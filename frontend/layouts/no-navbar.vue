@@ -1,6 +1,6 @@
 <template>
-  <div class="CustomLayout h-screen bg-black text-white">
-    <p>Custom layout</p>
+  <div class="CustomLayout h-screen bg-white text-black">
+    <p></p>
     <slot />
   </div>
 </template>

@@ -16,9 +16,9 @@
       <!-- Navigation Links (Desktop) -->
       <nav class="hidden md:flex space-x-6 text-white font-semibold tracking-wide">
         <NuxtLink to="/home" class="hover:text-blue transition duration-300">Home</NuxtLink>
-        <NuxtLink to="/about" class="hover:text-blue transition duration-300">About</NuxtLink>
-        <NuxtLink to="/services" class="hover:text-blue transition duration-300">Services</NuxtLink>
-        <NuxtLink to="/contact" class="hover:text-blue transition duration-300">Contact</NuxtLink>
+        <NuxtLink to="/about" class="hover:text-blue transition duration-300">Subscriptions</NuxtLink>
+        <NuxtLink to="/services" class="hover:text-blue transition duration-300">Products</NuxtLink>
+        <NuxtLink to="/contact" class="hover:text-blue transition duration-300">About</NuxtLink>
       </nav>
       
       <!-- Dark Mode & Connect Button Wrapper (Desktop) -->
@@ -32,9 +32,12 @@
         </button>
 
         <!-- Connect Button -->
-        <button class="btn-primary py-2 px-4 border border-blue text-white rounded-lg hover:bg-transparent hover:border-white transition-all duration-300">
+        <NuxtLink to="/auth/login">
+          <button class="btn-primary py-2 px-4 border border-blue text-white rounded-lg hover:bg-transparent hover:border-white transition-all duration-300">
           Connect
-        </button>
+          </button>
+        </NuxtLink>
+
       </div>
 
 
@@ -56,17 +59,20 @@
     <transition name="fade">
       <div
         v-if="isMenuOpen"
+        @click="toggleMenu"
         class="md:hidden bg-black backdrop-blur-lg p-6 absolute top-16 left-0 right-0 z-40 shadow-lg"
       >
         <NuxtLink to="/" class="block text-white py-2 hover:text-blue">Home</NuxtLink>
-        <NuxtLink to="/about" class="block text-white py-2 hover:text-blue">About</NuxtLink>
-        <NuxtLink to="/services" class="block text-white py-2 hover:text-blue">Services</NuxtLink>
-        <NuxtLink to="/contact" class="block text-white py-2 hover:text-blue">Contact</NuxtLink>
-        <button
+        <NuxtLink to="/about" class="block text-white py-2 hover:text-blue">Subscriptions</NuxtLink>
+        <NuxtLink to="/services" class="block text-white py-2 hover:text-blue">Products</NuxtLink>
+        <NuxtLink to="/contact" class="block text-white py-2 hover:text-blue">About</NuxtLink>
+        <NuxtLink to="/auth/login">
+          <button
           class="w-full btn-primary py-2 mt-4 border border-blue text-white rounded-lg hover:bg-transparent hover:border-white transition-all duration-300"
         >
           Connect
         </button>
+        </NuxtLink>
       </div>
     </transition>
   </header>
@@ -76,7 +82,13 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 
-const isDark = ref(false); // Track dark mode state
+const isDark = ref(false); 
+
+const isMenuOpen = ref(false); 
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value; 
+};
 
 // Function to toggle dark mode
 const toggleDarkMode = () => {
