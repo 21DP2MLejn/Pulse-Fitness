@@ -19,6 +19,5 @@
   <script>
   </script>
   
-  <style scoped>
 
   
