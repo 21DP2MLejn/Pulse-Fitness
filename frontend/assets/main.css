@@ -5,38 +5,75 @@
 @tailwind utilities;
 
 
-@layer components{
-    /* Buttons */
-    .btn-primary {
-        @apply border-2 border-blue bg-blue text-white py-2 px-6 rounded-md shadow-md hover:bg-dark-blue hover:border-dark-blue focus:outline-none transition duration-300 ease-in-out text-button;
-      }
-    
-      /* Mobile */
-      @media (max-width: 768px) {
-        .btn-primary {
-          @apply w-1/3 text-lg; 
-        }
-    }
-    .btn-secondary {
-        @apply border-2 border-blue text-blue py-2 px-6 rounded-md shadow-sm hover:bg-dark-blue focus:outline-none transition duration-300 ease-in-out text-button;
-      }
-    
-      /* Mobile */
-      @media (max-width: 768px) {
-        .btn-secondary {
-          @apply w-1/3 text-lg; 
-        }
-      }
-    .btn-long {
-        @apply border-2 border-blue text-white rounded-md py-2 px-16 bg-blue hover:bg-dark-blue focus:outline-none transition duration-300 ease-in-out text-button;
-    }
-    
-    /* Mobile */
-    @media (max-width: 768px){
-        .btn-long {
-            @apply w-1/2 text-lg
-        }
-    }
+@layer components {
 
-    
+  .dark-mode-toggle {
+      @apply flex items-center justify-center w-10 h-10 cursor-pointer;
+  }
+  .btn-primary {
+      @apply border border-blue text-blue py-2 px-4 rounded-lg shadow-sm 
+          hover:bg-blue hover:text-white transition duration-200 ease-in-out;
+  }
+
+  .btn-secondary {
+      @apply border border-gray-500 text-gray-700 py-2 px-4 rounded-lg 
+          hover:bg-gray-500 hover:text-white transition duration-200 ease-in-out;
+  }
+  
+  .btn-long {
+      @apply border border-blue text-blue py-2 px-8 rounded-lg 
+          hover:bg-blue hover:text-white transition duration-200 ease-in-out;
+  }
+
+  .btn-small {
+      @apply border border-gray-400 text-gray-600 py-1 px-3 rounded 
+          hover:bg-gray-400 hover:text-white transition duration-200 ease-in-out;
+  }
+
+  /* Mobile Styles */
+  @media (max-width: 768px) {
+      .btn-primary, .btn-secondary, .btn-long, .btn-small {
+          @apply w-full text-lg py-3;
+      }
+  }
+}
+
+@layer utilities {
+  @keyframes backgroundAnimation {
+    0% {
+      background-position: 0% 0%;
+    }
+    50% {
+      background-position: 100% 100%;
+    }
+    100% {
+      background-position: 0% 0%;
+    }
+  }
+  .animate-background {
+    animation: backgroundAnimation 10s ease infinite;
+    background-size: 300% 300%;
+  }
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-15px);
+    }
+  }
+  /* Transition effect for menu fade */
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.3s ease;
+  }
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
+  }
+
+  /* Shadow styling */
+  .shadow-lg {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
 }

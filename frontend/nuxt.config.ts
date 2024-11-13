@@ -3,6 +3,7 @@
 export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
+  modules: ['@nuxt/image'],
   app:{
     head:{
       title: 'Pulse',
@@ -12,7 +13,8 @@ export default defineNuxtConfig({
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
       ]
-    }
+    },
+    pageTransition: true
   },
   css: ['~/assets/main.css'],
   postcss:{
@@ -21,4 +23,5 @@ export default defineNuxtConfig({
       autoprefixer: {},
     }
   },
+  plugins:[ '~/plugins/loadingScreen.js' ]
 })
