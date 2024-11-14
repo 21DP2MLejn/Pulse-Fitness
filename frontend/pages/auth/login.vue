@@ -1,7 +1,8 @@
 <template>
-  <div class="h-screen flex items-center justify-center">
-    <div id="container" class="bg-black w-1/4 rounded-xl content-center p-5 h-auto shadow-xl">
-      <button
+  <div class="h-screen dark:bg-dark-blue flex items-center justify-center">
+    <div id="container" class="bg-black w-1/4 rounded-xl content-center p-5 h-auto shadow-xl hover:shadow-lg-white transition duration-300">
+      <form @submit.prevent="handleLogin">
+        <button
         @click="toggleDarkMode"
         class="absolute top-4 right-4 dark-mode-toggle bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-400 dark:border-gray-600 p-2 rounded-full transition-colors duration-300 ease-in-out"
         aria-label="Toggle Dark Mode"
@@ -9,8 +10,7 @@
         <span v-if="!isDark">🌞</span>
         <span v-else>🌙</span>
       </button>
-      <form @submit.prevent="handleLogin">
-        <h2 class="text-center text-white dark:text-dark-text text-2xl mb-8">Register</h2>
+        <h2 class="text-center text-white dark:text-dark-text text-2xl mb-8">Login</h2>
 
         <!-- Email Input -->
         <div class="flex flex-col items-center mb-4">
@@ -18,33 +18,9 @@
           <input
             type="email"
             id="email"
-            class="w-3/4 bg-transparent border-b-2 border-gray-400 dark:border-dark-light-gray text-black dark:text-dark-text focus:outline-none focus:border-blue-500 dark:focus:border-dark-blue placeholder-gray-400 dark:placeholder-dark-light-gray py-2 transition duration-300"
+            class="w-3/4 bg-transparent border-b-2 border-gray-400 dark:border-dark-light-gray text-black dark:text-dark-text focus:shadow-bottom-white focus:outline-none focus:border-white dark:focus:border-dark-blue placeholder-gray-400 focus:placeholder:text-white dark:placeholder-dark-light-gray py-2 transition duration-300"
             required
             placeholder="Enter your email"
-          />
-        </div>
-
-        <!-- Name Input -->
-        <div class="flex flex-col items-center mb-4">
-          <label for="name" class="block text-white dark:text-dark-text mb-2">Name</label>
-          <input
-            type="text"
-            id="name"
-            class="w-3/4 bg-transparent border-b-2 border-gray-400 dark:border-dark-light-gray text-black dark:text-dark-text focus:outline-none focus:border-blue-500 dark:focus:border-dark-blue placeholder-gray-400 dark:placeholder-dark-light-gray py-2 transition duration-300"
-            required
-            placeholder="Enter your name"
-          />
-        </div>
-
-        <!-- Last Name Input -->
-        <div class="flex flex-col items-center mb-4">
-          <label for="lastname" class="block text-white dark:text-dark-text mb-2">Last Name</label>
-          <input
-            type="text"
-            id="lastname"
-            class="w-3/4 bg-transparent border-b-2 border-gray-400 dark:border-dark-light-gray text-black dark:text-dark-text focus:outline-none focus:border-blue-500 dark:focus:border-dark-blue placeholder-gray-400 dark:placeholder-dark-light-gray py-2 transition duration-300"
-            required
-            placeholder="Enter your last name"
           />
         </div>
 
@@ -54,37 +30,24 @@
           <input
             type="password"
             id="password"
-            class="w-3/4 bg-transparent border-b-2 border-gray-400 dark:border-dark-light-gray text-black dark:text-dark-text focus:outline-none focus:border-blue-500 dark:focus:border-dark-blue placeholder-gray-400 dark:placeholder-dark-light-gray py-2 transition duration-300"
+            class="w-3/4 bg-transparent border-b-2 border-gray-400 dark:border-dark-light-gray text-black dark:text-dark-text focus:outline-none focus:shadow-bottom-white focus:border-white dark:focus:border-dark-blue placeholder-gray-400 focus:placeholder:text-white dark:placeholder-dark-light-gray py-2 transition duration-300"
             required
             placeholder="Enter your password"
           />
         </div>
 
-        <!-- Password Confirmation Input -->
-        <div class="flex flex-col items-center mb-4">
-          <label for="password_confirmation" class="block text-white dark:text-dark-text mb-2">Password Confirmation</label>
-          <input
-            type="password"
-            id="password_confirmation"
-            class="w-3/4 bg-transparent border-b-2 border-gray-400 dark:border-dark-light-gray text-black dark:text-dark-text focus:outline-none focus:border-blue-500 dark:focus:border-dark-blue placeholder-gray-400 dark:placeholder-dark-light-gray py-2 transition duration-300"
-            required
-            placeholder="Confirm your password"
-          />
-        </div>
 
         <!-- Login Redirect -->
         <div class="flex flex-col items-center mb-4">
-          <span class="text-black dark:text-dark-text">Already have an account?
-            <NuxtLink to="/auth/login" class="text-blue-500 dark:text-dark-blue hover:text-blue-400 dark:hover:text-blue-300 transition duration-300">
-              Login
+          <span class="text-white dark:text-dark-text">Don't have an account?
+            <NuxtLink to="/auth/register" class="text-blue dark:text-dark-blue hover:text-light-blue dark:hover:text-blue transition duration-300">
+              Register
             </NuxtLink>
           </span>
         </div>
-
-        <!-- Register Button -->
         <div class="flex flex-col items-center mb-4">
-          <button class="text-white dark:text-dark-text bg-blue-500 dark:bg-dark-blue hover:bg-blue-400 dark:hover:bg-blue-300 transition duration-300 rounded px-4 py-2">
-            Register
+          <button class="text-white dark:text-dark-text bg-blue dark:bg-dark-blue hover:bg-blue dark:hover:bg-blue transition duration-300 rounded px-4 py-2">
+            Login
           </button>
         </div>
       </form>
@@ -121,9 +84,6 @@ definePageMeta({
 });
 </script>
 
-
-
-</script>
 
 <style>
 

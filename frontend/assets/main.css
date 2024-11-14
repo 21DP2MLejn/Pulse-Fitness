@@ -75,6 +75,9 @@
   .shadow-lg {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
+  .shadow-lg-white {
+    box-shadow: 4px 4px 6px rgba(255, 255, 255, 0.1);
+  }
 
   .shadow-bottom-white {
     box-shadow: 0 4px 6px -4px rgba(255, 255, 255, 0.7);
