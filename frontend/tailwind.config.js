@@ -19,6 +19,7 @@ export default {
         'blue': '#1A73E8',
         'dark-blue': '#1D2B53',
 
+
         // Dark mode colors
         'dark-bg': '#1B1B1D',         
         'dark-text': '#E0E0E0',       
@@ -26,7 +27,8 @@ export default {
         'dark-blue': '#0A1F44',       
         'dark-light-gray': '#6B6B6B', 
 
-        
+        // Other
+        'light-blue': '#5591e0',
         'success': '#34D399',
         'warning': '#FBBF24',
         'error': '#EF4444',

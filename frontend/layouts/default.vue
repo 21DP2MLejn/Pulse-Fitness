@@ -1,5 +1,5 @@
 <template>
-  <div class="DefaultLayout text-black h-screen">
+  <div class="DefaultLayout text-black h-screen bg-light-gray">
     <NavBar />
     <p>Default layout</p>
     <LoadingScreen v-if="isLoading" />
