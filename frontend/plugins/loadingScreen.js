@@ -1,4 +1,4 @@
-// plugins/loadingScreen.js
+
 import Vue from 'vue';
 import LoadingScreen from '~/components/LoadingScreen.vue';
 
