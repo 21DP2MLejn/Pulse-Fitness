@@ -10,7 +10,10 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.7.0",
     "@nuxt/image": "^1.8.1",
+    "install": "^0.13.0",
+    "npm": "^10.9.0",
     "nuxt": "^3.14.159",
     "vue": "latest",
     "vue-router": "latest"

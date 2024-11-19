@@ -1,9 +1,10 @@
 <template>
-  <div class="DefaultLayout text-black h-screen bg-light-gray">
+  <div class="DefaultLayout text-black h-screen">
     <NavBar />
     <p>Default layout</p>
     <LoadingScreen v-if="isLoading" />
     <slot />
+    <Footer />
   </div>
 </template>
 
@@ -15,12 +16,11 @@ export default {
     };
   },
   watch: {
-    // Watch for route changes to show/hide loading screen
     $route(to, from) {
       this.isLoading = true;
       setTimeout(() => {
         this.isLoading = false;
-      }, 1000); // Adjust time as needed
+      }, 1200);
     }
   }
 };

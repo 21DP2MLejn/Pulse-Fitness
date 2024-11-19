@@ -1,23 +1,25 @@
 <template>
-    <div class="loading-screen fixed inset-0 flex items-center justify-center bg-dark-blue z-50 overflow-hidden">
-      <div class="absolute inset-0 bg-gradient-to-r from-blue via-light-gray to-dark-blue animate-background"></div>
-      <div class="relative z-10 flex flex-col items-center justify-center">
-        <div class="relative flex space-x-4 animate-pulse">
-          <div class="w-16 h-16 rounded-full bg-blue animate-bounce"></div>
-          <div class="w-16 h-16 rounded-full bg-light-gray animate-bounce"></div>
-          <div class="w-16 h-16 rounded-full bg-dark-blue animate-bounce"></div>
-        </div>
-        
-        <p class="text-white mt-8 text-3xl font-bold tracking-wider animate-textFade">
-          Loading...
-        </p>
-        <div class="absolute top-0 left-0 right-0 bottom-0 bg-gradient-to-r from-transparent via-light-gray to-transparent opacity-30 animate-shimmer"></div>
+  <div class="loading-screen fixed inset-0 flex items-center justify-center bg-gray-900 z-50 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-r from-gray-800 via-gray-600 to-gray-900 animate-background"></div>
+    <div class="relative z-10 flex flex-col items-center justify-center space-y-6">
+      <div class="relative flex items-center justify-center space-x-6 animate-lift">
+        <div class="w-12 h-12 rounded-full bg-light-blue dark:bg-dark-blue shadow-lg"></div>
+        <div class="w-12 h-12 rounded-full bg-blue dark:bg-black shadow-lg"></div>
+        <div class="w-12 h-12 rounded-full bg-dark-blue dark:bg-dark-bg shadow-lg"></div>
       </div>
+      <div class="flex items-center space-x-2">
+        <div class="w-6 h-6 rounded-full bg-light-blue dark:bg-dark-blue"></div>
+        <div class="w-48 h-3 bg-blue dark:bg-black rounded animate-barPulse"></div>
+        <div class="w-6 h-6 rounded-full bg-dark-blue dark:bg-dark-bg"></div>
+      </div>
+      <p class="text-white text-2xl font-extrabold tracking-widest animate-pulse">
+        PULSE FITNESS
+      </p>
     </div>
-  </template>
-  
-  <script>
-  </script>
+    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20 animate-shimmer"></div>
+  </div>
+</template>
+
   
 
   

@@ -21,7 +21,7 @@
           <input
             type="email"
             id="email"
-            class="w-3/4 bg-transparent border-b-2 border-gray-400 dark:border-dark-light-gray text-white dark:text-dark-text placeholder-gray-400 dark:placeholder-dark-light-gray focus:outline-none focus:border-white dark:focus:border-dark-blue py-2 transition duration-300"
+            class="w-3/4 bg-transparent border-b-2 border-gray-400 dark:border-dark-light-gray text-white dark:text-dark-text focus:shadow-bottom-white placeholder-gray-400 dark:placeholder-dark-light-gray focus:outline-none focus:border-white dark:focus:border-dark-blue py-2 transition duration-300"
             required
             placeholder="Enter your email"
           />
@@ -33,7 +33,7 @@
           <input
             type="text"
             id="name"
-            class="w-3/4 bg-transparent border-b-2 border-gray-400 dark:border-dark-light-gray text-white dark:text-dark-text placeholder-gray-400 dark:placeholder-dark-light-gray focus:outline-none focus:border-white dark:focus:border-dark-blue py-2 transition duration-300"
+            class="w-3/4 bg-transparent border-b-2 border-gray-400 dark:border-dark-light-gray text-white dark:text-dark-text focus:shadow-bottom-white placeholder-gray-400 dark:placeholder-dark-light-gray focus:outline-none focus:border-white dark:focus:border-dark-blue py-2 transition duration-300"
             required
             placeholder="Enter your name"
           />
@@ -44,7 +44,7 @@
           <input
             type="text"
             id="lastname"
-            class="w-3/4 bg-transparent border-b-2 border-gray-400 dark:border-dark-light-gray text-white dark:text-dark-text placeholder-gray-400 dark:placeholder-dark-light-gray focus:outline-none focus:border-white dark:focus:border-dark-blue py-2 transition duration-300"
+            class="w-3/4 bg-transparent border-b-2 border-gray-400 dark:border-dark-light-gray text-white dark:text-dark-text focus:shadow-bottom-white placeholder-gray-400 dark:placeholder-dark-light-gray focus:outline-none focus:border-white dark:focus:border-dark-blue py-2 transition duration-300"
             required
             placeholder="Enter your last name"
           />
@@ -56,7 +56,7 @@
           <input
             type="password"
             id="password"
-            class="w-3/4 bg-transparent border-b-2 border-gray-400 dark:border-dark-light-gray text-white dark:text-dark-text placeholder-gray-400 dark:placeholder-dark-light-gray focus:outline-none focus:border-white dark:focus:border-dark-blue py-2 transition duration-300"
+            class="w-3/4 bg-transparent border-b-2 border-gray-400 dark:border-dark-light-gray text-white dark:text-dark-text focus:shadow-bottom-white placeholder-gray-400 dark:placeholder-dark-light-gray focus:outline-none focus:border-white dark:focus:border-dark-blue py-2 transition duration-300"
             required
             placeholder="Enter your password"
           />
@@ -67,7 +67,7 @@
           <input
             type="password"
             id="password_confirmation"
-            class="w-3/4 bg-transparent border-b-2 border-gray-400 dark:border-dark-light-gray text-white dark:text-dark-text placeholder-gray-400 dark:placeholder-dark-light-gray focus:outline-none focus:border-white dark:focus:border-dark-blue py-2 transition duration-300"
+            class="w-3/4 bg-transparent border-b-2 border-gray-400 dark:border-dark-light-gray text-white dark:text-dark-text focus:shadow-bottom-white placeholder-gray-400 dark:placeholder-dark-light-gray focus:outline-none focus:border-white dark:focus:border-dark-blue py-2 transition duration-300"
             required
             placeholder="Confirm your password"
           />
@@ -76,11 +76,11 @@
         <!-- Login Link and Register Button -->
         <div class="flex flex-col items-center mb-4">
           <span class="text-white dark:text-dark-text">Already have an account? 
-            <NuxtLink to="/auth/login" class="text-blue-500 dark:text-dark-blue hover:text-blue-400 dark:hover:text-blue-300 transition duration-300">Login</NuxtLink>
+            <NuxtLink to="/auth/login" class="text-blue dark:text-dark-blue hover:text-blue dark:hover:text-blue transition duration-300">Login</NuxtLink>
           </span>
         </div>
         <div class="flex flex-col items-center mb-4">
-          <button class="text-white dark:text-dark-text bg-blue-500 dark:bg-dark-blue hover:bg-blue-400 dark:hover:bg-blue-300 transition duration-300 rounded px-4 py-2">
+          <button class="text-white dark:text-dark-text bg-blue dark:bg-dark-blue hover:bg-blue dark:hover:bg-blue transition duration-300 rounded px-4 py-2">
             Register
           </button>
         </div>
@@ -89,30 +89,11 @@
   </div>
 </template>
 
-<script>
-import { ref, onMounted } from 'vue';
+<script setup>
+import { useDarkMode } from '~/composables/useDarkMode';
 
-export default {
-  setup() {
-    const isDark = ref(false);
+const { isDark, toggleDarkMode } = useDarkMode();
 
-    const toggleDarkMode = () => {
-      isDark.value = !isDark.value;
-      document.documentElement.classList.toggle('dark', isDark.value);
-      localStorage.setItem('theme', isDark.value ? 'dark' : 'light');
-    };
-
-    onMounted(() => {
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        isDark.value = true;
-        document.documentElement.classList.add('dark');
-      }
-    });
-
-    return { isDark, toggleDarkMode };
-  },
-};
 definePageMeta({
   layout: 'no-navbar'
 });

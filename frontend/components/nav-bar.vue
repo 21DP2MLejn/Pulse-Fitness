@@ -1,5 +1,5 @@
 <template>
-  <header class="bg-black backdrop-blur-md py-4 px-6 fixed inset-x-0 top-0 z-50 shadow-lg">
+  <header class="bg-white dark:bg-black backdrop-blur-md py-4 px-6 fixed inset-x-0 top-0 z-50 shadow-lg">
     <div class="max-w-screen-xl mx-auto flex items-center justify-between">
       <!-- Logo Section -->
       <div class="flex items-center space-x-4">
@@ -8,17 +8,25 @@
           alt="Logo"
           class="h-10 w-auto"
         />
-        <NuxtLink to="/" class="text-white text-2xl font-extrabold tracking-wider">
+        <NuxtLink to="/" class="text-black dark:text-white text-2xl font-extrabold tracking-wider">
           Pulse
         </NuxtLink>
       </div>
       
       <!-- Navigation Links (Desktop) -->
-      <nav class="hidden md:flex space-x-6 text-white font-semibold tracking-wide">
-        <NuxtLink to="/home" class="hover:text-blue transition duration-300">Home</NuxtLink>
-        <NuxtLink to="/about" class="hover:text-blue transition duration-300">Subscriptions</NuxtLink>
-        <NuxtLink to="/services" class="hover:text-blue transition duration-300">Products</NuxtLink>
-        <NuxtLink to="/contact" class="hover:text-blue transition duration-300">About</NuxtLink>
+      <nav class="hidden md:flex space-x-6 font-semibold tracking-wide">
+        <NuxtLink to="/nav/home" class="text-black dark:text-white hover:text-blue dark:hover:text-light-blue transition duration-300">
+          Home
+        </NuxtLink>
+        <NuxtLink to="/nav/subscriptions" class="text-black dark:text-white hover:text-blue dark:hover:text-light-blue transition duration-300">
+          Subscriptions
+        </NuxtLink>
+        <NuxtLink to="/nav/products" class="text-black dark:text-white hover:text-blue dark:hover:text-light-blue transition duration-300">
+          Products
+        </NuxtLink>
+        <NuxtLink to="/nav/about" class="text-black dark:text-white hover:text-blue dark:hover:text-light-blue transition duration-300">
+          About
+        </NuxtLink>
       </nav>
       
       <!-- Dark Mode & Connect Button Wrapper (Desktop) -->
@@ -27,23 +35,23 @@
         <button
           @click="toggleDarkMode"
           class="dark-mode-toggle bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-400 dark:border-gray-600 p-2 rounded-full transition-colors duration-300 ease-in-out"
+          aria-label="Toggle Dark Mode"
         >
-          <span class="material-icons">{{ isDark ? 'light_mode' : 'dark_mode' }}</span>
+          <span v-if="!isDark">🌞</span>
+          <span v-else>🌙</span>
         </button>
 
         <!-- Connect Button -->
         <NuxtLink to="/auth/login">
-          <button class="btn-primary py-2 px-4 border border-blue text-white rounded-lg hover:bg-transparent hover:border-white transition-all duration-300">
-          Connect
+          <button class="btn-primary py-2 px-4 border hover:text-black border-blue dark:border-dark-blue text-black dark:text-white bg-blue dark:bg-dark-blue rounded-lg hover:bg-transparent dark:hover:bg-transparent hover:border-black dark:hover:border-white transition-all duration-300">
+            Connect
           </button>
         </NuxtLink>
-
       </div>
-
 
       <!-- Mobile Menu Toggle Button -->
       <div class="md:hidden flex items-center">
-        <button @click="toggleMenu" class="text-white">
+        <button @click="toggleMenu" class="text-black dark:text-white">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path
               stroke="currentColor"
@@ -60,18 +68,34 @@
       <div
         v-if="isMenuOpen"
         @click="toggleMenu"
-        class="md:hidden bg-black backdrop-blur-lg p-6 absolute top-16 left-0 right-0 z-40 shadow-lg"
+        class="md:hidden bg-white dark:bg-black backdrop-blur-lg p-6 absolute top-16 left-0 right-0 z-40 shadow-lg"
       >
-        <NuxtLink to="/" class="block text-white py-2 hover:text-blue">Home</NuxtLink>
-        <NuxtLink to="/about" class="block text-white py-2 hover:text-blue">Subscriptions</NuxtLink>
-        <NuxtLink to="/services" class="block text-white py-2 hover:text-blue">Products</NuxtLink>
-        <NuxtLink to="/contact" class="block text-white py-2 hover:text-blue">About</NuxtLink>
+        <NuxtLink to="/" class="block text-black dark:text-white py-2 hover:text-blue dark:hover:text-light-blue">
+          Home
+        </NuxtLink>
+        <NuxtLink to="/about" class="block text-black dark:text-white py-2 hover:text-blue dark:hover:text-light-blue">
+          Subscriptions
+        </NuxtLink>
+        <NuxtLink to="/services" class="block text-black dark:text-white py-2 hover:text-blue dark:hover:text-light-blue">
+          Products
+        </NuxtLink>
+        <NuxtLink to="/contact" class="block text-black dark:text-white py-2 hover:text-blue dark:hover:text-light-blue">
+          About
+        </NuxtLink>
+        <button
+          @click="toggleDarkMode"
+          class="dark-mode-toggle bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-400 dark:border-gray-600 p-2 rounded-full transition-colors duration-300 ease-in-out"
+          aria-label="Toggle Dark Mode"
+        >
+          <span v-if="!isDark">🌞</span>
+          <span v-else>🌙</span>
+        </button>
         <NuxtLink to="/auth/login">
           <button
-          class="w-full btn-primary py-2 mt-4 border border-blue text-white rounded-lg hover:bg-transparent hover:border-white transition-all duration-300"
-        >
-          Connect
-        </button>
+            class="w-full btn-primary py-2 mt-4 border hover:text-black border-blue dark:border-dark-blue text-black dark:text-white bg-blue dark:bg-dark-blue rounded-lg hover:bg-transparent dark:hover:bg-transparent hover:border-black dark:hover:border-white transition-all duration-300"
+          >
+            Connect
+          </button>
         </NuxtLink>
       </div>
     </transition>
@@ -80,9 +104,12 @@
 
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { useDarkMode } from '~/composables/useDarkMode';
 
-const isDark = ref(false); 
+const { isDark, toggleDarkMode } = useDarkMode();
+
+
+import { ref } from 'vue';
 
 const isMenuOpen = ref(false); 
 
@@ -90,21 +117,6 @@ const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value; 
 };
 
-// Function to toggle dark mode
-const toggleDarkMode = () => {
-  isDark.value = !isDark.value;
-  document.documentElement.classList.toggle('dark', isDark.value);
-  localStorage.setItem('theme', isDark.value ? 'dark' : 'light');
-};
-
-// Initialize dark mode based on saved preference or system preference
-onMounted(() => {
-  const savedTheme = localStorage.getItem('theme');
-  if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-    isDark.value = true;
-    document.documentElement.classList.add('dark');
-  }
-});
 </script>
 
 <style scoped>

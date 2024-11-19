@@ -18,6 +18,7 @@ export default {
         'black': '#2E2E2E',
         'blue': '#1A73E8',
         'dark-blue': '#1D2B53',
+        'light-blue': '#5591e0',
 
 
         // Dark mode colors
@@ -28,7 +29,6 @@ export default {
         'dark-light-gray': '#6B6B6B', 
 
         // Other
-        'light-blue': '#5591e0',
         'success': '#34D399',
         'warning': '#FBBF24',
         'error': '#EF4444',
@@ -56,7 +56,7 @@ export default {
       }
     },
   },
-  plugins: [],
+  plugins: [require('@fortawesome/fontawesome-free')],
 }
 
 

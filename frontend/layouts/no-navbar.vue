@@ -1,5 +1,5 @@
 <template>
-  <div class="CustomLayout h-screen bg-light-gray text-black">
+  <div class="CustomLayout h-screen text-black">
     <p></p>
     <slot />
   </div>
