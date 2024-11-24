@@ -23,7 +23,7 @@
           <input
             type="email"
             id="email"
-            class="w-3/4 bg-transparent border-b-2 border-gray-400 dark:border-dark-light-gray text-white dark:text-dark-text focus:shadow-bottom-white focus:outline-none focus:border-white dark:focus:border-dark-blue placeholder-gray-400 focus:placeholder:text-white dark:placeholder-dark-light-gray py-2 transition duration-300"
+            class="w-3/4 bg-transparent border-b-2 border-gray-400 dark:focus:placeholder:text-white dark:border-dark-light-gray text-white dark:text-dark-text focus:shadow-bottom-white dark:focus:shadow-bottom-dark-blue focus:outline-none focus:border-white dark:focus:border-dark-blue placeholder-gray-400 focus:placeholder:text-white dark:placeholder-dark-light-gray py-2 transition duration-300"
             required
             placeholder="Enter your email"
           />
@@ -35,7 +35,7 @@
           <input
             type="password"
             id="password"
-            class="w-3/4 bg-transparent border-b-2 border-gray-400 dark:border-dark-light-gray text-white dark:text-dark-text focus:outline-none focus:shadow-bottom-white focus:border-white dark:focus:border-dark-blue placeholder-gray-400 focus:placeholder:text-white dark:placeholder-dark-light-gray py-2 transition duration-300"
+            class="w-3/4 bg-transparent border-b-2 border-gray-400 dark:focus:placeholder:text-white dark:border-dark-light-gray text-white dark:text-dark-text focus:outline-none focus:shadow-bottom-white dark:focus:shadow-bottom-dark-blue focus:border-white dark:focus:border-dark-blue placeholder-gray-400 focus:placeholder:text-white dark:placeholder-dark-light-gray py-2 transition duration-300"
             required
             placeholder="Enter your password"
           />
@@ -70,6 +70,3 @@ definePageMeta({
   layout: 'no-navbar'
 });
 </script>
-
-<style>
-</style>
