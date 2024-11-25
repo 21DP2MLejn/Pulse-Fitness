@@ -30,7 +30,7 @@
           hover:bg-gray-400 hover:text-white transition duration-300 ease-in-out;
   }
 
-  /* Mobile Styles */
+
   @media (max-width: 768px) {
       .btn-primary, .btn-secondary, .btn-long, .btn-small {
           @apply w-full text-lg py-3;
@@ -209,7 +209,6 @@ html.dark ::-webkit-scrollbar-corner {
   background-color: rgba(58, 58, 58, 0.6); 
 }
 
-/* Optional: Smooth scrolling */
 html {
   scroll-behavior: smooth; 
 }

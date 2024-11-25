@@ -2,13 +2,9 @@
   <div class="dark:bg-dark-bg bg-white">
     <!-- Hero Section with Background Animation -->
     <section class="hero flex flex-col items-center justify-center h-screen p-8 text-center dark:text-white text-black relative">
-      <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('https://via.placeholder.com/1500x1000?text=Hero+Image'); opacity: 0.5;"></div>
       <h1 class="text-5xl font-extrabold mb-6 text-white animate__animated animate__fadeIn animate__delay-1s">Welcome to Our Gym</h1>
       <p class="text-xl mb-8 text-white animate__animated animate__fadeIn animate__delay-2s">Achieve your fitness goals with us</p>
-
-      <!-- Slider Component (Add fade-in effect) -->
       <Slider class="animate__animated animate__fadeIn animate__delay-2s" />
-
       <!-- Call to Action -->
       <div class="cta mt-8">
         <button class="btn-primary py-2 px-6 border hover:text-black border-blue dark:border-dark-blue text-black dark:text-white bg-blue dark:bg-dark-blue rounded-lg hover:bg-transparent dark:hover:bg-transparent hover:border-black dark:hover:border-white transition-all duration-300 transform hover:scale-110">
@@ -78,7 +74,7 @@
     </section>
 
     <!-- Footer Section -->
-    <footer class="p-8 bg-dark-blue text-white text-center">
+    <footer class="p-8 bg-gray-100 dark:bg-dark-bg text-white text-center">
     </footer>
   </div>
 </template>
