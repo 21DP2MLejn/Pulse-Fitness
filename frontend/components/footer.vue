@@ -5,7 +5,7 @@
         <div>
           <h2 class="text-lg font-bold text-blue dark:text-light-blue mb-4">About Us</h2>
           <p class="text-sm leading-relaxed">
-            Welcome to <strong>PowerLift Gym</strong>, the ultimate destination for fitness and strength. Our state-of-the-art facilities and expert trainers are here to help you achieve your goals.
+            Welcome to <strong>Pulse Fitness Gym</strong>, the ultimate destination for fitness and strength. Our state-of-the-art facilities and expert trainers are here to help you achieve your goals.
           </p>
         </div>
   
@@ -27,7 +27,7 @@
             <strong>Address:</strong> 123 Fitness Lane, Flex City, FL 54321
           </p>
           <p class="text-sm">
-            <strong>Email:</strong> <a href="mailto:contact@powerliftgym.com" class="text-blue dark:text-light-blue hover:underline">contact@powerliftgym.com</a>
+            <strong>Email:</strong> <a href="mailto:contact@pulsefitness.com" class="text-blue dark:text-light-blue hover:underline">contact@pulsefitness.com</a>
           </p>
           <p class="text-sm">
             <strong>Phone:</strong> <a href="tel:+1234567890" class="text-blue dark:text-light-blue hover:underline">(123) 456-7890</a>
@@ -43,7 +43,7 @@
   
       <!-- Footer Bottom -->
       <div class="mt-8 border-t border-dark-light-gray dark:border-dark-blue pt-4 text-center">
-        <p class="text-sm">&copy; 2024 PowerLift Gym. All rights reserved.</p>
+        <p class="text-sm">&copy; 2024 Pulse Fitness Gym. All rights reserved.</p>
         <p class="text-sm">"Strength, Dedication, Transformation"</p>
       </div>
     </footer>
