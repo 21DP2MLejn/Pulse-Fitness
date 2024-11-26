@@ -6,6 +6,17 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup>
+
+import AOS from "aos";
+import "aos/dist/aos.css";
+
+onMounted(() => {
+  AOS.init({
+    duration: 1200,
+    offset: 200,
+    once: true,
+  });
+});
 
 </script>
