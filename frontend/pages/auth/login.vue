@@ -21,6 +21,7 @@
         <div class="flex flex-col items-center mb-4">
           <label for="email" class="block text-white dark:text-dark-text mb-2">Email</label>
           <input
+            v-model="formData.email"
             type="email"
             id="email"
             class="w-3/4 bg-transparent border-b-2 border-gray-400 dark:focus:placeholder:text-white dark:border-dark-light-gray text-white dark:text-dark-text focus:shadow-bottom-white dark:focus:shadow-bottom-dark-blue focus:outline-none focus:border-white dark:focus:border-dark-blue placeholder-gray-400 focus:placeholder:text-white dark:placeholder-dark-light-gray py-2 transition duration-300"
@@ -33,6 +34,7 @@
         <div class="flex flex-col items-center mb-4">
           <label for="password" class="block text-white dark:text-dark-text mb-2">Password</label>
           <input
+            v-model="formData.password"
             type="password"
             id="password"
             class="w-3/4 bg-transparent border-b-2 border-gray-400 dark:focus:placeholder:text-white dark:border-dark-light-gray text-white dark:text-dark-text focus:outline-none focus:shadow-bottom-white dark:focus:shadow-bottom-dark-blue focus:border-white dark:focus:border-dark-blue placeholder-gray-400 focus:placeholder:text-white dark:placeholder-dark-light-gray py-2 transition duration-300"
@@ -63,8 +65,28 @@
 
 <script setup>
 import { useDarkMode } from '~/composables/useDarkMode';
-
 const { isDark, toggleDarkMode } = useDarkMode();
+
+const formData = ref({
+  email: '',
+  password: ''
+});
+
+async function handleLogin() {
+  try {
+    const response = await $fetch('/api/login', {
+      method: 'POST',
+      body: formData.value,
+    });
+
+    console.log('Login successful:', response);
+    alert('Login successful! Redirecting to home...');
+    navigateTo('/home'); 
+  } catch (error) {
+    console.error('Login error:', error);
+    alert(error?.data?.message || 'An error occurred during login.');
+  }
+}
 
 definePageMeta({
   layout: 'no-navbar'

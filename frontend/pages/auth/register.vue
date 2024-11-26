@@ -168,6 +168,30 @@ const formData = ref({
   phone: '',
 });
 
+async function handleRegister() {
+  if (!formData.value.birthdate || !formData.value.gender || !formData.value.phone) {
+    alert('Please fill all fields');
+    return;
+  }
+
+  try {
+    // Make an API request to register the user
+    const response = await $fetch('/api/register', {
+      method: 'POST',
+      body: formData.value,
+    });
+
+    // Handle successful registration
+    console.log('Registration successful:', response);
+    alert('Registration successful! Redirecting to login...');
+    navigateTo('/login'); // Redirect to login or another page
+  } catch (error) {
+    // Handle errors
+    console.error('Registration error:', error);
+    alert(error?.data?.message || 'An error occurred during registration.');
+  }
+}
+
 function validateStep1() {
   if (!formData.value.email || !formData.value.name || !formData.value.lastname || !formData.value.password || !formData.value.password_confirmation) {
     alert('Please fill all fields');
@@ -180,15 +204,6 @@ function validateStep1() {
   step.value++;
 }
 
-function handleRegister() {
-  if (!formData.value.birthdate || !formData.value.gender || !formData.value.phone) {
-    alert('Please fill all fields');
-    return;
-  }
-  // Submit registration logic here
-  console.log('Registering user:', formData.value);
-  alert('Registration successful!');
-}
 
 definePageMeta({
   layout: 'no-navbar'
