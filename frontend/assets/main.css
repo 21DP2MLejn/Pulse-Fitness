@@ -4,9 +4,8 @@
 @tailwind components;
 @tailwind utilities;
 
-
+/* Component Classes */
 @layer components {
-
   .dark-mode-toggle {
       @apply flex items-center justify-center w-10 h-10 cursor-pointer;
   }
@@ -14,22 +13,18 @@
       @apply border border-blue text-blue py-2 px-4 rounded-lg shadow-sm 
           hover:bg-blue hover:text-white transition duration-300 ease-in-out;
   }
-
   .btn-secondary {
       @apply border border-gray-500 text-gray-700 py-2 px-4 rounded-lg 
           hover:bg-gray-500 hover:text-white transition duration-300 ease-in-out;
   }
-  
   .btn-long {
       @apply border border-blue text-blue py-2 px-8 rounded-lg 
           hover:bg-blue hover:text-white transition duration-300 ease-in-out;
   }
-
   .btn-small {
       @apply border border-gray-400 text-gray-600 py-1 px-3 rounded 
           hover:bg-gray-400 hover:text-white transition duration-300 ease-in-out;
   }
-
 
   @media (max-width: 768px) {
       .btn-primary, .btn-secondary, .btn-long, .btn-small {
@@ -38,185 +33,14 @@
   }
 }
 
-@layer utilities {
-  @keyframes backgroundAnimation {
-    0% {
-      background-position: 0% 0%;
-    }
-    50% {
-      background-position: 100% 100%;
-    }
-    100% {
-      background-position: 0% 0%;
-    }
-  }
-  .animate-background {
-    animation: backgroundAnimation 10s ease infinite;
-    background-size: 300% 300%;
-  }
-  @keyframes bounce {
-    0%, 100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-15px);
-    }
-  }
-  @keyframes lift {
-    0%, 100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-20px);
-    }
-  }
-  
-  @keyframes barPulse {
-    0%, 100% {
-      transform: scaleX(1);
-    }
-    50% {
-      transform: scaleX(1.1);
-    }
-  }
-  
-  @keyframes shimmer {
-    0% {
-      background-position: -200px 0;
-    }
-    100% {
-      background-position: 200px 0;
-    }
-  }
-  
-  .animate-lift {
-    animation: lift 1.5s ease-in-out infinite;
-  }
-  
-  .animate-barPulse {
-    animation: barPulse 1.5s ease-in-out infinite;
-  }
-  
-  .animate-shimmer {
-    background-size: 400% 100%;
-    animation: shimmer 3s infinite linear;
-  }
-  
-  /* Transition effect for menu fade */
-  .fade-enter-active,
-  .fade-leave-active {
-    transition: opacity 0.3s ease;
-  }
-  .fade-enter-from,
-  .fade-leave-to {
-    opacity: 0;
-  }
-
-  .shadow-lg {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  .shadow-lg-white {
-    box-shadow: 4px 4px 6px rgba(255, 255, 255, 0.1);
-  }
-
-  .shadow-bottom-white {
-    box-shadow: 0 4px 6px -4px rgba(255, 255, 255, 0.7);
-  }
-  .focus\:shadow-bottom-white:focus {
-    box-shadow: 0 4px 6px -4px rgba(255, 255, 255, 0.7);
-  }
-
-  .shadow-bottom-dark-blue {
-    box-shadow: 0 4px 6px -4px rgba(10, 31, 68, 0.7);
-  }
-  
-  .focus\:shadow-bottom-dark-blue:focus {
-    box-shadow: 0 4px 6px -4px rgba(10, 31, 68, 0.7); 
-  }
-}
-.hero h1 {
-  animation: fadeIn 1s ease-in;
-}
-
-.hero p {
-  animation: fadeIn 1.5s ease-in;
-}
-
-.features .feature-box, 
-.products .product-box, 
-.trainers .trainer-box {
-  transition: all 0.3s ease;
-}
-
-.features .feature-box:hover, 
-.products .product-box:hover, 
-.trainers .trainer-box:hover {
-  transform: scale(1.05);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-}
-
-/* Custom button hover effect */
-.btn-primary:hover {
-  transform: scale(1.1);
-  transition: all 0.3s ease-in-out;
-}
-
-::-webkit-scrollbar {
-  width: 8px;  
-  height: 8px; 
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(46, 46, 46, 0.1); 
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: rgba(168, 168, 168, 0.6); 
-  border-radius: 10px;
-  border: 2px solid rgba(168, 168, 168, 0.2); 
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(168, 168, 168, 0.8); 
-}
-
-::-webkit-scrollbar-corner {
-  background-color: rgba(46, 46, 46, 0.1); 
-}
-
-/* Dark Mode Scrollbar Style */
-html.dark ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-html.dark ::-webkit-scrollbar-track {
-  background: rgba(58, 58, 58, 0.6); 
-}
-
-html.dark ::-webkit-scrollbar-thumb {
-  background-color: rgba(224, 224, 224, 0.6); 
-  border-radius: 10px;
-  border: 2px solid rgba(58, 58, 58, 0.3); 
-}
-
-html.dark ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(224, 224, 224, 0.8); 
-}
-
-html.dark ::-webkit-scrollbar-corner {
-  background-color: rgba(58, 58, 58, 0.6); 
-}
-
+/* Scroll Behavior */
 html {
   scroll-behavior: smooth; 
 }
 
-
+/* Mobile Scrollbar Hiding */
 @media (max-width: 768px) {
   ::-webkit-scrollbar {
     display: none;
   }
 }
-

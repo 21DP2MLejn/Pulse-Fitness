@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+/* Animations */
+@keyframes backgroundAnimation {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+.animate-background {
+  animation: backgroundAnimation 10s ease infinite;
+  background-size: 300% 300%;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+@keyframes lift {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+@keyframes barPulse {
+  0%, 100% {
+    transform: scaleX(1);
+  }
+  50% {
+    transform: scaleX(1.1);
+  }
+}
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: 200px 0;
+  }
+}
+.animate-lift {
+  animation: lift 1.5s ease-in-out infinite;
+}
+.animate-barPulse {
+  animation: barPulse 1.5s ease-in-out infinite;
+}
+.animate-shimmer {
+  background-size: 400% 100%;
+  animation: shimmer 3s infinite linear;
+}
+
+/* Hero Section Animations */
+.hero h1 {
+  animation: fadeIn 1s ease-in;
+}
+.hero p {
+  animation: fadeIn 1.5s ease-in;
+}
+
+/* Hover Effects for Features, Products, and Trainers */
+.features .feature-box, 
+.products .product-box, 
+.trainers .trainer-box {
+  transition: all 0.3s ease;
+}
+.features .feature-box:hover, 
+.products .product-box:hover, 
+.trainers .trainer-box:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Button Hover Animation */
+.btn-primary:hover {
+  transform: scale(1.1);
+  transition: all 0.3s ease-in-out;
+}
+
+/* Fade Transitions */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.scroll-animate {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease-out;
+  }
+  
+  /* Triggered animation */
+  .scroll-animate.animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(46, 46, 46, 0.1); 
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(168, 168, 168, 0.6); 
+  border-radius: 10px;
+  border: 2px solid rgba(168, 168, 168, 0.2); 
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(168, 168, 168, 0.8); 
+}
+::-webkit-scrollbar-corner {
+  background-color: rgba(46, 46, 46, 0.1); 
+}
+
+/* Dark Mode Scrollbar Styles */
+html.dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+html.dark ::-webkit-scrollbar-track {
+  background: rgba(58, 58, 58, 0.6); 
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background-color: rgba(224, 224, 224, 0.6); 
+  border-radius: 10px;
+  border: 2px solid rgba(58, 58, 58, 0.3); 
+}
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(224, 224, 224, 0.8); 
+}
+html.dark ::-webkit-scrollbar-corner {
+  background-color: rgba(58, 58, 58, 0.6); 
+}
