@@ -2,8 +2,8 @@
   <div class="dark:bg-dark-bg bg-white" >
     <!-- Hero Section with Background Animation -->
     <section class="hero flex flex-col items-center justify-center h-screen p-8 text-center dark:text-white text-black relative">
-      <h1 class="text-5xl font-extrabold mb-6 text-white animate__animated animate__fadeIn animate__delay-1s">Welcome to Our Gym</h1>
-      <p class="text-xl mb-8 text-white animate__animated animate__fadeIn animate__delay-2s">Achieve your fitness goals with us</p>
+      <h1 class="text-5xl font-extrabold mb-6 text-black dark:text-white animate__animated animate__fadeIn animate__delay-1s">Welcome to Our Gym</h1>
+      <p class="text-xl mb-8 text-black dark:text-white animate__animated animate__fadeIn animate__delay-2s">Achieve your fitness goals with us</p>
       <Slider class="animate__animated animate__fadeIn animate__delay-2s" />
       <!-- Call to Action -->
       <div class="cta mt-8">
