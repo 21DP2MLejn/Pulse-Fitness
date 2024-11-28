@@ -176,7 +176,7 @@ async function handleRegister() {
     });
     console.log('Registration successful:', response);
     alert('Registration successful!');
-    $router.push('/auth/login');
+    navigateTo('/auth/login');
   } catch (error) {
     console.error('Registration error:', error);
     const errorMessage = error?.data?.message || 'An error occurred during registration.';

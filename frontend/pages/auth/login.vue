@@ -74,14 +74,14 @@ const formData = ref({
 
 async function handleLogin() {
   try {
-    const response = await $fetch('/api/login', {
-      method: 'POST',
+    const response = await $fetch('http://127.0.0.1:8000/api/login', {
+      method: 'GET',
       body: formData.value,
     });
 
     console.log('Login successful:', response);
     alert('Login successful! Redirecting to home...');
-    navigateTo('/home'); 
+    navigateTo('/nav/home'); 
   } catch (error) {
     console.error('Login error:', error);
     alert(error?.data?.message || 'An error occurred during login.');
