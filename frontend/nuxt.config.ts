@@ -23,5 +23,10 @@ export default defineNuxtConfig({
       autoprefixer: {},
     }
   },
+  runtimeConfig:{
+    public:{
+      apiBase: 'http://127.0.0.1:8000/',
+    },
+  },
   plugins:[ '~/plugins/loadingScreen.js' ]
 })

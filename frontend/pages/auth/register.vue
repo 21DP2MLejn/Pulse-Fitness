@@ -169,28 +169,21 @@ const formData = ref({
 });
 
 async function handleRegister() {
-  if (!formData.value.birthdate || !formData.value.gender || !formData.value.phone) {
-    alert('Please fill all fields');
-    return;
-  }
-
   try {
-    // Make an API request to register the user
-    const response = await $fetch('/api/register', {
+    const response = await $fetch('http://127.0.0.1:8000/api/register', {
       method: 'POST',
       body: formData.value,
     });
-
-    // Handle successful registration
     console.log('Registration successful:', response);
-    alert('Registration successful! Redirecting to login...');
-    navigateTo('/login'); // Redirect to login or another page
+    alert('Registration successful!');
+    $router.push('/auth/login');
   } catch (error) {
-    // Handle errors
     console.error('Registration error:', error);
-    alert(error?.data?.message || 'An error occurred during registration.');
+    const errorMessage = error?.data?.message || 'An error occurred during registration.';
+    alert(errorMessage);
   }
 }
+
 
 function validateStep1() {
   if (!formData.value.email || !formData.value.name || !formData.value.lastname || !formData.value.password || !formData.value.password_confirmation) {

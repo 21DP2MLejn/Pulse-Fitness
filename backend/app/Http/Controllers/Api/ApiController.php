@@ -60,7 +60,7 @@ class ApiController extends Controller
     
             return response()->json([
                 'message' => 'Login successful',
-                'user' => auth()->user(),
+                'user' => auth()->user,
             ], 200);
         }
     
