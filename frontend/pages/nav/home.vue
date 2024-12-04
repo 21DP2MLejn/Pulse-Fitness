@@ -6,22 +6,22 @@
       style="background-image: url('https://via.placeholder.com/1500x1000?text=Hero+Image');" 
       data-aos="fade-in" 
       data-aos-duration="1500">
-      <div class="absolute inset-0 bg-black opacity-50"></div> <!-- Dark overlay -->
+      <div class="absolute inset-0 bg-black opacity-50"></div>
       <div class="container mx-auto text-center relative z-10 py-32 px-6">
-        <h1 class="text-5xl lg:text-6xl font-extrabold text-white mb-8 leading-tight drop-shadow-md" data-aos="fade-up" data-aos-duration="1000">
+        <h1 class="text-5xl lg:text-6xl font-extrabold text-black dark:text-dark-text mb-8 leading-tight drop-shadow-md" data-aos="fade-up" data-aos-duration="1000">
           Achieve Your Fitness Goals with Pulse Gym
         </h1>
-        <p class="text-xl max-w-2xl mx-auto mb-6 text-white opacity-90" data-aos="fade-up" data-aos-duration="1200">
+        <p class="text-xl max-w-2xl mx-auto mb-6 text-black dark:text-dark-text opacity-90" data-aos="fade-up" data-aos-duration="1200">
           Join our community and start your journey to a healthier, stronger, and more confident you. We offer personalized training, nutrition coaching, and group classes designed to meet your fitness goals.
         </p>
         <div class="flex justify-center space-x-4" data-aos="zoom-in" data-aos-duration="1400">
-          <button class="btn-primary text-white py-3 px-8 rounded-full text-lg hover:bg-white hover:text-blue dark:hover:bg-dark-light-gray dark:hover:text-dark-blue transition-all ease-in-out">
+          <button class="btn-primary text-black dark:text-dark-text py-3 px-8 rounded-full text-lg hover:bg-white hover:text-blue dark:hover:bg-dark-light-gray dark:hover:text-dark-blue transition-all ease-in-out">
             Join Now
           </button>
-          <button class="btn-secondary text-white py-3 px-8 rounded-full text-lg hover:bg-transparent hover:text-blue dark:hover:bg-dark-light-gray dark:hover:text-dark-blue transition-all ease-in-out">
+          <button class="btn-secondary text-black dark:text-dark-text py-3 px-8 rounded-full text-lg hover:bg-transparent hover:text-blue dark:hover:bg-dark-light-gray dark:hover:text-dark-blue transition-all ease-in-out">
             Learn More
           </button>
-          <button class="btn-outline text-white py-3 px-8 rounded-full text-lg hover:bg-transparent hover:text-blue dark:hover:bg-dark-light-gray dark:hover:text-dark-blue transition-all ease-in-out">
+          <button class="btn-outline text-black dark:text-dark-text py-3 px-8 rounded-full text-lg hover:bg-transparent hover:text-blue dark:hover:bg-dark-light-gray dark:hover:text-dark-blue transition-all ease-in-out">
             Contact Us
           </button>
         </div>
