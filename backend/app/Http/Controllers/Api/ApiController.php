@@ -25,8 +25,6 @@ class ApiController extends Controller
             'password' => 'required|string|min:8',
         ]);
 
-        $verificationToken = Str::random(10);
-
         $user = User::create([
             'name' => $request->name,
             'lastname' => $request->lastname,
@@ -35,10 +33,8 @@ class ApiController extends Controller
             'gender' => $request->gender,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'email_verification_token' => $verificationToken,
         ]);
         
-        Mail::to($user->email)->send(new EmailVerificationMail($verificationToken));
         
         return response()->json([
             'message' => 'User registered successfully, please check your email for verification.',

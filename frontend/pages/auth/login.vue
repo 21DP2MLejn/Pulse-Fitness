@@ -54,7 +54,9 @@
 
         <!-- Login Button -->
         <div class="flex flex-col items-center mb-4">
-          <button class="text-black dark:text-dark-text bg-blue dark:bg-dark-blue hover:bg-blue dark:hover:bg-blue transition duration-300 rounded px-4 py-2">
+          <button class="text-black dark:text-dark-text bg-blue dark:bg-dark-blue hover:bg-blue dark:hover:bg-blue transition duration-300 rounded px-4 py-2"
+          type="submit"
+          >
             Login
           </button>
         </div>
@@ -78,7 +80,6 @@ async function handleLogin() {
       method: 'POST', 
       body: formData.value, 
     });
-
     console.log('Login successful:', response);
     alert('Login successful! Redirecting to home...');
     navigateTo('/nav/home'); 

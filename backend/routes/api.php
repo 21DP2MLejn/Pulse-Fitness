@@ -7,4 +7,5 @@ Route::post('/register', [ApiController::class, 'register']);
 Route::post('/login', [ApiController::class, 'login']);
 Route::get('/logout', [ApiController::class, 'logout']);
 Route::get('/verify-email', [ApiController::class, 'verifyEmail']);
+
     

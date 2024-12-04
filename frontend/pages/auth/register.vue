@@ -175,7 +175,6 @@ async function handleRegister() {
       body: formData.value,
     });
     console.log('Registration successful:', response);
-    alert('Registration successful!');
     navigateTo('/auth/login');
   } catch (error) {
     console.error('Registration error:', error);
