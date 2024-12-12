@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;
 use App\Mail\EmailVerificationMail;
 use Illuminate\Support\Facades\Mail;
@@ -33,6 +34,15 @@ class ApiController extends Controller
             'gender' => $request->gender,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+
+        ]);
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'User registered successfully',
+            'access_token' => $token,
+            'token_type' => 'Bearer',
         ]);
         
         
@@ -45,35 +55,36 @@ class ApiController extends Controller
 
     public function login(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string|min:8',
+        $validated = $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required|string',
         ]);
-    
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $request->session()->regenerate();
-    
-            return response()->json([
-                'message' => 'Login successful',
-                'user' => auth()->user,
-            ], 200);
+
+        $user = User::where('email', $validated['email'])->first();
+
+        if (!$user || !Hash::check($validated['password'], $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['The provided credentials are incorrect.'],
+            ]);
         }
-    
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
         return response()->json([
-            'message' => 'Invalid credentials',
-        ], 401);
+            'message' => 'Login successful',
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+        ]);
     }
     
     
-
     public function logout(Request $request)
     {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        $request->user()->currentAccessToken()->delete();
+
         return response()->json([
-            'message' => 'Successfully logged out',
-        ], 200);
+            'message' => 'Logged out successfully',
+        ]);
     }
 
     public function verifyEmail(Request $request)
