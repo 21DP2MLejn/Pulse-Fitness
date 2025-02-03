@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --text: #090218;
+    --background: #f5f1fe;
+    --primary: #2f087d;
+    --secondary: #f462b9;
+    --accent: #c50d34;
+  }
+
+  .dark {
+    --text: #eee7fd;
+    --background: #05010e;
+    --primary: #2f087d;
+    --secondary: #f462b9;
+    --accent: #c50d34;
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-background text-text;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  /* Theme transition */
+  * {
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  input:is(:-webkit-autofill, :autofill) {
+    background-color: transparent;
+  }
+
+  /* Form styles */
+  input, input select, textarea {
+    @apply bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    @apply ring-2 ring-primary border-transparent;
+  }
+
+  /* Button styles */
+  button {
+    @apply transition-all duration-200;
+  }
+
+  /* Card styles */
+  .card {
+    @apply bg-white dark:bg-gray-800 shadow-lg rounded-lg border border-gray-200 dark:border-gray-700;
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-gray-900;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary-50 hover:bg-primary-70;
+  }
+}
