@@ -1,35 +1,53 @@
-import type { Config } from "tailwindcss";
+import type { Config } from 'tailwindcss';
 
-export default {
+const config: Config = {
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        text: "var(--text)",
-        background: "var(--background)",
         primary: {
-          DEFAULT: "var(--primary)",
-          50: "color-mix(in srgb, var(--primary) 50%, transparent)",
-          70: "color-mix(in srgb, var(--primary) 70%, transparent)",
-          90: "color-mix(in srgb, var(--primary) 90%, transparent)",
+          DEFAULT: '#7c3aed', // purple-600
+          50: '#f5f3ff',
+          100: '#ede9fe',
+          200: '#ddd6fe',
+          300: '#c4b5fd',
+          400: '#a78bfa',
+          500: '#8b5cf6',
+          600: '#7c3aed',
+          700: '#6d28d9',
+          800: '#5b21b6',
+          900: '#4c1d95',
         },
-        secondary: "var(--secondary)",
-        accent: "var(--accent)",
+        secondary: {
+          DEFAULT: '#3b82f6', // blue-500
+          50: '#eff6ff',
+          100: '#dbeafe',
+          200: '#bfdbfe',
+          300: '#93c5fd',
+          400: '#60a5fa',
+          500: '#3b82f6',
+          600: '#2563eb',
+          700: '#1d4ed8',
+          800: '#1e40af',
+          900: '#1e3a8a',
+        },
       },
-      fontSize: {
-        sm: ["0.75rem", { lineHeight: "1.25" }],
-        base: ["1rem", { lineHeight: "1.5" }],
-        lg: ["1.333rem", { lineHeight: "1.5" }],
-        xl: ["1.777rem", { lineHeight: "1.5" }],
-        "2xl": ["2.369rem", { lineHeight: "1.5" }],
-        "3xl": ["3.157rem", { lineHeight: "1.5" }],
+      backgroundColor: {
+        'dark': '#111827',
+        'light': '#ffffff',
+      },
+      textColor: {
+        'dark': '#ffffff',
+        'light': '#111827',
       },
     },
   },
   plugins: [],
-} satisfies Config;
+};
+
+export default config;

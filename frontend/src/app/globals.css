@@ -4,31 +4,46 @@
 
 @layer base {
   :root {
+    --foreground-rgb: 0, 0, 0;
+    --background-rgb: 255, 255, 255;
     --text: #090218;
-    --background: #f5f1fe;
-    --primary: #2f087d;
-    --secondary: #f462b9;
+    --primary: #7c3aed;
+    --primary-light: #8b5cf6;
+    --secondary: #06b6d4;
     --accent: #c50d34;
   }
 
-  .dark {
+  [data-theme='dark'] {
+    --foreground-rgb: 255, 255, 255;
+    --background-rgb: 17, 24, 39;
     --text: #eee7fd;
-    --background: #05010e;
-    --primary: #2f087d;
-    --secondary: #f462b9;
+    --primary: #7c3aed;
+    --primary-light: #8b5cf6;
+    --secondary: #06b6d4;
     --accent: #c50d34;
   }
-}
 
-@layer base {
   body {
-    @apply bg-background text-text;
+    color: rgb(var(--foreground-rgb));
+    background: none;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   
+  body.dark {
+    background: #111827;
+    color: #ffffff;
+  }
+
+  body.light {
+    background: #f3f4f6;
+    color: #111827;
+  }
+
   /* Theme transition */
   * {
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+    transition-property: color, background-color, border-color;
+    transition-duration: 200ms;
+    transition-timing-function: ease-in-out;
   }
   input:is(:-webkit-autofill, :autofill) {
     background-color: transparent;
@@ -60,14 +75,35 @@
 
   /* Custom scrollbar */
   ::-webkit-scrollbar {
-    width: 8px;
+    display: none;
   }
 
-  ::-webkit-scrollbar-track {
-    @apply bg-gray-100 dark:bg-gray-900;
+  * {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors;
   }
 
-  ::-webkit-scrollbar-thumb {
-    @apply bg-primary-50 hover:bg-primary-70;
+  .btn-secondary {
+    @apply bg-white text-purple-600 px-4 py-2 rounded-md hover:bg-gray-100 transition-colors;
+  }
+
+  .nav-link {
+    @apply hover:text-purple-600 transition-colors;
+  }
+
+  .card {
+    @apply bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
   }
 }

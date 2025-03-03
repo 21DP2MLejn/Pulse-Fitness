@@ -1,30 +1,24 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import './globals.css'
-import { ThemeProvider } from '@/context/ThemeContext'
+import './globals.css';
+import { Providers } from '@/components/Providers';
 import GlobalLayout from '@/components/GlobalLayout';
 
-const inter = Inter({ subsets: ['latin'] })
-
-export const metadata: Metadata = {
-  title: 'Pulse Fitness',
-  description: 'Your premium fitness destination',
-}
+export const metadata = {
+  title: 'PulseFitness',
+  description: 'Your personal fitness companion',
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} antialiased`}>
-        <ThemeProvider>
-          <GlobalLayout>
-            {children}
-          </GlobalLayout>
-        </ThemeProvider>
+      <body>
+        <Providers>
+          <GlobalLayout>{children}</GlobalLayout>
+        </Providers>
       </body>
     </html>
-  )
+  );
 }

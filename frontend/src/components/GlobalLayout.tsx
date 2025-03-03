@@ -1,79 +1,80 @@
-"use client";
+'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
+import Navbar from './Navbar';
+import Footer from './Footer';
+import { useTheme } from '@/context/ThemeContext';
 
-const GlobalLayout = ({ children }) => {
+interface Props {
+  children: React.ReactNode;
+}
+
+export default function GlobalLayout({ children }: Props) {
+  const pathname = usePathname();
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+  const isAuthPage = pathname?.startsWith('/auth');
+  const blobRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    const blob = document.getElementById("blob");
+    if (!blobRef.current) return;
 
-    const handlePointerMove = (event) => {
-      const { clientX, clientY } = event;
-      const { innerWidth, innerHeight } = window;
-
-      // Calculate the position ensuring the blob stays within the viewport
-      const x = Math.min(Math.max(0, clientX), innerWidth);
-      const y = Math.min(Math.max(0, clientY), innerHeight);
+    const handlePointerMove = (e: PointerEvent) => {
+      const { clientX, clientY } = e;
+      const blob = blobRef.current;
+      if (!blob) return;
 
       blob.animate(
         {
-          left: `${x}px`,
-          top: `${y}px`,
-          opacity: (x < 0 || x > innerWidth || y < 0 || y > innerHeight) ? 0 : 0.8,
+          left: `${clientX}px`,
+          top: `${clientY}px`,
         },
-        { duration: 3000, fill: "forwards" }
+        { duration: 3000, fill: 'forwards' }
       );
     };
 
-    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener('pointermove', handlePointerMove);
 
     return () => {
-      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener('pointermove', handlePointerMove);
     };
   }, []);
 
-  return (
-    <div style={{ position: 'relative', overflowX: 'hidden' }}>
-      <div id="blob"></div>
-      <div id="blur"></div>
-      <div style={{ position: 'relative', zIndex: 0 }}> 
-        {children}
-      </div>
-      <style jsx>{`
-        #blob {
-          background-color: white;
-          height: 34vmax;
-          aspect-ratio: 1;
-          position: fixed;
-          left: 50%;
-          top: 50%;
-          translate: -50% -50%;
-          border-radius: 50%;
-          background: linear-gradient(to right, aquamarine, mediumpurple);
-          animation: rotate 20s infinite;
-          opacity: 0.8;
-          z-index: -1;
-        }
-
-        #blur {
-          height: 100%;
-          width: 100%;
-          position: absolute;
-          z-index: -1;
-          backdrop-filter: blur(12vmax);
-        }
-
-        body {
-          margin: 0;
-          overflow-x: hidden;
-          background: none;
-        }
-
-        body.dark #blob {
-          background: linear-gradient(to right, darkslateblue, darkcyan);
-        }
-      `}</style>
+  const content = isAuthPage ? children : (
+    <div className="min-h-screen flex flex-col dark:bg-dark bg-gray-50">
+      <Navbar />
+      <main className="flex-grow pt-16">{children}</main>
+      <Footer />
     </div>
   );
-};
 
-export default GlobalLayout;
+  return (
+    <>
+      <div
+        ref={blobRef}
+        className="fixed blur-[100px] aspect-square w-[600px] rounded-full pointer-events-none -translate-x-1/2 -translate-y-1/2 mix-blend-normal"
+        style={{
+          background: isDark 
+            ? 'radial-gradient(circle at center, rgba(124, 58, 237, 0.35) 0%, rgba(6, 182, 212, 0.35) 45%, rgba(197, 13, 52, 0.35) 100%)'
+            : 'radial-gradient(circle at center, rgba(124, 58, 237, 0.25) 0%, rgba(6, 182, 212, 0.25) 45%, rgba(197, 13, 52, 0.25) 100%)',
+          animation: 'pulse 8s ease-in-out infinite'
+        }}
+      />
+      {content}
+      <style jsx>{`
+        @keyframes pulse {
+          0% {
+            transform: translate(-50%, -50%) scale(1);
+          }
+          50% {
+            transform: translate(-50%, -50%) scale(1.1);
+          }
+          100% {
+            transform: translate(-50%, -50%) scale(1);
+          }
+        }
+      `}</style>
+    </>
+  );
+}
