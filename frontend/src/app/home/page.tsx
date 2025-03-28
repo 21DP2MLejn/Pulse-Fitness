@@ -3,37 +3,41 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useTheme } from "@/context/ThemeContext"
-import Cookies from "js-cookie"
+import { useAuth } from "@/context/AuthContext"
 
 export default function HomePage() {
-  const [userName, setUserName] = useState("")
   const router = useRouter()
   const { theme } = useTheme()
+  const { user, isAuthenticated, isLoading } = useAuth()
 
   useEffect(() => {
-    const token = Cookies.get("token")
-    if (!token) {
+    console.log("Home page - Auth state:", { isLoading, isAuthenticated });
+    if (!isLoading && !isAuthenticated) {
+      console.log("Not authenticated, redirecting to login");
       router.push("/auth/login")
-      return
     }
+  }, [isLoading, isAuthenticated, router])
 
-    // Fetch user data
-    fetch("http://localhost:8000/api/user", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      credentials: "include", // Include cookies in the request
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setUserName(data.name)
-      })
-      .catch((error) => {
-        console.error("Error fetching user data:", error)
-        Cookies.remove("token")
-        router.push("/auth/login")
-      })
-  }, [router])
+  // Show loading state while checking authentication
+  if (isLoading) {
+    console.log("Home page - Still loading auth state");
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  // If not authenticated, don't render the page content
+  if (!isAuthenticated || !user) {
+    console.log("Home page - Not authenticated, showing nothing");
+    return null;
+  }
+
+  console.log("Home page - Rendering for authenticated user:", user);
+  
+  // Extract user name safely
+  const userName = user?.name || "User";
 
   return (
     <div className={`${theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"} min-h-screen`}>
@@ -91,4 +95,3 @@ export default function HomePage() {
     </div>
   )
 }
-

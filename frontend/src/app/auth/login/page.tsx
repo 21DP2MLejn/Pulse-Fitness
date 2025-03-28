@@ -6,6 +6,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useTheme } from "@/context/ThemeContext"
+import { useAuth } from "@/context/AuthContext"
 import Cookies from "js-cookie"
 
 export default function LoginPage() {
@@ -15,6 +16,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { theme } = useTheme()
+  const { login } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -22,25 +24,49 @@ export default function LoginPage() {
     setError("")
 
     try {
+      console.log("Attempting login with:", { email });
+      
       const response = await fetch("http://localhost:8000/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
+        credentials: "include",
       })
 
       const data = await response.json()
+      console.log("Login response:", response.status, data);
 
       if (!response.ok) {
         throw new Error(data.message || "Login failed")
       }
 
-      // Store token in cookie instead of localStorage
-      Cookies.set("token", data.token, { expires: 7 }) // Expires in 7 days
-
-      router.push("/")
+      // Use the auth context login method instead of manually setting the cookie
+      console.log("Login successful, token received:", data.token);
+      
+      // Manually set the token cookie as a backup
+      Cookies.set("token", data.token, { 
+        expires: 7, 
+        path: '/',
+        sameSite: 'lax' 
+      });
+      
+      // Store token in localStorage as well for redundancy
+      localStorage.setItem('authToken', data.token);
+      
+      // Pass both token and user data to login method
+      login(data.token, data.user);
+      
+      // Add a slight delay to ensure the token is set before navigation
+      setTimeout(() => {
+        console.log("Redirecting to home page...");
+        console.log("Token in cookie after login:", Cookies.get("token"));
+        console.log("Token in localStorage after login:", localStorage.getItem('authToken'));
+        router.push("/home");
+      }, 1000);
     } catch (err) {
+      console.error("Login error:", err);
       setError(err instanceof Error ? err.message : "An error occurred during login")
     } finally {
       setIsLoading(false)
@@ -131,4 +157,3 @@ export default function LoginPage() {
     </div>
   )
 }
-

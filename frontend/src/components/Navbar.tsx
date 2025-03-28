@@ -4,24 +4,18 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTheme } from '@/context/ThemeContext';
+import { useAuth } from '@/context/AuthContext';
 import { FiMoon, FiSun } from 'react-icons/fi';
-import Cookies from 'js-cookie';
 import { FiShoppingCart } from 'react-icons/fi';
 
 export default function Navbar() {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
+  const { isAuthenticated, logout } = useAuth();
   const isDark = theme === 'dark';
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    const token = Cookies.get('token');
-    setIsAuthenticated(!!token);
-  }, []);
 
   const handleLogout = () => {
-    Cookies.remove('token');
-    window.location.href = '/auth/login';
+    logout();
   };
 
   return (
@@ -30,7 +24,7 @@ export default function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <Link href="/" className="text-2xl font-bold text-primary">
+              <Link href="/" className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-primary'}`}>
                 Pulse Fitness
               </Link>
             </div>
@@ -74,19 +68,22 @@ export default function Navbar() {
             </div>
           </div>
           <div className="flex items-center">
-            <Link
-              href="/cart" 
-              className="mr-4"
-            >
-              <FiShoppingCart />
-            </Link>
+            {isAuthenticated && (
+              <Link
+                href="/cart" 
+                className={`mr-4 ${isDark ? 'text-white' : 'text-gray-800'} hover:text-primary transition-colors`}
+              >
+                <FiShoppingCart size={20} />
+              </Link>
+            )}
             <button
               onClick={toggleTheme}
               className={`p-2 rounded-lg ${
-                isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
-              }`}
+                isDark ? 'text-white hover:bg-gray-700' : 'text-gray-800 hover:bg-gray-100'
+              } transition-colors`}
+              aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
             >
-              {isDark ? <FiSun /> : <FiMoon />}
+              {isDark ? <FiSun size={20} /> : <FiMoon size={20} />}
             </button>
             <div className="ml-4">
               {isAuthenticated ? (

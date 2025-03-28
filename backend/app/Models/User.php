@@ -27,6 +27,7 @@ class User extends Authenticatable
         'address',
         'postalcode',
         'role',
+        'dob',
     ];
 
     /**

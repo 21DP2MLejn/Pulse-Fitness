@@ -53,12 +53,12 @@ export default function GlobalLayout({ children }: Props) {
     <>
       <div
         ref={blobRef}
-        className="fixed blur-[100px] aspect-square w-[600px] rounded-full pointer-events-none -translate-x-1/2 -translate-y-1/2 mix-blend-normal"
+        className="fixed blur-[100px] aspect-square w-[300px] rounded-full pointer-events-none -translate-x-1/2 -translate-y-1/2 mix-blend-normal z-[-1]"
         style={{
           background: isDark 
-            ? 'radial-gradient(circle at center, rgba(124, 58, 237, 0.35) 0%, rgba(6, 182, 212, 0.35) 45%, rgba(197, 13, 52, 0.35) 100%)'
-            : 'radial-gradient(circle at center, rgba(124, 58, 237, 0.25) 0%, rgba(6, 182, 212, 0.25) 45%, rgba(197, 13, 52, 0.25) 100%)',
-          animation: 'pulse 8s ease-in-out infinite'
+            ? 'radial-gradient(circle at center, rgba(124, 58, 237, 0.15) 0%, rgba(6, 182, 212, 0.15) 45%, rgba(197, 13, 52, 0.15) 100%)'
+            : 'radial-gradient(circle at center, rgba(124, 58, 237, 0.1) 0%, rgba(6, 182, 212, 0.1) 45%, rgba(197, 13, 52, 0.1) 100%)',
+          animation: 'pulse 12s ease-in-out infinite'
         }}
       />
       {content}
@@ -68,7 +68,7 @@ export default function GlobalLayout({ children }: Props) {
             transform: translate(-50%, -50%) scale(1);
           }
           50% {
-            transform: translate(-50%, -50%) scale(1.1);
+            transform: translate(-50%, -50%) scale(1.05);
           }
           100% {
             transform: translate(-50%, -50%) scale(1);
