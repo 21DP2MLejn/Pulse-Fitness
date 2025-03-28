@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 
-
 class ProductController extends Controller
 {
     public function index()
@@ -21,7 +20,7 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         try {
-            \Log::info('Incoming product creation request:', $request->all());
+            \Log::info('Incoming product creation request');
             
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:255',
@@ -29,54 +28,65 @@ class ProductController extends Controller
                 'price' => 'required|numeric|min:0',
                 'category' => 'required|string',
                 'stock' => 'required|integer|min:0',
-                'features' => 'required|array',
-                'features.*' => 'required|string',
+                'features' => 'nullable|array',
+                'features.*' => 'nullable|string',
                 'specifications' => 'nullable|array',
-                'images' => 'required|array|min:1',
-                'images.*' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'images' => 'nullable|array',
+                'images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ]);
     
             if ($validator->fails()) {
                 \Log::error('Validation failed:', $validator->errors()->toArray());
-                return response()->json(['errors' => $validator->errors()], 422);
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validation failed',
+                    'errors' => $validator->errors()
+                ], 422);
             }
     
-            \Log::info('Validation passed, processing images');
+            \Log::info('Validation passed, processing product data');
             
+            // Process images if they exist
             $imageUrls = [];
-            foreach ($request->file('images') as $image) {
-                \Log::info('Processing image:', ['name' => $image->getClientOriginalName()]);
-                $path = $image->store('products', 'public');
-                $imageUrls[] = Storage::url($path);
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    \Log::info('Processing image:', ['name' => $image->getClientOriginalName()]);
+                    $path = $image->store('products', 'public');
+                    $imageUrls[] = '/storage/' . $path;
+                }
             }
-    
-            \Log::info('Creating product with data:', [
-                'name' => $request->name,
-                'category' => $request->category,
-                'imageCount' => count($imageUrls)
-            ]);
-    
-            $product = Product::create([
-                'name' => $request->name,
-                'description' => $request->description,
-                'price' => $request->price,
-                'category' => $request->category,
-                'stock' => $request->stock,
-                'features' => $request->features,
-                'specifications' => $request->specifications,
-                'images' => $imageUrls,
-            ]);
-    
-            return response()->json($product, 201);
-    
+            
+            // Create the product
+            $product = new Product();
+            $product->name = $request->name;
+            $product->description = $request->description;
+            $product->price = $request->price;
+            $product->category = $request->category;
+            $product->stock = $request->stock;
+            $product->images = $imageUrls;
+            $product->features = $request->features ?? [];
+            $product->specifications = $request->specifications ?? [];
+            $product->rating = 0; // Default rating for new products
+            $product->save();
+            
+            \Log::info('Product created successfully', ['product_id' => $product->id]);
+            
+            return response()->json([
+                'status' => true,
+                'message' => 'Product created successfully',
+                'data' => $product
+            ], 201);
+            
         } catch (\Exception $e) {
-            \Log::error('Error creating product:', [
-                'message' => $e->getMessage(),
+            \Log::error('Error creating product: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString()
             ]);
             
             return response()->json([
-                'message' => 'Error creating product',
+                'status' => false,
+                'message' => 'Failed to create product',
                 'error' => $e->getMessage()
             ], 500);
         }

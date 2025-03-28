@@ -78,33 +78,40 @@ export default function NewProductPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-  
+
     try {
       const token = Cookies.get('token');
+      if (!token) {
+        throw new Error('Authentication token not found. Please log in again.');
+      }
+
       const formDataToSend = new FormData();
-      
+
       // Add basic fields
       formDataToSend.append('name', formData.name);
       formDataToSend.append('description', formData.description);
       formDataToSend.append('price', formData.price.toString());
       formDataToSend.append('category', formData.category);
       formDataToSend.append('stock', formData.stock.toString());
-      
+
       // Add features as individual array items
       formData.features.forEach((feature, index) => {
-        formDataToSend.append(`features[${index}]`, feature);
+        if (feature.trim()) {
+          formDataToSend.append(`features[${index}]`, feature);
+        }
       });
-  
+
       // Add specifications as individual array items
       Object.entries(formData.specifications).forEach(([key, value]) => {
         formDataToSend.append(`specifications[${key}]`, value);
       });
-  
+
       // Add images
       images.forEach((image, index) => {
         formDataToSend.append(`images[${index}]`, image);
       });
-  
+
+      console.log('Sending product data to server...');
       const response = await fetch('http://localhost:8000/api/admin/products', {
         method: 'POST',
         headers: {
@@ -112,14 +119,29 @@ export default function NewProductPage() {
         },
         body: formDataToSend,
       });
-  
+
       if (!response.ok) {
-        const text = await response.text();
-        console.error('Server response:', text);
-        throw new Error('Failed to create product. Check console for details.');
+        const errorData = await response.json();
+        console.error('Server response:', errorData);
+
+        if (errorData.errors) {
+          // Format validation errors
+          const errorMessages = Object.entries(errorData.errors)
+            .map(([field, messages]) => `${field}: ${Array.isArray(messages) ? messages.join(', ') : messages}`)
+            .join('\n');
+          throw new Error(`Validation failed:\n${errorMessages}`);
+        }
+
+        throw new Error(errorData.message || 'Failed to create product');
       }
-      
+
       const data = await response.json();
+      console.log('Product created successfully:', data);
+
+      // Show success message
+      alert('Product created successfully!');
+
+      // Redirect to products page
       router.push('/admin/products');
     } catch (error) {
       console.error('Error creating product:', error);

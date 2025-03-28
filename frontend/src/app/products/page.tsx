@@ -17,11 +17,25 @@ export default function ProductsPage() {
   const [sortBy, setSortBy] = useState<'price-asc' | 'price-desc' | 'rating'>('rating');
 
   useEffect(() => {
-    // TODO: Replace with actual API call
+    // Fetch products from the API
     fetch('http://localhost:8000/api/products')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Failed to fetch products');
+        }
+        return res.json();
+      })
       .then(data => {
-        setProducts(data);
+        console.log('Products fetched:', data);
+        // Check if the response has the expected structure
+        if (data.data) {
+          setProducts(data.data);
+        } else if (Array.isArray(data)) {
+          setProducts(data);
+        } else {
+          console.error('Unexpected response format:', data);
+          setProducts([]);
+        }
         setLoading(false);
       })
       .catch(err => {
@@ -60,10 +74,10 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Search and Filter Section */}
-      <div className="mb-8 space-y-4">
-        <div className="flex flex-col md:flex-row gap-4 items-center">
+    <div className="container mx-auto px-4 py-8 max-w-6xl">
+      {/* Search and Filter Section - Simplified */}
+      <div className="mb-8">
+        <div className="flex flex-col sm:flex-row gap-4 items-center mb-4">
           <div className="relative flex-grow">
             <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
@@ -81,7 +95,7 @@ export default function ProductsPage() {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as 'price-asc' | 'price-desc' | 'rating')}
-            className={`p-2 rounded-lg border ${
+            className={`py-2 px-4 rounded-lg border ${
               isDark
                 ? 'bg-gray-800 border-gray-700 text-white'
                 : 'bg-white border-gray-300'
@@ -98,7 +112,7 @@ export default function ProductsPage() {
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-4 py-2 rounded-lg transition-colors ${
+              className={`px-4 py-1 rounded-full text-sm transition-colors ${
                 selectedCategory === category
                   ? 'bg-primary text-white'
                   : isDark
@@ -112,55 +126,52 @@ export default function ProductsPage() {
         </div>
       </div>
 
-      {/* Products Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {/* Products Grid - Minimalistic */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredProducts.map((product) => (
-          <div
+          <Link 
             key={product.id}
-            className={`group relative rounded-lg overflow-hidden shadow-lg transition-transform hover:scale-[1.02] ${
+            href={`/products/${product.id}`}
+            className={`block rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow ${
               isDark ? 'bg-gray-800' : 'bg-white'
             }`}
           >
-            <Link href={`/products/${product.id}`}>
-              <div className="aspect-square relative">
-                <Image
-                  src={product.images[0]}
-                  alt={product.name}
-                  fill
-                  className="object-cover group-hover:opacity-90 transition-opacity"
-                />
+            <div className="aspect-square relative">
+              <Image
+                src={product.images[0] || '/images/placeholder.jpg'}
+                alt={product.name}
+                fill
+                className="object-cover"
+              />
+              <div className="absolute top-2 right-2 bg-white dark:bg-gray-800 rounded-full p-1 shadow-sm">
+                <FiShoppingCart className="text-primary" size={16} />
               </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
-                <p className={`text-sm mb-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-                  {product.description.length > 100
-                    ? product.description.substring(0, 100) + '...'
-                    : product.description}
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-primary">${product.price.toFixed(2)}</span>
-                  <div className="flex items-center">
-                    <FiStar className="text-yellow-400 mr-1" />
-                    <span>{product.rating.toFixed(1)}</span>
-                  </div>
+            </div>
+            <div className="p-3">
+              <h3 className="font-medium text-base">{product.name}</h3>
+              <div className="flex items-center justify-between mt-2">
+                <span className="font-bold text-primary">
+                  ${typeof product.price === 'number' 
+                    ? product.price.toFixed(2) 
+                    : parseFloat(product.price).toFixed(2)}
+                </span>
+                <div className="flex items-center text-sm">
+                  <FiStar className="text-yellow-400 mr-1" size={14} />
+                  <span>
+                    {typeof product.rating === 'number'
+                      ? product.rating.toFixed(1)
+                      : parseFloat(product.rating).toFixed(1)}
+                  </span>
                 </div>
               </div>
-            </Link>
-            <button
-              onClick={() => {
-                // TODO: Add to cart functionality
-              }}
-              className="absolute top-4 right-4 p-2 rounded-full bg-primary text-white opacity-0 group-hover:opacity-100 transition-opacity"
-            >
-              <FiShoppingCart />
-            </button>
-          </div>
+            </div>
+          </Link>
         ))}
       </div>
 
       {filteredProducts.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-lg">No products found matching your criteria.</p>
+        <div className="text-center py-8">
+          <p>No products found matching your criteria.</p>
         </div>
       )}
     </div>

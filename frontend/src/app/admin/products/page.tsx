@@ -22,16 +22,36 @@ export default function AdminProductsPage() {
   const fetchProducts = async () => {
     try {
       const token = Cookies.get('token');
+      if (!token) {
+        console.error('No authentication token found');
+        return;
+      }
+      
+      console.log('Fetching products with token');
       const response = await fetch('http://localhost:8000/api/admin/products', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-      if (!response.ok) throw new Error('Failed to fetch products');
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch products');
+      }
+      
       const data = await response.json();
-      setProducts(data);
+      console.log('Products fetched:', data);
+      
+      // Check if the response has the expected structure
+      if (data.data) {
+        setProducts(data.data);
+      } else {
+        // Handle legacy response format
+        setProducts(Array.isArray(data) ? data : []);
+      }
     } catch (error) {
       console.error('Failed to fetch products:', error);
+    } finally {
+      setLoading(false);
     }
   };
   
@@ -39,18 +59,29 @@ export default function AdminProductsPage() {
     if (!confirm('Are you sure you want to delete this product?')) return;
 
     try {
+      const token = Cookies.get('token');
+      if (!token) {
+        console.error('No authentication token found');
+        return;
+      }
+      
       const response = await fetch(`http://localhost:8000/api/admin/products/${productId}`, {
         method: 'DELETE',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
       if (response.ok) {
         setProducts(prev => prev.filter(p => p.id !== productId));
+        alert('Product deleted successfully');
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to delete product');
       }
     } catch (error) {
       console.error('Failed to delete product:', error);
+      alert(error instanceof Error ? error.message : 'An error occurred');
     }
   };
 
