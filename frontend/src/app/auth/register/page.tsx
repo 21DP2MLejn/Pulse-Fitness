@@ -4,10 +4,11 @@ import type React from 'react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { FiUser, FiMail, FiLock, FiCalendar, FiMapPin, FiSun, FiMoon, FiPhone } from 'react-icons/fi';
+import { FiUser, FiMail, FiLock, FiCalendar, FiMapPin, FiSun, FiMoon, FiPhone, FiArrowRight } from 'react-icons/fi';
 import { useTheme } from '@/context/ThemeContext';
 import countryList from 'react-select-country-list';
 import Select from 'react-select';
+import Image from 'next/image';
 
 interface FormData {
   name: string;
@@ -31,6 +32,7 @@ interface CountryOption {
 export default function RegisterPage() {
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
+  const isDark = theme === 'dark';
 
   const [formData, setFormData] = useState<FormData>({
     name: '',
@@ -49,6 +51,7 @@ export default function RegisterPage() {
   const countries = countryList().getData() as CountryOption[];
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [step, setStep] = useState(1); // For multi-step form
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -100,45 +103,139 @@ export default function RegisterPage() {
     }
   };
 
-  return (
-    <div
-      className={`min-h-screen flex items-center justify-center ${theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"}`}
-    >
-      <div className={`max-w-2xl mx-auto p-6 rounded-lg shadow-lg ${theme === "dark" ? "bg-gray-800" : "bg-white"}`}>
-        <h2 className="text-2xl font-semibold text-center mb-4">Register to Pulse Fitness</h2>
-        {error && <p className="text-red-500 text-center mb-4 p-2 rounded bg-red-100">{error}</p>}
+  const nextStep = () => {
+    if (step === 1) {
+      // Validate first step fields
+      if (!formData.name || !formData.lastname || !formData.email || !formData.password || !formData.password_confirmation) {
+        setError('Please fill in all required fields');
+        return;
+      }
+      if (formData.password !== formData.password_confirmation) {
+        setError('Passwords do not match');
+        return;
+      }
+    }
+    setError('');
+    setStep(step + 1);
+  };
 
-        <form onSubmit={handleSubmit} className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[
-            { label: 'First Name', name: 'name', icon: <FiUser /> },
-            { label: 'Last Name', name: 'lastname', icon: <FiUser /> },
-            { label: 'Email', name: 'email', type: 'email', icon: <FiMail /> },
-            { label: 'Password', name: 'password', type: 'password', icon: <FiLock /> },
-            { label: 'Confirm Password', name: 'password_confirmation', type: 'password', icon: <FiLock /> },
-            { label: 'Date of Birth', name: 'dob', type: 'date', icon: <FiCalendar /> },
-            { label: 'Phone', name: 'phone', type: 'tel', icon: <FiPhone /> },
-            { label: 'City', name: 'city', icon: <FiMapPin /> },
-            { label: 'Address', name: 'address', icon: <FiMapPin /> },
-            { label: 'Postal Code', name: 'postalcode', icon: <FiMapPin /> },
-          ].map(({ label, name, type = 'text', icon }) => (
-            <div key={name}>
-              <label className="block text-sm font-medium mb-1">{label}</label>
-              <div className={`flex items-center p-2 border rounded-md ${theme === "dark" ? "bg-gray-700 border-gray-600" : "bg-white border-gray-300"}`}>
-                <span className={theme === "dark" ? "text-gray-300" : "text-gray-500"}>{icon}</span>
-                <input
-                  type={type}
-                  name={name}
-                  value={formData[name as keyof FormData]}
-                  onChange={handleChange}
-                  className={`w-full ml-2 outline-none ${theme === "dark" ? "bg-gray-700 text-white" : "bg-white text-gray-900"}`}
-                  required
-                />
-              </div>
-            </div>
-          ))}
+  const prevStep = () => {
+    setStep(step - 1);
+  };
 
+  const renderFormStep = () => {
+    if (step === 1) {
+      return (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>First Name</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className={`w-full px-3 py-2 border rounded-md ${isDark ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300"}`}
+              required
+              placeholder="First Name"
+            />
+          </div>
+          
+          <div>
+            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Last Name</label>
+            <input
+              type="text"
+              name="lastname"
+              value={formData.lastname}
+              onChange={handleChange}
+              className={`w-full px-3 py-2 border rounded-md ${isDark ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300"}`}
+              required
+              placeholder="Last Name"
+            />
+          </div>
+          
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium mb-1">Country</label>
+            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className={`w-full px-3 py-2 border rounded-md ${isDark ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300"}`}
+              required
+              placeholder="your.email@example.com"
+            />
+          </div>
+          
+          <div>
+            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Password</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className={`w-full px-3 py-2 border rounded-md ${isDark ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300"}`}
+              required
+              placeholder="Password"
+            />
+          </div>
+          
+          <div>
+            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Confirm Password</label>
+            <input
+              type="password"
+              name="password_confirmation"
+              value={formData.password_confirmation}
+              onChange={handleChange}
+              className={`w-full px-3 py-2 border rounded-md ${isDark ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300"}`}
+              required
+              placeholder="Confirm Password"
+            />
+          </div>
+          
+          <div className="md:col-span-2 mt-4">
+            <button
+              type="button"
+              onClick={nextStep}
+              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Continue <FiArrowRight className="inline ml-1" />
+            </button>
+            <p className="text-xs text-center mt-2 text-gray-500">
+              By creating an account, you agree to our terms and conditions and gain access to premium equipment, supplements, and apparel.
+            </p>
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Date of Birth</label>
+            <input
+              type="date"
+              name="dob"
+              value={formData.dob}
+              onChange={handleChange}
+              className={`w-full px-3 py-2 border rounded-md ${isDark ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300"}`}
+              required
+            />
+          </div>
+          
+          <div>
+            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Phone</label>
+            <input
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              className={`w-full px-3 py-2 border rounded-md ${isDark ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300"}`}
+              required
+              placeholder="Phone Number"
+            />
+          </div>
+          
+          <div className="md:col-span-2">
+            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Country</label>
             <Select
               options={countries}
               value={countries.find((c) => c.value === formData.country)}
@@ -146,51 +243,188 @@ export default function RegisterPage() {
               className="w-full"
               placeholder="Select a country"
               styles={{
-                control: (baseStyles) => ({
-                  ...baseStyles,
-                  backgroundColor: theme === 'dark' ? '#374151' : 'white',
-                  borderColor: theme === 'dark' ? '#4B5563' : '#D1D5DB',
+                control: (base) => ({
+                  ...base,
+                  backgroundColor: isDark ? '#374151' : 'white',
+                  borderColor: isDark ? '#4B5563' : '#D1D5DB',
                 }),
-                menu: (baseStyles) => ({
-                  ...baseStyles,
-                  backgroundColor: theme === 'dark' ? '#374151' : 'white',
+                menu: (base) => ({
+                  ...base,
+                  backgroundColor: isDark ? '#374151' : 'white',
                 }),
-                option: (baseStyles, state) => ({
-                  ...baseStyles,
-                  backgroundColor: state.isFocused
-                    ? theme === 'dark'
-                      ? '#4B5563'
-                      : '#F3F4F6'
-                    : theme === 'dark'
-                    ? '#374151'
-                    : 'white',
-                  color: theme === 'dark' ? 'white' : 'black',
+                option: (base, state) => ({
+                  ...base,
+                  backgroundColor: state.isFocused 
+                    ? isDark ? '#4B5563' : '#F3F4F6'
+                    : isDark ? '#374151' : 'white',
+                  color: isDark ? 'white' : 'black',
                 }),
-                singleValue: (baseStyles) => ({
-                  ...baseStyles,
-                  color: theme === 'dark' ? 'white' : 'black',
+                singleValue: (base) => ({
+                  ...base,
+                  color: isDark ? 'white' : 'black',
                 }),
               }}
             />
           </div>
-
+          
+          <div>
+            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>City</label>
+            <input
+              type="text"
+              name="city"
+              value={formData.city}
+              onChange={handleChange}
+              className={`w-full px-3 py-2 border rounded-md ${isDark ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300"}`}
+              required
+              placeholder="City"
+            />
+          </div>
+          
+          <div>
+            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Postal Code</label>
+            <input
+              type="text"
+              name="postalcode"
+              value={formData.postalcode}
+              onChange={handleChange}
+              className={`w-full px-3 py-2 border rounded-md ${isDark ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300"}`}
+              required
+              placeholder="Postal Code"
+            />
+          </div>
+          
           <div className="md:col-span-2">
+            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Address</label>
+            <input
+              type="text"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              className={`w-full px-3 py-2 border rounded-md ${isDark ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300"}`}
+              required
+              placeholder="Address"
+            />
+          </div>
+          
+          <div className="md:col-span-2 mt-4 flex gap-4">
+            <button
+              type="button"
+              onClick={prevStep}
+              className={`w-1/3 py-2 px-4 border rounded-md shadow-sm text-sm font-medium ${
+                isDark 
+                  ? 'border-gray-600 text-white hover:bg-gray-700' 
+                  : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+              } transition-colors`}
+            >
+              Back
+            </button>
             <button
               type="submit"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="w-2/3 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               disabled={isLoading}
             >
-              {isLoading ? 'Registering...' : 'Register'}
+              {isLoading ? 'Creating Account...' : 'Complete Registration'}
             </button>
           </div>
-        </form>
+        </div>
+      );
+    }
+  };
 
-        <p className="text-center text-sm mt-6">
-          Already have an account?{' '}
-          <Link href="/auth/login" className="text-indigo-600 hover:text-indigo-500">
-            Login
-          </Link>
-        </p>
+  return (
+    <div className={`min-h-screen flex items-center justify-center ${isDark ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
+      <div className="absolute top-4 right-4">
+        <button
+          onClick={toggleTheme}
+          className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 focus:outline-none"
+          aria-label="Toggle theme"
+        >
+          {isDark ? <FiSun className="text-yellow-400" /> : <FiMoon className="text-gray-700" />}
+        </button>
+      </div>
+
+      <div className="w-full max-w-6xl flex flex-col md:flex-row shadow-xl rounded-xl overflow-hidden">
+        {/* Left side - Branding */}
+        <div className="hidden md:flex md:w-1/3 bg-indigo-600 text-white p-10 flex-col justify-between">
+          <div className="flex flex-col justify-center items-center h-full text-white p-12">
+            <h1 className="text-4xl font-bold mb-4">Pulse Fitness</h1>
+            <p className="text-xl mb-6 text-center">
+              Your journey to a healthier lifestyle starts here.
+            </p>
+            <div className="w-16 h-1 bg-white rounded-full mb-8"></div>
+          </div>
+        </div>
+
+        {/* Right side - Form */}
+        <div className={`w-full md:w-2/3 p-8 ${isDark ? "bg-gray-800" : "bg-white"}`}>
+          <div className="mb-6">
+            <h2 className={`text-2xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
+              Create Your Account
+            </h2>
+            <p className={`text-sm ${isDark ? "text-gray-300" : "text-gray-600"}`}>
+              Step {step} of 2: {step === 1 ? "Account Details" : "Personal Information"}
+            </p>
+            
+            {/* Progress bar */}
+            <div className="w-full h-2 bg-gray-200 rounded-full mt-4 mb-6">
+              <div 
+                className="h-full bg-indigo-600 rounded-full" 
+                style={{ width: step === 1 ? "50%" : "100%" }}
+              ></div>
+            </div>
+            
+            {step === 1 && (
+              <div>
+                <h3 className={`text-lg font-medium mb-2 ${isDark ? "text-white" : "text-gray-900"}`}>
+                  Account Information
+                </h3>
+                <p className={`text-sm mb-4 ${isDark ? "text-gray-300" : "text-gray-600"}`}>
+                  Basic information to create your account.
+                </p>
+              </div>
+            )}
+            
+            {step === 2 && (
+              <div>
+                <h3 className={`text-lg font-medium mb-2 ${isDark ? "text-white" : "text-gray-900"}`}>
+                  Personal Information
+                </h3>
+                <p className={`text-sm mb-4 ${isDark ? "text-gray-300" : "text-gray-600"}`}>
+                  Additional information for shipping and communication.
+                </p>
+              </div>
+            )}
+          </div>
+
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {renderFormStep()}
+          </form>
+
+          <div className="mt-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className={`w-full border-t ${isDark ? "border-gray-600" : "border-gray-300"}`}></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className={`px-2 ${isDark ? "bg-gray-800" : "bg-white"} ${isDark ? "text-gray-300" : "text-gray-600"}`}>
+                  Or
+                </span>
+              </div>
+            </div>
+            <p className="mt-4 text-center text-sm">
+              Already have an account?{" "}
+              <Link href="/auth/login" className="text-indigo-600 hover:text-indigo-500">
+                Login
+              </Link>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

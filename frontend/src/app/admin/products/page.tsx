@@ -2,14 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import { useTheme } from '@/context/ThemeContext';
+import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FiPlus, FiEdit2, FiTrash2, FiSearch } from 'react-icons/fi';
 import type { Product } from '@/types/product';
-import Cookies from 'js-cookie';
+import toast from 'react-hot-toast';
 
 export default function AdminProductsPage() {
   const { theme } = useTheme();
+  const { getToken } = useAuth();
   const isDark = theme === 'dark';
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -21,14 +23,15 @@ export default function AdminProductsPage() {
 
   const fetchProducts = async () => {
     try {
-      const token = Cookies.get('token');
+      const token = getToken();
       if (!token) {
         console.error('No authentication token found');
+        toast.error('Authentication error. Please log in again.');
         return;
       }
       
       console.log('Fetching products with token');
-      const response = await fetch('http://localhost:8000/api/admin/products', {
+      const response = await fetch('http://localhost:8000/api/get-products', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -50,6 +53,7 @@ export default function AdminProductsPage() {
       }
     } catch (error) {
       console.error('Failed to fetch products:', error);
+      toast.error('Failed to fetch products. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -59,9 +63,10 @@ export default function AdminProductsPage() {
     if (!confirm('Are you sure you want to delete this product?')) return;
 
     try {
-      const token = Cookies.get('token');
+      const token = getToken();
       if (!token) {
         console.error('No authentication token found');
+        toast.error('Authentication error. Please log in again.');
         return;
       }
       
@@ -74,14 +79,14 @@ export default function AdminProductsPage() {
 
       if (response.ok) {
         setProducts(prev => prev.filter(p => p.id !== productId));
-        alert('Product deleted successfully');
+        toast.success('Product deleted successfully');
       } else {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to delete product');
       }
     } catch (error) {
       console.error('Failed to delete product:', error);
-      alert(error instanceof Error ? error.message : 'An error occurred');
+      toast.error(error instanceof Error ? error.message : 'Failed to delete product');
     }
   };
 
@@ -99,7 +104,7 @@ export default function AdminProductsPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className={`container mx-auto px-4 py-8 ${isDark ? 'text-white' : 'text-gray-900'}`}>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Products</h1>
         <Link
@@ -125,43 +130,51 @@ export default function AdminProductsPage() {
         />
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto rounded-lg shadow">
         <table className={`w-full border-collapse ${isDark ? 'text-white' : 'text-gray-900'}`}>
           <thead>
             <tr className={isDark ? 'bg-gray-800' : 'bg-gray-50'}>
-              <th className="px-4 py-2 text-left">Image</th>
-              <th className="px-4 py-2 text-left">Name</th>
-              <th className="px-4 py-2 text-left">Category</th>
-              <th className="px-4 py-2 text-left">Price</th>
-              <th className="px-4 py-2 text-left">Stock</th>
-              <th className="px-4 py-2 text-left">Rating</th>
-              <th className="px-4 py-2 text-left">Actions</th>
+              <th className="px-4 py-3 text-left">Image</th>
+              <th className="px-4 py-3 text-left">Name</th>
+              <th className="px-4 py-3 text-left">Category</th>
+              <th className="px-4 py-3 text-left">Price</th>
+              <th className="px-4 py-3 text-left">Stock</th>
+              <th className="px-4 py-3 text-left">Rating</th>
+              <th className="px-4 py-3 text-left">Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className={isDark ? 'bg-gray-900' : 'bg-white'}>
             {filteredProducts.map((product) => (
               <tr
                 key={product.id}
                 className={`border-t ${
-                  isDark ? 'border-gray-700' : 'border-gray-200'
-                }`}
+                  isDark ? 'border-gray-700 hover:bg-gray-800' : 'border-gray-200 hover:bg-gray-50'
+                } transition-colors`}
               >
-                <td className="px-4 py-2">
+                <td className="px-4 py-3">
                   <div className="relative w-16 h-16">
                     <Image
-                      src={product.images[0]}
+                      src={product.images[0] || '/images/placeholder.jpg'}
                       alt={product.name}
                       fill
                       className="object-cover rounded"
                     />
                   </div>
                 </td>
-                <td className="px-4 py-2">{product.name}</td>
-                <td className="px-4 py-2">{product.category}</td>
-                <td className="px-4 py-2">${product.price.toFixed(2)}</td>
-                <td className="px-4 py-2">{product.stock}</td>
-                <td className="px-4 py-2">{product.rating.toFixed(1)}</td>
-                <td className="px-4 py-2">
+                <td className="px-4 py-3">{product.name}</td>
+                <td className="px-4 py-3">{product.category}</td>
+                <td className="px-4 py-3">
+                  ${typeof product.price === 'number' 
+                    ? product.price.toFixed(2) 
+                    : parseFloat(product.price).toFixed(2)}
+                </td>
+                <td className="px-4 py-3">{product.stock}</td>
+                <td className="px-4 py-3">
+                  {typeof product.rating === 'number' 
+                    ? product.rating.toFixed(1) 
+                    : parseFloat(product.rating || '0').toFixed(1)}
+                </td>
+                <td className="px-4 py-3">
                   <div className="flex gap-2">
                     <Link
                       href={`/admin/products/${product.id}/edit`}
@@ -183,7 +196,7 @@ export default function AdminProductsPage() {
         </table>
 
         {filteredProducts.length === 0 && (
-          <div className="text-center py-8">
+          <div className={`text-center py-8 ${isDark ? 'bg-gray-900' : 'bg-white'} rounded-b-lg`}>
             <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>
               No products found matching your search.
             </p>

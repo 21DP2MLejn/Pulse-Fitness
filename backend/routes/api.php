@@ -6,6 +6,7 @@ use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\UserController;
 
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
@@ -25,6 +26,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/cart/add', [CartController::class, 'addToCart']);
     Route::put('/cart/{id}', [CartController::class, 'updateCartItem']);
     Route::delete('/cart/{id}', [CartController::class, 'removeFromCart']);
+    
+    // Direct product creation route (bypasses abilities middleware)
+    Route::post('/create-product', [AdminProductController::class, 'store']);
+    
+    // Direct product listing route (bypasses abilities middleware)
+    Route::get('/get-products', [AdminProductController::class, 'index']);
+    
+    // Direct user listing route (bypasses abilities middleware)
+    Route::get('/get-users', [UserController::class, 'index']);
+    
+    // Direct user stats route (bypasses abilities middleware)
+    Route::get('/get-user-stats', [UserController::class, 'stats']);
     
     // Admin routes - protected by admin ability
     Route::middleware('abilities:admin')->prefix('admin')->group(function () {

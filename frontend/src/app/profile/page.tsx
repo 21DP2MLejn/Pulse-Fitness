@@ -372,7 +372,7 @@ export default function ProfilePage() {
 
           {/* Danger Zone */}
           <div className="mt-12 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <h2 className="text-xl font-bold text-red-500 mb-4">Danger Zone</h2>
+
             <button
               onClick={() => setIsDeleteModalOpen(true)}
               className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center gap-2"

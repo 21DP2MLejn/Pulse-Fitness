@@ -3,12 +3,14 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/context/ThemeContext';
+import { useAuth } from '@/context/AuthContext';
 import { FiUpload, FiX } from 'react-icons/fi';
-import Cookies from 'js-cookie';
+import toast from 'react-hot-toast';
 
 export default function NewProductPage() {
   const router = useRouter();
   const { theme } = useTheme();
+  const { getToken } = useAuth();
   const isDark = theme === 'dark';
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -78,88 +80,106 @@ export default function NewProductPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
+    
     try {
-      const token = Cookies.get('token');
-      if (!token) {
-        throw new Error('Authentication token not found. Please log in again.');
+      // Validate form
+      if (!formData.name || !formData.description || !formData.price || !formData.category || !formData.stock) {
+        toast.error('Please fill in all required fields');
+        setLoading(false);
+        return;
       }
-
-      const formDataToSend = new FormData();
-
-      // Add basic fields
-      formDataToSend.append('name', formData.name);
-      formDataToSend.append('description', formData.description);
-      formDataToSend.append('price', formData.price.toString());
-      formDataToSend.append('category', formData.category);
-      formDataToSend.append('stock', formData.stock.toString());
-
-      // Add features as individual array items
+      
+      // Create FormData object
+      const productData = new FormData();
+      productData.append('name', formData.name);
+      productData.append('description', formData.description);
+      productData.append('price', formData.price.toString());
+      productData.append('category', formData.category);
+      productData.append('stock', formData.stock.toString());
+      
+      // Add features
       formData.features.forEach((feature, index) => {
         if (feature.trim()) {
-          formDataToSend.append(`features[${index}]`, feature);
+          productData.append(`features[${index}]`, feature);
         }
       });
-
-      // Add specifications as individual array items
+      
+      // Add specifications
       Object.entries(formData.specifications).forEach(([key, value]) => {
-        formDataToSend.append(`specifications[${key}]`, value);
+        productData.append(`specifications[${key}]`, value);
       });
-
+      
       // Add images
-      images.forEach((image, index) => {
-        formDataToSend.append(`images[${index}]`, image);
-      });
-
-      console.log('Sending product data to server...');
-      const response = await fetch('http://localhost:8000/api/admin/products', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formDataToSend,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Server response:', errorData);
-
-        if (errorData.errors) {
-          // Format validation errors
-          const errorMessages = Object.entries(errorData.errors)
-            .map(([field, messages]) => `${field}: ${Array.isArray(messages) ? messages.join(', ') : messages}`)
-            .join('\n');
-          throw new Error(`Validation failed:\n${errorMessages}`);
-        }
-
-        throw new Error(errorData.message || 'Failed to create product');
+      if (images.length > 0) {
+        images.forEach(image => {
+          productData.append('images[]', image);
+        });
       }
-
-      const data = await response.json();
-      console.log('Product created successfully:', data);
-
-      // Show success message
-      alert('Product created successfully!');
-
-      // Redirect to products page
-      router.push('/admin/products');
+      
+      const token = getToken();
+      if (!token) {
+        toast.error('Authentication error. Please log in again.');
+        setLoading(false);
+        return;
+      }
+      
+      console.log('Sending product data to server with token:', token);
+      
+      // Using XMLHttpRequest instead of fetch for better FormData handling
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        
+        // Using the new direct endpoint that bypasses the abilities middleware
+        xhr.open('POST', 'http://localhost:8000/api/create-product', true);
+        xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+        
+        xhr.onload = function() {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            console.log('Product created successfully:', xhr.responseText);
+            toast.success('Product created successfully!');
+            router.push('/admin/products');
+            resolve(xhr.response);
+          } else {
+            console.error('Error creating product:', xhr.status, xhr.statusText, xhr.responseText);
+            let errorMessage = 'Failed to create product';
+            try {
+              const response = JSON.parse(xhr.responseText);
+              errorMessage = response.message || errorMessage;
+            } catch (e) {
+              console.error('Error parsing error response:', e);
+            }
+            toast.error(errorMessage);
+            reject(new Error(errorMessage));
+          }
+          setLoading(false);
+        };
+        
+        xhr.onerror = function() {
+          console.error('Network error occurred');
+          toast.error('Network error. Please check your connection.');
+          setLoading(false);
+          reject(new Error('Network error'));
+        };
+        
+        xhr.send(productData);
+      });
+      
     } catch (error) {
-      console.error('Error creating product:', error);
-      alert(error instanceof Error ? error.message : 'An error occurred');
-    } finally {
+      console.error('Error submitting form:', error);
+      toast.error('Error creating product. Please try again.');
       setLoading(false);
     }
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className={`container mx-auto px-4 py-8 ${isDark ? 'text-white' : 'text-gray-900'}`}>
       <h1 className="text-3xl font-bold mb-8">Create New Product</h1>
 
       <form onSubmit={handleSubmit} className="max-w-4xl space-y-6">
         {/* Basic Information */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium mb-2">Name</label>
+            <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Name</label>
             <input
               type="text"
               required
@@ -174,7 +194,7 @@ export default function NewProductPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Category</label>
+            <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Category</label>
             <select
               required
               value={formData.category}
@@ -194,7 +214,7 @@ export default function NewProductPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Price</label>
+            <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Price</label>
             <input
               type="number"
               step="0.01"
@@ -210,7 +230,7 @@ export default function NewProductPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Stock</label>
+            <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Stock</label>
             <input
               type="number"
               required
@@ -226,7 +246,7 @@ export default function NewProductPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">Description</label>
+          <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Description</label>
           <textarea
             required
             rows={4}
@@ -242,7 +262,7 @@ export default function NewProductPage() {
 
         {/* Features */}
         <div>
-          <label className="block text-sm font-medium mb-2">Features</label>
+          <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Features</label>
           <div className="space-y-2">
             {formData.features.map((feature, index) => (
               <div key={index} className="flex gap-2">
@@ -270,7 +290,7 @@ export default function NewProductPage() {
           <button
             type="button"
             onClick={addFeature}
-            className="mt-2 text-primary hover:text-primary/90"
+            className={`mt-2 text-primary hover:text-primary/90 ${isDark ? 'hover:text-white' : ''}`}
           >
             + Add Feature
           </button>
@@ -278,7 +298,7 @@ export default function NewProductPage() {
 
         {/* Specifications */}
         <div>
-          <label className="block text-sm font-medium mb-2">Specifications</label>
+          <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Specifications</label>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
             <input
               type="text"
@@ -317,7 +337,7 @@ export default function NewProductPage() {
               <div
                 key={key}
                 className={`flex justify-between items-center p-2 rounded-lg ${
-                  isDark ? 'bg-gray-800' : 'bg-gray-100'
+                  isDark ? 'bg-gray-800 text-white' : 'bg-gray-100'
                 }`}
               >
                 <span>
@@ -337,7 +357,7 @@ export default function NewProductPage() {
 
         {/* Images */}
         <div>
-          <label className="block text-sm font-medium mb-2">Images</label>
+          <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Images</label>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {previewUrls.map((url, index) => (
               <div key={index} className="relative aspect-square">
@@ -367,7 +387,7 @@ export default function NewProductPage() {
                 onChange={handleImageChange}
                 className="hidden"
               />
-              <FiUpload className="w-8 h-8 text-gray-400" />
+              <FiUpload className={`w-8 h-8 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
             </label>
           </div>
         </div>
@@ -387,7 +407,7 @@ export default function NewProductPage() {
             onClick={() => router.back()}
             className={`px-6 py-2 border rounded-lg ${
               isDark
-                ? 'border-gray-700 hover:bg-gray-800'
+                ? 'border-gray-700 hover:bg-gray-800 text-white'
                 : 'border-gray-300 hover:bg-gray-100'
             }`}
           >

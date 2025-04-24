@@ -5,14 +5,20 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from '@/context/AuthContext';
-import { FiMoon, FiSun } from 'react-icons/fi';
-import { FiShoppingCart } from 'react-icons/fi';
+import { useCart } from '@/context/CartContext';
+import { useLanguage } from '@/context/LanguageContext';
+import LanguageSelector from './LanguageSelector';
+import { FiMoon, FiSun, FiShoppingCart, FiSettings } from 'react-icons/fi';
 
 export default function Navbar() {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
+  const { items } = useCart();
+  const { t } = useLanguage();
   const isDark = theme === 'dark';
+  const isAdmin = user?.role === 'admin';
+  const cartItemCount = items.length;
 
   const handleLogout = () => {
     logout();
@@ -25,57 +31,69 @@ export default function Navbar() {
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
               <Link href="/" className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-primary'}`}>
-                Pulse Fitness
+                {t('app.name')}
               </Link>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               <Link
                 href="/home"
                 className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
-                  pathname === '/'
+                  pathname === '/home' || pathname === '/'
                     ? 'text-primary border-b-2 border-primary'
                     : isDark
                     ? 'text-gray-300 hover:text-white'
                     : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
-                Home
+                {t('nav.home')}
               </Link>
               <Link
                 href="/products"
                 className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
-                  pathname === '/products'
+                  pathname === '/products' || pathname.startsWith('/products/')
                     ? 'text-primary border-b-2 border-primary'
                     : isDark
                     ? 'text-gray-300 hover:text-white'
                     : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
-                Products
+                {t('nav.products')}
               </Link>
-              <Link
-                href="/profile"
-                className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
-                  pathname === '/profile'
-                    ? 'text-primary border-b-2 border-primary'
-                    : isDark
-                    ? 'text-gray-300 hover:text-white'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                Profile
-              </Link>
+              {isAuthenticated && (
+                <Link
+                  href="/profile"
+                  className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
+                    pathname === '/profile'
+                      ? 'text-primary border-b-2 border-primary'
+                      : isDark
+                      ? 'text-gray-300 hover:text-white'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  {t('nav.profile')}
+                </Link>
+              )}
+              {isAdmin && (
+                <Link
+                  href="/admin"
+                  className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
+                    pathname.startsWith('/admin')
+                      ? 'text-primary border-b-2 border-primary'
+                      : isDark
+                      ? 'text-gray-300 hover:text-white'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  {t('nav.admin')}
+                </Link>
+              )}
             </div>
           </div>
-          <div className="flex items-center">
-            {isAuthenticated && (
-              <Link
-                href="/cart" 
-                className={`mr-4 ${isDark ? 'text-white' : 'text-gray-800'} hover:text-primary transition-colors`}
-              >
-                <FiShoppingCart size={20} />
-              </Link>
-            )}
+          <div className="flex items-center space-x-4">
+            {/* Language Selector */}
+            <LanguageSelector />
+            
+            {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
               className={`p-2 rounded-lg ${
@@ -85,20 +103,33 @@ export default function Navbar() {
             >
               {isDark ? <FiSun size={20} /> : <FiMoon size={20} />}
             </button>
+            {isAuthenticated && (
+              <Link
+                href="/cart" 
+                className={`mr-4 relative ${isDark ? 'text-white' : 'text-gray-800'} hover:text-primary transition-colors`}
+              >
+                <FiShoppingCart size={20} />
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {cartItemCount}
+                  </span>
+                )}
+              </Link>
+            )}
             <div className="ml-4">
               {isAuthenticated ? (
                 <button
                   onClick={handleLogout}
                   className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90"
                 >
-                  Logout
+                  {t('nav.logout')}
                 </button>
               ) : (
                 <Link
                   href="/auth/login"
                   className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90"
                 >
-                  Login
+                  {t('nav.login')}
                 </Link>
               )}
             </div>
