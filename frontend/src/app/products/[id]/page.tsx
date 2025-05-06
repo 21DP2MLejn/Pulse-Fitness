@@ -83,7 +83,9 @@ export default function ProductPage({ params }: { params: { id: string } }) {
           <div className="space-y-4">
             <div className="aspect-square relative rounded-lg overflow-hidden shadow-md">
               <Image
-                src={product.images[selectedImage] || '/images/placeholder.jpg'}
+                src={product.images && product.images.length > 0 
+                  ? `http://localhost:8000/api/images/${product.images[selectedImage].replace(/^\/storage\//, '')}`
+                  : '/images/placeholder.jpg'}
                 alt={product.name}
                 fill
                 className="object-cover transition-transform hover:scale-105 duration-500"
@@ -99,7 +101,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                   }`}
                 >
                   <Image
-                    src={image || '/images/placeholder.jpg'}
+                    src={image ? `http://localhost:8000/api/images/${image.replace(/^\/storage\//, '')}` : '/images/placeholder.jpg'}
                     alt={`${product.name} ${index + 1}`}
                     fill
                     className="object-cover"

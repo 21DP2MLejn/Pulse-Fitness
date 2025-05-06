@@ -46,7 +46,6 @@ class ProductController extends Controller
     
             \Log::info('Validation passed, processing product data');
             
-            // Process images if they exist
             $imageUrls = [];
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {

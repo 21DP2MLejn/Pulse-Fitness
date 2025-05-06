@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\UserController;
 
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/auth/forgot-password', [AuthController::class, 'sendResetPasswordEmail']);
+Route::post('/auth/reset-password', [AuthController::class, 'resetPassword']);
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -36,7 +38,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // Direct user listing route (bypasses abilities middleware)
     Route::get('/get-users', [UserController::class, 'index']);
     
-    // Direct user stats route (bypasses abilities middleware)
     Route::get('/get-user-stats', [UserController::class, 'stats']);
     
     // Admin routes - protected by admin ability
@@ -47,6 +48,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/products/{product}', [AdminProductController::class, 'show']);
         Route::put('/products/{product}', [AdminProductController::class, 'update']);
         Route::delete('/products/{product}', [AdminProductController::class, 'destroy']);
+        Route::get('/subscriptions', [SubscriptionController::class, 'index']);
+        Route::post('/subscriptions', [SubscriptionController::class, 'store']);
+        Route::get('/subscriptions/{subscription}', [SubscriptionController::class, 'show']);
+        Route::put('/subscriptions/{subscription}', [SubscriptionController::class, 'update']);
+        Route::delete('/subscriptions/{subscription}', [SubscriptionController::class, 'destroy']);
     });
 });
 
@@ -54,10 +60,11 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/{product}', [ProductController::class, 'show']);
 
-Route::get('/image/{filename}', function ($filename) {
-    $path = storage_path('app/public/images/' . $filename);
-    if (!file_exists($path)) {
+// Route to serve product images
+Route::get('/images/{path}', function ($path) {
+    $fullPath = storage_path('app/public/' . $path);
+    if (!file_exists($fullPath)) {
         abort(404);
     }
-    return response()->file($path);
-});
+    return response()->file($fullPath);
+})->where('path', '.*');

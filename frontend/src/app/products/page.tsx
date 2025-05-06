@@ -138,7 +138,9 @@ export default function ProductsPage() {
           >
             <div className="aspect-square relative">
               <Image
-                src={product.images[0] || '/images/placeholder.jpg'}
+                src={product.images && product.images.length > 0 
+                  ? `http://localhost:8000/api/images/${product.images[0].replace(/^\/storage\//, '')}`
+                  : '/images/placeholder.jpg'}
                 alt={product.name}
                 fill
                 className="object-cover"

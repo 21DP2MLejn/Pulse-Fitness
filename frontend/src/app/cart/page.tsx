@@ -87,7 +87,9 @@ export default function CartPage() {
               >
                 <div className="relative w-24 h-24">
                   <Image
-                    src={item.product.images[0] || '/images/placeholder.jpg'}
+                    src={item.product.images && item.product.images.length > 0 
+                      ? `http://localhost:8000/api/images/${item.product.images[0].replace(/^\/storage\//, '')}` 
+                      : '/images/placeholder.jpg'}
                     alt={item.product.name}
                     fill
                     className="object-cover rounded-lg"

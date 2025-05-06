@@ -47,24 +47,24 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className={`${theme === "dark" ? "bg-gray-800" : "bg-white"} p-6 rounded-lg shadow-lg`}>
-              <h2 className="text-xl font-semibold mb-4">Your Progress</h2>
-              <p className="text-sm mb-4">Track your fitness journey and see how far you've come.</p>
+              <h2 className="text-xl font-semibold mb-4">See Latest Products</h2>
+              <p className="text-sm mb-4">Check out our latest products and get ready to take your fitness journey to the next level.</p>
               <button
-                onClick={() => router.push("/progress")}
+                onClick={() => router.push("/products")}
                 className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition-colors"
               >
-                View Progress
+                View Products
               </button>
             </div>
 
             <div className={`${theme === "dark" ? "bg-gray-800" : "bg-white"} p-6 rounded-lg shadow-lg`}>
-              <h2 className="text-xl font-semibold mb-4">Today's Workout</h2>
-              <p className="text-sm mb-4">Get ready for your daily fitness routine.</p>
+              <h2 className="text-xl font-semibold mb-4">Group Workout</h2>
+              <p className="text-sm mb-4">Get started with a group workout</p>
               <button
-                onClick={() => router.push("/workouts")}
+                onClick={() => router.push("/group-workouts")}
                 className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition-colors"
               >
-                Start Workout
+                Register for a Workout
               </button>
             </div>
 

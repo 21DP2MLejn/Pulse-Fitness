@@ -8,6 +8,9 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\WelcomeMail;
+use App\Mail\ResetPasswordMail;
 
 class AuthController extends Controller
 {
@@ -95,6 +98,9 @@ class AuthController extends Controller
 
             $token = $user->createToken('auth_token')->plainTextToken;
 
+            // Send welcome email
+            Mail::to($user->email)->send(new WelcomeMail($user));
+
             return response()->json([
                 'status' => true,
                 'message' => 'User registered successfully',
@@ -107,6 +113,38 @@ class AuthController extends Controller
                 'message' => 'Registration failed',
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
+            ], 500);
+        }
+    }
+
+    // Sends a reset password email
+    public function sendResetPasswordEmail(Request $request)
+    {
+        try {
+            $request->validate([
+                'email' => 'required|email|exists:users,email'
+            ]);
+            
+            $user = User::where('email', $request->email)->first();
+            
+            // Generate a reset token
+            $token = app('auth.password.broker')->createToken($user);
+            
+            // Create reset URL pointing to the frontend
+            $resetUrl = 'http://localhost:3000/auth/reset-password?token=' . $token . '&email=' . urlencode($user->email);
+            
+            // Send email with reset link
+            Mail::to($user->email)->send(new ResetPasswordMail($user, $resetUrl));
+            
+            return response()->json([
+                'status' => true,
+                'message' => 'Password reset email sent. Please check your inbox.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to send password reset email',
+                'error' => $e->getMessage()
             ], 500);
         }
     }
@@ -222,5 +260,53 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Profile deleted successfully'
         ]);
+    }
+    
+    // Reset password with token
+    public function resetPassword(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email|exists:users,email',
+                'token' => 'required|string',
+                'password' => 'required|string|min:8',
+                'password_confirmation' => 'required|string|same:password',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validation error',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            // Verify the token
+            $status = app('auth.password.broker')->reset(
+                $request->only('email', 'password', 'password_confirmation', 'token'),
+                function ($user, $password) {
+                    $user->password = Hash::make($password);
+                    $user->save();
+                }
+            );
+
+            if ($status === \Illuminate\Auth\Passwords\PasswordBroker::PASSWORD_RESET) {
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Password has been reset successfully'
+                ]);
+            }
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Invalid or expired token'
+            ], 400);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to reset password',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }
