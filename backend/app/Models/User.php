@@ -28,6 +28,8 @@ class User extends Authenticatable
         'postalcode',
         'role',
         'dob',
+        'subscription_id',
+        'subscription_name',
     ];
 
     /**

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Product;
+use App\Models\Subscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -11,22 +11,46 @@ use Illuminate\Support\Facades\Log;
 
 class SubscriptionController extends Controller
 {
+    public function index()
+    {
+        try {
+            \Log::info('Fetching all subscriptions');
+            
+            $subscriptions = Subscription::all();
+            
+            return response()->json([
+                'status' => true,
+                'message' => 'Subscriptions retrieved successfully',
+                'data' => $subscriptions
+            ], 200);
+        } catch (\Exception $e) {
+            \Log::error('Error fetching subscriptions: ' . $e->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to fetch subscriptions',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
     public function store(Request $request)
     {
         try{
-            \Log::info('Incoming a new subscription creation')
+            \Log::info('Incoming a new subscription creation', $request->all());
             
             $validator = Validator::make($request->all(), [
+                'user_id' => 'required|exists:users,id',
                 'name' => 'required|string|max:255',
                 'description' => 'required|string',
                 'price' => 'required|numeric|min:0',
                 'features' => 'nullable|array',
                 'features.*' => 'nullable|string',
                 'specifications' => 'nullable|array',
+                'start_date' => 'required|date',
+                'status' => 'required|string|in:active,inactive,expired',
             ]);
         } catch (\Exception $e) {
-            \Log::error('Error creating subscription:', $e->getMessage());
+            \Log::error('Error creating subscription: ' . $e->getMessage());
             return response()->json([
                 'status' => false,
                 'message' => 'Failed to create subscription',
@@ -45,12 +69,17 @@ class SubscriptionController extends Controller
 
         \Log::info('Validation passed, processing subscription data');
         
-        $subscription = new Product();
+        $subscription = new Subscription();
+        $subscription->user_id = $request->user_id;
         $subscription->name = $request->name;
         $subscription->description = $request->description;
         $subscription->price = $request->price;
         $subscription->features = $request->features ?? [];
         $subscription->specifications = $request->specifications ?? [];
+        $subscription->start_date = $request->start_date;
+        $subscription->end_date = $request->end_date;
+        $subscription->status = $request->status;
+        $subscription->subscription_name = $request->name; // Use name as subscription_name for compatibility
         $subscription->save();
         
         \Log::info('Subscription created successfully', ['subscription_id' => $subscription->id]);
@@ -95,7 +124,7 @@ class SubscriptionController extends Controller
 
         \Log::info('Validation passed, processing subscription data');
         
-        $subscription = Product::findOrFail($id);
+        $subscription = Subscription::findOrFail($id);
         $subscription->name = $request->name;
         $subscription->description = $request->description;
         $subscription->price = $request->price;
@@ -117,7 +146,7 @@ class SubscriptionController extends Controller
         try {
             \Log::info('Incoming subscription delete request', ['id' => $id]);
             
-            $subscription = Product::findOrFail($id);
+            $subscription = Subscription::findOrFail($id);
             $subscription->delete();
             
             \Log::info('Subscription deleted successfully', ['subscription_id' => $subscription->id]);
@@ -137,7 +166,7 @@ class SubscriptionController extends Controller
     }
 
     public function show($id){
-        $subscription = Product::findOrFail($id);
+        $subscription = Subscription::findOrFail($id);
         return response()->json([
             'status' => true,
             'message' => 'Subscription retrieved successfully',

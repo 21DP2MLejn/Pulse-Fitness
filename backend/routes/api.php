@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\SubscriptionController;
 
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
@@ -40,8 +41,8 @@ Route::middleware('auth:sanctum')->group(function () {
     
     Route::get('/get-user-stats', [UserController::class, 'stats']);
     
-    // Admin routes - protected by admin ability
-    Route::middleware('abilities:admin')->prefix('admin')->group(function () {
+    // Admin routes - protected by auth:sanctum
+    Route::prefix('admin')->group(function () {
         // Product management
         Route::get('/products', [AdminProductController::class, 'index']);
         Route::post('/products', [AdminProductController::class, 'store']);

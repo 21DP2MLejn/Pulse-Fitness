@@ -18,6 +18,7 @@ interface UserProfile {
   address: string
   postalcode: string
   phone: string
+  subscription_name?: string
 }
 
 export default function ProfilePage() {
@@ -164,6 +165,7 @@ export default function ProfilePage() {
           city: data.user.city || "",
           address: data.user.address || "",
           postalcode: data.user.postalcode || "",
+          subscription_name: data.user.subscription_name || "",
         });
       }
 
@@ -368,17 +370,25 @@ export default function ProfilePage() {
                 </div>
               )}
             </div>
-          </div>
 
-          {/* Danger Zone */}
-          <div className="mt-12 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <div>
+              <h2 className="text-2xl font-bold mb-4">Subscription</h2>
+              <div className="space-y-2">
+                <p>
+                  <span className={`font-medium ${isDark ? "text-gray-300" : "text-gray-600"}`}>Subscription Name: </span>
+                  {profile.subscription_name || "No active subscription"}
+                </p>
+              </div>
+            </div>
 
-            <button
-              onClick={() => setIsDeleteModalOpen(true)}
-              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center gap-2"
-            >
-              <FiTrash2 /> Delete Account
-            </button>
+            <div className="mt-12 pt-6 border-t border-gray-200 dark:border-gray-700">
+              <button
+                onClick={() => setIsDeleteModalOpen(true)}
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center gap-2"
+              >
+                <FiTrash2 /> Delete Account
+              </button>
+            </div>
           </div>
         </div>
       </div>

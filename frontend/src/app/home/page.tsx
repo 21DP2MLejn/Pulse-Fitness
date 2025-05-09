@@ -69,24 +69,24 @@ export default function HomePage() {
             </div>
 
             <div className={`${theme === "dark" ? "bg-gray-800" : "bg-white"} p-6 rounded-lg shadow-lg`}>
-              <h2 className="text-xl font-semibold mb-4">Nutrition Plan</h2>
-              <p className="text-sm mb-4">Check your meal plan and track your nutrition.</p>
+              <h2 className="text-xl font-semibold mb-4"> My Subscriptions</h2>
+              <p className="text-sm mb-4">Manage your subscriptions and view your subscription history.</p>
               <button
-                onClick={() => router.push("/nutrition")}
+                onClick={() => router.push("/subscriptions")}
                 className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition-colors"
               >
-                View Plan
+                View Subscriptions
               </button>
             </div>
 
             <div className={`${theme === "dark" ? "bg-gray-800" : "bg-white"} p-6 rounded-lg shadow-lg`}>
-              <h2 className="text-xl font-semibold mb-4">Community</h2>
-              <p className="text-sm mb-4">Connect with other fitness enthusiasts.</p>
+              <h2 className="text-xl font-semibold mb-4">My Orders</h2>
+              <p className="text-sm mb-4">View your order history and manage your orders.</p>
               <button
-                onClick={() => router.push("/community")}
+                onClick={() => router.push("/orders")}
                 className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition-colors"
               >
-                Join Community
+                View Orders
               </button>
             </div>
           </div>

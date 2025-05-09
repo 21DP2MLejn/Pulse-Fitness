@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('city')->nullable();
             $table->string('address')->nullable();
             $table->string('postalcode')->nullable();
+            $table->string('subscription_name')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
