@@ -28,7 +28,6 @@ export default function HomePage() {
     );
   }
 
-  // If not authenticated, don't render the page content
   if (!isAuthenticated || !user) {
     console.log("Home page - Not authenticated, showing nothing");
     return null;

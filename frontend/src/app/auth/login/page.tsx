@@ -8,6 +8,7 @@ import Link from "next/link"
 import { useTheme } from "@/context/ThemeContext"
 import { useAuth } from "@/context/AuthContext"
 import Cookies from "js-cookie"
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -17,6 +18,7 @@ export default function LoginPage() {
   const router = useRouter()
   const { theme } = useTheme()
   const { login } = useAuth()
+  const { t } = useLanguage()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -42,23 +44,17 @@ export default function LoginPage() {
         throw new Error(data.message || "Login failed")
       }
 
-      // Use the auth context login method instead of manually setting the cookie
       console.log("Login successful, token received:", data.token);
       
-      // Manually set the token cookie as a backup
       Cookies.set("token", data.token, { 
         expires: 7, 
         path: '/',
         sameSite: 'lax' 
       });
       
-      // Store token in localStorage as well for redundancy
       localStorage.setItem('authToken', data.token);
-      
-      // Pass both token and user data to login method
       login(data.token, data.user);
       
-      // Add a slight delay to ensure the token is set before navigation
       setTimeout(() => {
         console.log("Redirecting to home page...");
         console.log("Token in cookie after login:", Cookies.get("token"));
@@ -85,7 +81,7 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium mb-1">
-              Email
+              {t('auth.email')}
             </label>
             <input
               id="email"
@@ -99,7 +95,7 @@ export default function LoginPage() {
 
           <div>
             <label htmlFor="password" className="block text-sm font-medium mb-1">
-              Password
+              {t('auth.password')}
             </label>
             <input
               id="password"
@@ -119,13 +115,13 @@ export default function LoginPage() {
                 className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
               />
               <label htmlFor="remember-me" className="ml-2 block text-sm">
-                Remember me
+                {t('auth.rememberMe')}
               </label>
             </div>
 
             <div className="text-sm">
               <Link href="/auth/password-reset" className="text-indigo-600 hover:text-indigo-500">
-                Forgot your password?
+                {t('auth.forgotPassword')}
               </Link>
             </div>
           </div>
@@ -148,9 +144,9 @@ export default function LoginPage() {
         </div>
 
         <p className="mt-6 text-center text-sm">
-          Don't have an account?{" "}
+          {t('auth.dontHaveAccount')}{" "}
           <Link href="/auth/register" className="text-indigo-600 hover:text-indigo-500">
-            Sign up
+            {t('auth.register')}
           </Link>
         </p>
       </div>

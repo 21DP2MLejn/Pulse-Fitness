@@ -59,6 +59,32 @@ export default function Navbar() {
               >
                 {t('nav.products')}
               </Link>
+              <Link
+                href="/subscriptions"
+                className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
+                  pathname === '/subscriptions'
+                    ? 'text-primary border-b-2 border-primary'
+                    : isDark
+                    ? 'text-gray-300 hover:text-white'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                {t('nav.subscriptions')}
+              </Link>
+              {isAuthenticated && (
+                <Link
+                  href="/reservations"
+                  className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
+                    pathname.startsWith('/reservations')
+                      ? 'text-primary border-b-2 border-primary'
+                      : isDark
+                      ? 'text-gray-300 hover:text-white'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  Training Schedule
+                </Link>
+              )}
               {isAuthenticated && (
                 <Link
                   href="/profile"
@@ -74,18 +100,32 @@ export default function Navbar() {
                 </Link>
               )}
               {isAdmin && (
-                <Link
-                  href="/admin"
-                  className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
-                    pathname.startsWith('/admin')
-                      ? 'text-primary border-b-2 border-primary'
-                      : isDark
-                      ? 'text-gray-300 hover:text-white'
-                      : 'text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  {t('nav.admin')}
-                </Link>
+                <>
+                  <Link
+                    href="/admin"
+                    className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
+                      pathname === '/admin'
+                        ? 'text-primary border-b-2 border-primary'
+                        : isDark
+                        ? 'text-gray-300 hover:text-white'
+                        : 'text-gray-500 hover:text-gray-700'
+                    }`}
+                  >
+                    {t('nav.admin')}
+                  </Link>
+                  <Link
+                    href="/admin/training-sessions"
+                    className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
+                      pathname.startsWith('/admin/training-sessions')
+                        ? 'text-primary border-b-2 border-primary'
+                        : isDark
+                        ? 'text-gray-300 hover:text-white'
+                        : 'text-gray-500 hover:text-gray-700'
+                    }`}
+                  >
+                    Manage Sessions
+                  </Link>
+                </>
               )}
             </div>
           </div>

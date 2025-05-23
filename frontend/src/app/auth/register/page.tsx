@@ -9,6 +9,7 @@ import { useTheme } from '@/context/ThemeContext';
 import countryList from 'react-select-country-list';
 import Select from 'react-select';
 import Image from 'next/image';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface FormData {
   name: string;
@@ -33,6 +34,7 @@ export default function RegisterPage() {
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
   const isDark = theme === 'dark';
+  const { t } = useLanguage();
 
   const [formData, setFormData] = useState<FormData>({
     name: '',
@@ -79,7 +81,6 @@ export default function RegisterPage() {
 
       console.log("Registration response status:", response.status);
       
-      // Handle non-JSON responses (like HTML error pages)
       const contentType = response.headers.get('content-type');
       if (contentType && contentType.indexOf('application/json') === -1) {
         const htmlError = await response.text();
@@ -105,13 +106,12 @@ export default function RegisterPage() {
 
   const nextStep = () => {
     if (step === 1) {
-      // Validate first step fields
       if (!formData.name || !formData.lastname || !formData.email || !formData.password || !formData.password_confirmation) {
-        setError('Please fill in all required fields');
+        setError(t('auth.fillAllFields'));
         return;
       }
       if (formData.password !== formData.password_confirmation) {
-        setError('Passwords do not match');
+        setError(t('auth.passwordsDoNotMatch'));
         return;
       }
     }
@@ -128,7 +128,7 @@ export default function RegisterPage() {
       return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>First Name</label>
+            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>{t('auth.firstName')}</label>
             <input
               type="text"
               name="name"
@@ -136,12 +136,12 @@ export default function RegisterPage() {
               onChange={handleChange}
               className={`w-full px-3 py-2 border rounded-md ${isDark ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300"}`}
               required
-              placeholder="First Name"
+              placeholder={t('auth.firstName')}
             />
           </div>
           
           <div>
-            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Last Name</label>
+            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>{t('auth.lastName')}</label>
             <input
               type="text"
               name="lastname"
@@ -149,12 +149,12 @@ export default function RegisterPage() {
               onChange={handleChange}
               className={`w-full px-3 py-2 border rounded-md ${isDark ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300"}`}
               required
-              placeholder="Last Name"
+              placeholder={t('auth.lastName')}
             />
           </div>
           
           <div className="md:col-span-2">
-            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Email</label>
+            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>{t('auth.email')}</label>
             <input
               type="email"
               name="email"
@@ -162,12 +162,12 @@ export default function RegisterPage() {
               onChange={handleChange}
               className={`w-full px-3 py-2 border rounded-md ${isDark ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300"}`}
               required
-              placeholder="your.email@example.com"
+              placeholder={t('auth.email')}
             />
           </div>
           
           <div>
-            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Password</label>
+            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>{t('auth.password')}</label>
             <input
               type="password"
               name="password"
@@ -175,12 +175,12 @@ export default function RegisterPage() {
               onChange={handleChange}
               className={`w-full px-3 py-2 border rounded-md ${isDark ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300"}`}
               required
-              placeholder="Password"
+              placeholder={t('auth.password')}
             />
           </div>
           
           <div>
-            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Confirm Password</label>
+            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>{t('auth.confirmPassword')}</label>
             <input
               type="password"
               name="password_confirmation"
@@ -188,7 +188,7 @@ export default function RegisterPage() {
               onChange={handleChange}
               className={`w-full px-3 py-2 border rounded-md ${isDark ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300"}`}
               required
-              placeholder="Confirm Password"
+              placeholder={t('auth.confirmPassword')}
             />
           </div>
           
@@ -198,10 +198,10 @@ export default function RegisterPage() {
               onClick={nextStep}
               className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              Continue <FiArrowRight className="inline ml-1" />
+              {t('auth.continue')} <FiArrowRight className="inline ml-1" />
             </button>
             <p className="text-xs text-center mt-2 text-gray-500">
-              By creating an account, you agree to our terms and conditions and gain access to premium equipment, supplements, and apparel.
+              {t('auth.agreeToTerms')}
             </p>
           </div>
         </div>
@@ -210,7 +210,7 @@ export default function RegisterPage() {
       return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Date of Birth</label>
+            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>{t('auth.dob')}</label>
             <input
               type="date"
               name="dob"
@@ -222,7 +222,7 @@ export default function RegisterPage() {
           </div>
           
           <div>
-            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Phone</label>
+            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>{t('auth.phone')}</label>
             <input
               type="tel"
               name="phone"
@@ -230,18 +230,18 @@ export default function RegisterPage() {
               onChange={handleChange}
               className={`w-full px-3 py-2 border rounded-md ${isDark ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300"}`}
               required
-              placeholder="Phone Number"
+              placeholder={t('auth.phone')}
             />
           </div>
           
           <div className="md:col-span-2">
-            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Country</label>
+            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>{t('auth.country')}</label>
             <Select
               options={countries}
               value={countries.find((c) => c.value === formData.country)}
               onChange={handleCountryChange}
               className="w-full"
-              placeholder="Select a country"
+              placeholder={t('auth.SelectCountry')}
               styles={{
                 control: (base) => ({
                   ...base,
@@ -268,7 +268,7 @@ export default function RegisterPage() {
           </div>
           
           <div>
-            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>City</label>
+            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>{t('auth.city')}</label>
             <input
               type="text"
               name="city"
@@ -276,12 +276,12 @@ export default function RegisterPage() {
               onChange={handleChange}
               className={`w-full px-3 py-2 border rounded-md ${isDark ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300"}`}
               required
-              placeholder="City"
+              placeholder={t('auth.city')}
             />
           </div>
           
           <div>
-            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Postal Code</label>
+            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>{t('auth.postalcode')}</label>
             <input
               type="text"
               name="postalcode"
@@ -289,12 +289,12 @@ export default function RegisterPage() {
               onChange={handleChange}
               className={`w-full px-3 py-2 border rounded-md ${isDark ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300"}`}
               required
-              placeholder="Postal Code"
+              placeholder={t('auth.postalcode')}
             />
           </div>
           
           <div className="md:col-span-2">
-            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Address</label>
+            <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>{t('auth.address')}</label>
             <input
               type="text"
               name="address"
@@ -302,7 +302,7 @@ export default function RegisterPage() {
               onChange={handleChange}
               className={`w-full px-3 py-2 border rounded-md ${isDark ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300"}`}
               required
-              placeholder="Address"
+              placeholder={t('auth.address')}
             />
           </div>
           
@@ -316,14 +316,14 @@ export default function RegisterPage() {
                   : 'border-gray-300 text-gray-700 hover:bg-gray-50'
               } transition-colors`}
             >
-              Back
+              {t('auth.back')}
             </button>
             <button
               type="submit"
               className="w-2/3 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               disabled={isLoading}
             >
-              {isLoading ? 'Creating Account...' : 'Complete Registration'}
+              {isLoading ? 'Creating Account...' : t('auth.completeRegistration')}
             </button>
           </div>
         </div>
@@ -347,9 +347,9 @@ export default function RegisterPage() {
         {/* Left side - Branding */}
         <div className="hidden md:flex md:w-1/3 bg-indigo-600 text-white p-10 flex-col justify-between">
           <div className="flex flex-col justify-center items-center h-full text-white p-12">
-            <h1 className="text-4xl font-bold mb-4">Pulse Fitness</h1>
+            <h1 className="text-4xl font-bold mb-4">{t('app.name')}</h1>
             <p className="text-xl mb-6 text-center">
-              Your journey to a healthier lifestyle starts here.
+              {t('app.tagline')}
             </p>
             <div className="w-16 h-1 bg-white rounded-full mb-8"></div>
           </div>
@@ -359,10 +359,10 @@ export default function RegisterPage() {
         <div className={`w-full md:w-2/3 p-8 ${isDark ? "bg-gray-800" : "bg-white"}`}>
           <div className="mb-6">
             <h2 className={`text-2xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
-              Create Your Account
+              {t('auth.createAccount')}
             </h2>
             <p className={`text-sm ${isDark ? "text-gray-300" : "text-gray-600"}`}>
-              Step {step} of 2: {step === 1 ? "Account Details" : "Personal Information"}
+              {t('auth.step')} {step} {t('auth.of2')}: {step === 1 ? t('auth.accountDetails') : t('auth.personalInfo')}
             </p>
             
             {/* Progress bar */}
@@ -376,10 +376,10 @@ export default function RegisterPage() {
             {step === 1 && (
               <div>
                 <h3 className={`text-lg font-medium mb-2 ${isDark ? "text-white" : "text-gray-900"}`}>
-                  Account Information
+                  {t('auth.accountinformation')}
                 </h3>
                 <p className={`text-sm mb-4 ${isDark ? "text-gray-300" : "text-gray-600"}`}>
-                  Basic information to create your account.
+                  {t('auth.accountDetailsDescription')}
                 </p>
               </div>
             )}
@@ -387,10 +387,10 @@ export default function RegisterPage() {
             {step === 2 && (
               <div>
                 <h3 className={`text-lg font-medium mb-2 ${isDark ? "text-white" : "text-gray-900"}`}>
-                  Personal Information
+                  {t('auth.personalinformation')}
                 </h3>
                 <p className={`text-sm mb-4 ${isDark ? "text-gray-300" : "text-gray-600"}`}>
-                  Additional information for shipping and communication.
+                  {t('auth.personalInfoDescription')}
                 </p>
               </div>
             )}
@@ -413,14 +413,14 @@ export default function RegisterPage() {
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className={`px-2 ${isDark ? "bg-gray-800" : "bg-white"} ${isDark ? "text-gray-300" : "text-gray-600"}`}>
-                  Or
+                  {t('auth.or')}
                 </span>
               </div>
             </div>
             <p className="mt-4 text-center text-sm">
-              Already have an account?{" "}
+              {t('auth.alreadyHaveAccount')}{" "}
               <Link href="/auth/login" className="text-indigo-600 hover:text-indigo-500">
-                Login
+                {t('auth.signIn')}
               </Link>
             </p>
           </div>

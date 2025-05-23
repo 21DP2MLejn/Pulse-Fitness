@@ -4,21 +4,23 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FiArrowRight, FiShoppingCart } from 'react-icons/fi';
 import { useTheme } from '@/context/ThemeContext';
+import { useLanguage } from '@/context/LanguageContext';
 import Link from 'next/link';
 import Image from 'next/image';
-// Import Swiper React components
+
 import { Swiper, SwiperSlide } from 'swiper/react';
-// Import Swiper styles
+
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import 'swiper/css/effect-coverflow';
-// Import required modules
+
 import { Autoplay, Pagination, Navigation, EffectCoverflow } from 'swiper/modules';
 import type { Product } from '@/types/product';
 
 export default function Home() {
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const isDark = theme === 'dark';
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -67,18 +69,17 @@ export default function Home() {
             className="max-w-2xl text-white"
           >
             <h1 className="text-5xl font-bold mb-6">
-              Transform Your Body, Transform Your Life
+              {t('header.quote')}
             </h1>
             <p className="text-xl mb-8">
-              Join Pulse Fitness and start your journey to a healthier, stronger you.
-              Expert trainers, state-of-the-art equipment, and a supportive community await.
+              {t('getstarted.quote')}
             </p>
             <button className={`${
               isDark 
                 ? 'bg-purple-600 hover:bg-purple-700' 
                 : 'bg-white text-purple-600 hover:bg-gray-100'
             } px-8 py-3 rounded-md transition-colors flex items-center space-x-2`}>
-              <span>Get Started</span>
+              <span>{t('getstarted.button')}</span>
               <FiArrowRight />
             </button>
           </motion.div>
@@ -96,10 +97,10 @@ export default function Home() {
             className="mb-12 text-center"
           >
             <h2 className={`text-3xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              Featured Products
+              {t('featuredproducts.title')}
             </h2>
             <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} max-w-2xl mx-auto`}>
-              Discover our premium selection of fitness equipment and apparel
+              {t('featuredproucts.desc')}
             </p>
           </motion.div>
 
@@ -190,16 +191,16 @@ export default function Home() {
           >
             {[
               {
-                title: 'Expert Trainers',
-                description: 'Work with certified professionals who are passionate about helping you achieve your goals.'
+                title: t('trainers.card.title'),
+                description: t('trainers.card.desc')
               },
               {
-                title: 'Modern Equipment',
-                description: 'Access to state-of-the-art fitness equipment and facilities.'
+                title: t('equipment.card.title'),
+                description: t('equipment.card.desc')
               },
               {
-                title: 'Flexible Plans',
-                description: 'Choose from various membership options that suit your needs and schedule.'
+                title: t('subscriptions.card.title'),
+                description: t('subscriptions.card.desc')
               }
             ].map((feature, index) => (
               <div 
@@ -232,13 +233,13 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center"
           >
-            <h2 className="text-3xl font-bold mb-8">Ready to Start Your Journey?</h2>
+            <h2 className="text-3xl font-bold mb-8">{t('ready.to.start')}</h2>
             <button className={`${
               isDark 
                 ? 'bg-gray-900 hover:bg-gray-800' 
                 : 'bg-white text-purple-600 hover:bg-gray-100'
             } px-8 py-3 rounded-md transition-colors`}>
-              Join Now
+              {t('join.now')}
             </button>
           </motion.div>
         </div>

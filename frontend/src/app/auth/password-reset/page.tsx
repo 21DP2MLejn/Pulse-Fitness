@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useTheme } from "@/context/ThemeContext"
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function PasswordResetPage() {
   const [email, setEmail] = useState("")
@@ -12,7 +13,8 @@ export default function PasswordResetPage() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { theme } = useTheme()
-
+  const { t } = useLanguage()
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
@@ -59,7 +61,7 @@ export default function PasswordResetPage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium mb-1">
-              Email
+              {t('auth.email')}
             </label>
             <input
               id="email"
@@ -81,9 +83,9 @@ export default function PasswordResetPage() {
         </form>
 
         <p className="mt-6 text-center text-sm">
-          Remember your password?{" "}
+          {t('auth.rememberYourPassword')}{" "}
           <Link href="/auth/login" className="text-indigo-600 hover:text-indigo-500">
-            Sign in
+            {t('auth.signIn')}
           </Link>
         </p>
       </div>
