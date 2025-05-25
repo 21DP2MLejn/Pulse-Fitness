@@ -74,7 +74,7 @@ export default function LoginPage() {
       className={`min-h-screen flex items-center justify-center ${theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"}`}
     >
       <div className={`max-w-md w-full p-8 rounded-lg shadow-lg ${theme === "dark" ? "bg-gray-800" : "bg-white"}`}>
-        <h1 className="text-3xl font-bold text-center mb-6">Login to Pulse Fitness</h1>
+        <h1 className="text-3xl font-bold text-center mb-6">{t('login.to.pulsefitness')}</h1>
 
         {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
 

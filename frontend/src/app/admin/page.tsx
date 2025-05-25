@@ -3,7 +3,7 @@
 import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
-import { FiPackage, FiUsers, FiShoppingCart, FiSettings, FiClipboard } from 'react-icons/fi';
+import { FiPackage, FiUsers, FiShoppingCart, FiClipboard } from 'react-icons/fi';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -56,8 +56,7 @@ export default function AdminDashboard() {
         }
       });
       
-      // For now, we'll use a placeholder for orders
-      // In a real app, you would fetch this from the backend
+
       const ordersCount = 156;
       
       if (!productsResponse.ok || !usersResponse.ok) {
@@ -67,14 +66,13 @@ export default function AdminDashboard() {
       const productsData = await productsResponse.json();
       const usersData = await usersResponse.json();
       
-      // Get the actual counts
+
       const productsCount = productsData.data ? productsData.data.length : (Array.isArray(productsData) ? productsData.length : 0);
       const usersCount = usersData.data ? usersData.data.length : (Array.isArray(usersData) ? usersData.length : 0);
       
-      // For now, we'll use a placeholder for subscriptions count
-      // In a real app, you would fetch this from the backend
 
-      // Try to fetch subscriptions, but handle errors gracefully
+
+    
       let subscriptionsCount = 0;
       try {
         const subscriptionsResponse = await fetch('http://localhost:8000/api/admin/subscriptions', {
@@ -91,7 +89,7 @@ export default function AdminDashboard() {
         }
       } catch (subscriptionError) {
         console.warn('Could not fetch subscriptions:', subscriptionError);
-        // Continue with the dashboard - don't let subscription errors break the whole page
+        
       }
       
       setStats({
@@ -103,7 +101,7 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error('Failed to fetch stats:', error);
       toast.error('Failed to fetch dashboard statistics. Please try again later.');
-      // Set fallback stats in case of error
+      
       setStats({
         products: 0,
         users: 0,
@@ -225,23 +223,7 @@ export default function AdminDashboard() {
             </Link>
           </div>
           
-          <div className={`p-6 rounded-lg shadow-sm ${isDark ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
-            <div className="flex items-center mb-4">
-              <div className="p-2 rounded-full bg-purple-100 text-purple-500">
-                <FiSettings size={20} />
-              </div>
-              <h3 className="ml-3 text-xl font-semibold">{t('admin.settings')}</h3>
-            </div>
-            <p className={`mb-4 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-              {t('admin.manageSettings')}
-            </p>
-            <Link
-              href="/admin/settings"
-              className="inline-flex items-center text-indigo-600 hover:text-indigo-500"
-            >
-              {t('admin.viewSettings')} →
-            </Link>
-          </div>
+
 
           <div className={`p-6 rounded-lg shadow-sm ${isDark ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
             <div className="flex items-center mb-4">

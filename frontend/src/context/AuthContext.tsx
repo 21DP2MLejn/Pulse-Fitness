@@ -9,7 +9,7 @@ interface User {
   name: string;
   email: string;
   role: string;
-  [key: string]: any; // For any additional user properties
+  [key: string]: any; 
 }
 
 interface AuthContextType {
@@ -55,23 +55,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = (token: string, userData?: any) => {
     console.log("Setting token in cookie:", token);
-    // Set the token with proper options for better persistence
     Cookies.set("token", token, { 
-      expires: 7, // 7 days
+      expires: 7,
       path: '/',
       sameSite: 'lax'
     });
     
-    // Also store in localStorage for redundancy
     localStorage.setItem('authToken', token);
     
     if (userData) {
       console.log("Setting user data from login response:", userData);
       setUser(userData);
-      // Also store user data in localStorage for persistence
       localStorage.setItem('userData', JSON.stringify(userData));
     } else {
-      // If no user data provided, fetch it
+
       refreshUser();
     }
   };
@@ -89,7 +86,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     console.log("Token from cookie or localStorage:", token);
     
     if (!token) {
-      // Try to recover from localStorage if cookie is missing
       const storedUserData = localStorage.getItem('userData');
       if (storedUserData) {
         try {
@@ -129,29 +125,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const data = await response.json();
       console.log("User data received:", data);
       
-      // Check if the response has the expected structure
       if (data.status === true && data.user) {
         setUser(data.user);
-        // Update localStorage with latest user data
         localStorage.setItem('userData', JSON.stringify(data.user));
       } else if (data.status === false) {
         console.error("API returned error:", data.message);
         throw new Error(data.message || "Failed to fetch user data");
       } else {
-        // Handle legacy API response format
         setUser(data);
         localStorage.setItem('userData', JSON.stringify(data));
       }
     } catch (error) {
       console.error("Error refreshing user data:", error);
-      // Only clear on auth errors (401)
       if (error instanceof Error && error.message.includes("401")) {
         Cookies.remove("token", { path: '/' });
         localStorage.removeItem('authToken');
         localStorage.removeItem('userData');
         setUser(null);
       } else {
-        // For other errors, try to use cached user data
         const storedUserData = localStorage.getItem('userData');
         if (storedUserData) {
           try {
@@ -172,7 +163,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     console.log("AuthContext mounted, checking token");
     refreshUser();
     
-    // Add event listener for storage changes (for multi-tab support)
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'userData') {
         if (e.newValue) {

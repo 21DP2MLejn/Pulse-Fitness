@@ -82,7 +82,7 @@ export default function Navbar() {
                       : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >
-                  Training Schedule
+                  {t('nav.schedule')}
                 </Link>
               )}
               {isAuthenticated && (

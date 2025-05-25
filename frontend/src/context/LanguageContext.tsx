@@ -63,6 +63,7 @@ const translations: Translations = {
     'nav.logout': 'Logout',
     'nav.admin': 'Admin Panel',
     'nav.subscriptions': 'Subscriptions',
+    'nav.schedule': 'Schedule',
     
     // Auth
     'auth.login': 'Login',
@@ -106,6 +107,7 @@ const translations: Translations = {
     'auth.step' : 'Step',
     'auth.of2' : 'of 2',
     'auth.back' : 'Back',
+    'login.to.pulsefitness' : 'Login to Pulse Fitness',
 
      
     // Subscriptions
@@ -255,6 +257,7 @@ const translations: Translations = {
     'nav.logout': 'Iziet',
     'nav.admin': 'Administrācijas panelis',
     'nav.subscriptions': 'Abonomenti',
+    'nav.schedule': 'Nodarbības',
     
     // Auth
     'auth.login': 'Ieiet',
@@ -301,6 +304,7 @@ const translations: Translations = {
     'auth.of2' : 'no 2',
     'auth.back' : 'Atpakaļ',
     'auth.selectCountry' : 'Izvēlies valsti',
+    'login.to.pulsefitness' : 'Pieteikties Pulse Fitness',
 
     
     // Subscriptions
