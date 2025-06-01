@@ -32,6 +32,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/cart/{id}', [CartController::class, 'updateCartItem']);
     Route::delete('/cart/{id}', [CartController::class, 'removeFromCart']);
     
+    // Training sessions routes - MOVED TO PROTECTED SECTION
+    Route::get('/training-sessions', [TrainingSessionController::class, 'index']);
+    Route::get('/training-sessions/{id}', [TrainingSessionController::class, 'show']);
+    
     // User subscription routes - protected by auth
     Route::post('/subscriptions', [SubscriptionController::class, 'subscribe']);
     Route::get('/check-subscription/{id}', [SubscriptionController::class, 'checkSubscription']);
@@ -71,10 +75,6 @@ Route::get('/products/{product}', [ProductController::class, 'show']);
 Route::get('/subscriptions', [SubscriptionController::class, 'index']);
 Route::get('/subscriptions/{subscription}', [SubscriptionController::class, 'show']);
 
-// Public training sessions routes - for viewing available sessions
-Route::get('/training-sessions', [TrainingSessionController::class, 'index']);
-Route::get('/training-sessions/{id}', [TrainingSessionController::class, 'show']);
-
 // Protected training sessions and reservations routes
 Route::middleware('auth:sanctum')->group(function () {
     // User reservation routes
@@ -82,6 +82,57 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/reservations', [ReservationController::class, 'store']);
     Route::get('/reservations/{id}', [ReservationController::class, 'show']);
     Route::post('/reservations/{id}/cancel', [ReservationController::class, 'cancel']);
+    
+    // Debug endpoint to check reservation status
+    Route::get('/debug/session/{sessionId}/reservation-status', function($sessionId) {
+        $user = auth()->user();
+        $session = \App\Models\TrainingSession::find($sessionId);
+        
+        if (!$session) {
+            return response()->json(['error' => 'Session not found'], 404);
+        }
+        
+        // Get all reservations for this session
+        $allReservations = $session->reservations()->get();
+        $activeReservations = $session->activeReservations()->get();
+        $userReservations = $session->reservations()->where('user_id', $user->id)->get();
+        $userActiveReservations = $session->activeReservations()->where('user_id', $user->id)->get();
+        
+        return response()->json([
+            'session_id' => $sessionId,
+            'user_id' => $user->id,
+            'all_reservations_count' => $allReservations->count(),
+            'active_reservations_count' => $activeReservations->count(),
+            'user_all_reservations' => $userReservations,
+            'user_active_reservations' => $userActiveReservations,
+            'has_user_reservation_method' => $session->hasUserReservation($user->id),
+            'session_to_array' => $session->toArray(),
+        ]);
+    });
+    
+    // Direct delete endpoint for testing
+    Route::delete('/reservations/{id}', function($id) {
+        \Log::info('Direct deletion attempt for reservation ID: ' . $id);
+        try {
+            $reservation = \App\Models\Reservation::find($id);
+            if (!$reservation) {
+                \Log::error('Reservation not found with ID: ' . $id);
+                return response()->json(['message' => 'Reservation not found'], 404);
+            }
+            
+            \Log::info('Found reservation: ' . json_encode($reservation));
+            $deleted = $reservation->delete();
+            \Log::info('Deletion result: ' . ($deleted ? 'Success' : 'Failed'));
+            
+            return response()->json([
+                'message' => 'Reservation deleted successfully', 
+                'success' => true
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error deleting reservation: ' . $e->getMessage());
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
+    });
     
     // Admin training session management routes
     Route::post('/training-sessions', [TrainingSessionController::class, 'store']);

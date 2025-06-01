@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Database\Seeders\AdminSeeder;
+use Database\Seeders\SubscribedUserSeeder;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -40,9 +41,10 @@ class DatabaseSeeder extends Seeder
         // Create some additional users
         User::factory(5)->create();
         
-        // Call the admin seeder to create products
+        // Call the admin seeder to create products and subscribed user
         $this->call([
             AdminSeeder::class,
+            SubscribedUserSeeder::class,
         ]);
     }
 }

@@ -75,21 +75,24 @@ export default function SubscriptionsPage() {
           return res.json();
         })
         .then(userData => {
-          // If user has subscription data, fetch the details
-          if (userData.subscription_id) {
-            fetch(`http://localhost:8000/api/subscriptions/${userData.subscription_id}`, {
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              }
-            })
-              .then(res => res.json())
-              .then(subData => {
-                setUserSubscription(subData.data || subData);
-              })
-              .catch(err => {
-                console.error('Error fetching user subscription:', err);
-              });
+          console.log('User data received:', userData);
+          // Check if user has a subscription
+          if (userData.user && userData.user.subscription_id) {
+            console.log('User has subscription_id:', userData.user.subscription_id);
+            // Set the subscription data directly from the user data
+            // This avoids making an additional API call that might not exist
+            setUserSubscription({
+              id: userData.user.subscription_id,
+              name: userData.user.subscription_name || 'Your Subscription',
+              description: 'Your active fitness subscription',
+              price: 0, // We don't know the price from this endpoint
+              features: ['Access to all training sessions', 'Make reservations'],
+              status: 'active',
+              start_date: userData.user.subscription?.start_date,
+              end_date: userData.user.subscription?.end_date
+            });
+          } else {
+            console.log('User has no subscription');
           }
         })
         .catch(err => {
@@ -162,12 +165,20 @@ export default function SubscriptionsPage() {
                   <div className="p-6">
                     <h4 className="text-lg font-semibold mb-4">{t('subscriptions.features')}</h4>
                     <ul className="space-y-3">
-                      {subscription.features && subscription.features.map((feature, index) => (
-                        <li key={index} className="flex items-start">
+                      {subscription.features && Array.isArray(subscription.features) ? 
+                        subscription.features.map((feature, index) => (
+                          <li key={index} className="flex items-start">
+                            <FiCheck className="text-green-500 mt-1 mr-2 flex-shrink-0" />
+                            <span>{feature}</span>
+                          </li>
+                        ))
+                      : typeof subscription.features === 'string' ?
+                        <li className="flex items-start">
                           <FiCheck className="text-green-500 mt-1 mr-2 flex-shrink-0" />
-                          <span>{feature}</span>
+                          <span>{subscription.features}</span>
                         </li>
-                      ))}
+                      : null
+                      }
                     </ul>
 
                     <div className="mt-8">

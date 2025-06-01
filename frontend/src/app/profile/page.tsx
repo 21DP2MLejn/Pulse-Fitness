@@ -36,6 +36,7 @@ export default function ProfilePage() {
     address: "",
     postalcode: "",
     phone: "",
+    subscription_name: "",
   })
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
@@ -55,6 +56,7 @@ export default function ProfilePage() {
         address: user.address || "",
         postalcode: user.postalcode || "",
         phone: user.phone || "",
+        subscription_name: user.subscription_name || "",
       })
     }
   }, [isLoading, isAuthenticated, user, router])
@@ -77,17 +79,14 @@ export default function ProfilePage() {
     console.log("Save button clicked");
     setSaveError(null);
     
-    // Get token from auth context
     const token = getToken();
     console.log("Token from auth context:", token);
     
-    // Fallback to direct localStorage check
     if (!token) {
       const localToken = localStorage.getItem('authToken');
       console.log("Trying to get token directly from localStorage:", localToken);
       
       if (localToken) {
-        // Try to use the token from localStorage
         try {
           console.log("Sending profile update with localStorage token");
           const response = await fetch("http://localhost:8000/api/profile", {
@@ -113,6 +112,7 @@ export default function ProfilePage() {
                 address: data.user.address || "",
                 postalcode: data.user.postalcode || "",
                 phone: data.user.phone || "",
+                subscription_name: data.user.subscription_name || "",
               });
             }
             
@@ -151,12 +151,10 @@ export default function ProfilePage() {
         throw new Error(`Failed to update profile: ${response.status} ${errorText}`);
       }
 
-      // Update the user data in the context after successful save
       const data = await response.json();
       console.log("Profile update response data:", data);
       
       if (data.user) {
-        // Refresh the profile with the updated data
         setProfile({
           name: data.user.name || "",
           lastname: data.user.lastname || "",

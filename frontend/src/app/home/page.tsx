@@ -58,12 +58,12 @@ export default function HomePage() {
 
             <div className={`${theme === "dark" ? "bg-gray-800" : "bg-white"} p-6 rounded-lg shadow-lg`}>
               <h2 className="text-xl font-semibold mb-4">Group Workout</h2>
-              <p className="text-sm mb-4">Get started with a group workout</p>
+              <p className="text-sm mb-4">Make a reservation to a group workout</p>
               <button
-                onClick={() => router.push("/group-workouts")}
+                onClick={() => router.push("/reservations")}
                 className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition-colors"
               >
-                Register for a Workout
+                Make a reservation
               </button>
             </div>
 

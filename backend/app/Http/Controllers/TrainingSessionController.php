@@ -17,35 +17,40 @@ class TrainingSessionController extends Controller
         $startDate = $request->input('start_date', now()->startOfWeek()->format('Y-m-d'));
         $endDate = $request->input('end_date', now()->endOfWeek()->format('Y-m-d'));
         
-        $query = TrainingSession::query()
+        // Force fresh query without any caching
+        $trainingSessions = TrainingSession::query()
             ->whereBetween('start_time', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
-            ->orderBy('start_time');
+            ->orderBy('start_time')
+            ->get();
         
-        // Add filters if needed
-        if ($request->has('type')) {
-            $query->where('type', $request->type);
-        }
+        // Load reservations relationship after getting sessions to avoid N+1 queries
+        $trainingSessions->load(['reservations' => function($query) {
+            $query->where('cancelled', false);
+        }]);
         
-        if ($request->has('difficulty_level')) {
-            $query->where('difficulty_level', $request->difficulty_level);
-        }
+        \Log::info("[SESSIONS INDEX] Retrieved {$trainingSessions->count()} sessions for date range {$startDate} to {$endDate}");
         
-        $trainingSessions = $query->get();
+        // The toArray method will handle adding user-specific data
+        $response = $trainingSessions->toArray();
         
-        // Calculate remaining spaces and add to response
-        $trainingSessions->each(function ($session) use ($request) {
-            $session->remaining_spaces = $session->remaining_spaces;
-            $session->is_full = $session->is_full;
-            
-            // If user is authenticated, check if they have a reservation
-            if ($request->user()) {
-                $session->user_has_reservation = $session->hasUserReservation($request->user()->id);
-                $reservation = $session->getUserReservation($request->user()->id);
-                $session->user_reservation_id = $reservation ? $reservation->id : null;
-            }
-        });
+        // Add cache-busting headers
+        return response()->json($response)
+            ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
+    }
+
+    /**
+     * Display the specified training session.
+     */
+    public function show(Request $request, $id)
+    {
+        $trainingSession = TrainingSession::with(['reservations' => function($query) {
+            $query->where('cancelled', false);
+        }])->findOrFail($id);
         
-        return response()->json($trainingSessions);
+        return response()->json($trainingSession->toArray())
+            ->header('Cache-Control', 'no-cache, no-store, must-revalidate');
     }
 
     /**
@@ -77,27 +82,6 @@ class TrainingSessionController extends Controller
         $trainingSession = TrainingSession::create($request->all());
         
         return response()->json($trainingSession, 201);
-    }
-
-    /**
-     * Display the specified training session.
-     */
-    public function show(Request $request, $id)
-    {
-        $trainingSession = TrainingSession::findOrFail($id);
-        
-        // Add dynamic attributes
-        $trainingSession->remaining_spaces = $trainingSession->remaining_spaces;
-        $trainingSession->is_full = $trainingSession->is_full;
-        
-        // If user is authenticated, check if they have a reservation
-        if ($request->user()) {
-            $trainingSession->user_has_reservation = $trainingSession->hasUserReservation($request->user()->id);
-            $reservation = $trainingSession->getUserReservation($request->user()->id);
-            $trainingSession->user_reservation_id = $reservation ? $reservation->id : null;
-        }
-        
-        return response()->json($trainingSession);
     }
 
     /**
@@ -174,7 +158,7 @@ class TrainingSessionController extends Controller
         $trainingSession->update(['is_cancelled' => true]);
         
         // Get all active reservations
-        $reservations = $trainingSession->reservations()->where('cancelled', false)->get();
+        $reservations = $trainingSession->activeReservations()->get();
         
         // Cancel all reservations
         foreach ($reservations as $reservation) {

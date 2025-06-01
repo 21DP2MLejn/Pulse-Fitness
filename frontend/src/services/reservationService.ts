@@ -17,107 +17,69 @@ const handleResponse = async (response: Response) => {
   return response.json();
 };
 
-// Training Sessions API
-export const getTrainingSessions = async (startDate?: string, endDate?: string): Promise<TrainingSession[]> => {
-  const token = Cookies.get('token');
-  
-  if (!token) {
-    throw new Error('Authentication token is missing. Please log in again.');
+// Get auth token
+const getAuthToken = (): string => {
+  // Try to get token from cookies first
+  const cookieToken = Cookies.get('token');
+  if (cookieToken) {
+    return cookieToken;
   }
+  
+  // If not in cookies, try localStorage with the correct key
+  const localToken = localStorage.getItem('authToken'); // Changed from 'token' to 'authToken'
+  if (localToken) {
+    // If found in localStorage but not in cookie, restore the cookie
+    console.log("Token found in localStorage but not in cookie, restoring cookie");
+    Cookies.set("token", localToken, { 
+      expires: 7,
+      path: '/',
+      sameSite: 'lax'
+    });
+    return localToken;
+  }
+  
+  throw new Error('Authentication token is missing. Please log in again.');
+};
 
+// Training Sessions API
+export const getTrainingSessions = async (startDate?: string, endDate?: string, forceFresh?: boolean): Promise<TrainingSession[]> => {
+  const token = getAuthToken();
+  console.log('[getTrainingSessions] Using token:', token ? `${token.substring(0, 10)}...` : 'NO TOKEN');
+  
   let url = `${API_URL}/training-sessions`;
   if (startDate && endDate) {
     url += `?start_date=${startDate}&end_date=${endDate}`;
   }
+  
+  // Add cache-busting parameter to ensure fresh data
+  if (forceFresh) {
+    const cacheBuster = Date.now();
+    url += url.includes('?') ? `&_=${cacheBuster}` : `?_=${cacheBuster}`;
+  }
+  
+  console.log('[getTrainingSessions] Fetching from:', url);
+  
   const response = await fetch(url, {
     headers: {
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/json',
+      'Cache-Control': 'no-cache'
     },
     credentials: 'include',
   });
-  return handleResponse(response);
+  
+  console.log('[getTrainingSessions] Response status:', response.status);
+  
+  const data = await handleResponse(response);
+  console.log('[getTrainingSessions] Received sessions:', data.length, 'First session user_has_reservation:', data[0]?.user_has_reservation);
+  
+  return data;
 };
 
 export const getTrainingSession = async (id: number): Promise<TrainingSession> => {
-  const token = Cookies.get('token');
-  
-  if (!token) {
-    throw new Error('Authentication token is missing. Please log in again.');
-  }
+  const token = getAuthToken();
 
   const response = await fetch(`${API_URL}/training-sessions/${id}`, {
-    headers: {
-      'Authorization': `Bearer ${token}`
-    },
-    credentials: 'include',
-  });
-  return handleResponse(response);
-};
-
-export const createTrainingSession = async (data: Partial<TrainingSession>): Promise<TrainingSession> => {
-  const token = Cookies.get('token');
-  
-  if (!token) {
-    throw new Error('Authentication token is missing. Please log in again.');
-  }
-
-  const response = await fetch(`${API_URL}/training-sessions`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    },
-    body: JSON.stringify(data),
-    credentials: 'include',
-  });
-  return handleResponse(response);
-};
-
-export const updateTrainingSession = async (id: number, data: Partial<TrainingSession>): Promise<TrainingSession> => {
-  const token = Cookies.get('token');
-  
-  if (!token) {
-    throw new Error('Authentication token is missing. Please log in again.');
-  }
-
-  const response = await fetch(`${API_URL}/training-sessions/${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    },
-    body: JSON.stringify(data),
-    credentials: 'include',
-  });
-  return handleResponse(response);
-};
-
-export const deleteTrainingSession = async (id: number): Promise<void> => {
-  const token = Cookies.get('token');
-  
-  if (!token) {
-    throw new Error('Authentication token is missing. Please log in again.');
-  }
-
-  const response = await fetch(`${API_URL}/training-sessions/${id}`, {
-    method: 'DELETE',
-    headers: {
-      'Authorization': `Bearer ${token}`
-    },
-    credentials: 'include',
-  });
-  return handleResponse(response);
-};
-
-export const cancelTrainingSession = async (id: number): Promise<any> => {
-  const token = Cookies.get('token');
-  
-  if (!token) {
-    throw new Error('Authentication token is missing. Please log in again.');
-  }
-
-  const response = await fetch(`${API_URL}/training-sessions/${id}/cancel`, {
-    method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`
     },
@@ -128,11 +90,7 @@ export const cancelTrainingSession = async (id: number): Promise<any> => {
 
 // Reservations API
 export const getUserReservations = async (status?: string): Promise<Reservation[]> => {
-  const token = Cookies.get('token');
-  
-  if (!token) {
-    throw new Error('Authentication token is missing. Please log in again.');
-  }
+  const token = getAuthToken();
 
   let url = `${API_URL}/reservations`;
   if (status) {
@@ -147,30 +105,46 @@ export const getUserReservations = async (status?: string): Promise<Reservation[
   return handleResponse(response);
 };
 
-export const getReservation = async (id: number): Promise<Reservation> => {
-  const token = Cookies.get('token');
-  
-  if (!token) {
-    throw new Error('Authentication token is missing. Please log in again.');
-  }
+export const createReservation = async (data: ReservationFormData): Promise<any> => {
+  const token = getAuthToken();
 
-  const response = await fetch(`${API_URL}/reservations/${id}`, {
+  const response = await fetch(`${API_URL}/reservations`, {
+    method: 'POST',
     headers: {
+      'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     },
+    body: JSON.stringify(data),
     credentials: 'include',
   });
+  
   return handleResponse(response);
 };
 
-export const createReservation = async (data: ReservationFormData): Promise<any> => {
-  const token = Cookies.get('token');
-  
-  if (!token) {
-    throw new Error('Authentication token is missing. Please log in again.');
-  }
+export const cancelReservation = async (id: number, options?: { reason?: string }): Promise<any> => {
+  const token = getAuthToken();
 
-  const response = await fetch(`${API_URL}/reservations`, {
+  const response = await fetch(`${API_URL}/reservations/${id}/cancel`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify({
+      reason: options?.reason || ''
+    }),
+    credentials: 'include',
+  });
+  
+  return handleResponse(response);
+};
+
+// Admin functions
+export const createTrainingSession = async (data: Partial<TrainingSession>): Promise<TrainingSession> => {
+  const token = getAuthToken();
+
+  const response = await fetch(`${API_URL}/training-sessions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -182,33 +156,49 @@ export const createReservation = async (data: ReservationFormData): Promise<any>
   return handleResponse(response);
 };
 
-export const cancelReservation = async (id: number, data?: CancellationFormData): Promise<any> => {
-  const token = Cookies.get('token');
-  
-  if (!token) {
-    throw new Error('Authentication token is missing. Please log in again.');
-  }
+export const updateTrainingSession = async (id: number, data: Partial<TrainingSession>): Promise<TrainingSession> => {
+  const token = getAuthToken();
 
-  const response = await fetch(`${API_URL}/reservations/${id}/cancel`, {
-    method: 'POST',
-    headers: data ? {
+  const response = await fetch(`${API_URL}/training-sessions/${id}`, {
+    method: 'PUT',
+    headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
-    } : {
+    },
+    body: JSON.stringify(data),
+    credentials: 'include',
+  });
+  return handleResponse(response);
+};
+
+export const deleteTrainingSession = async (id: number): Promise<void> => {
+  const token = getAuthToken();
+
+  const response = await fetch(`${API_URL}/training-sessions/${id}`, {
+    method: 'DELETE',
+    headers: {
       'Authorization': `Bearer ${token}`
     },
-    body: data ? JSON.stringify(data) : undefined,
+    credentials: 'include',
+  });
+  return handleResponse(response);
+};
+
+export const cancelTrainingSession = async (id: number): Promise<any> => {
+  const token = getAuthToken();
+
+  const response = await fetch(`${API_URL}/training-sessions/${id}/cancel`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    },
     credentials: 'include',
   });
   return handleResponse(response);
 };
 
 export const getSessionReservations = async (sessionId: number): Promise<any> => {
-  const token = Cookies.get('token');
-  
-  if (!token) {
-    throw new Error('Authentication token is missing. Please log in again.');
-  }
+  const token = getAuthToken();
 
   const response = await fetch(`${API_URL}/training-sessions/${sessionId}/reservations`, {
     headers: {

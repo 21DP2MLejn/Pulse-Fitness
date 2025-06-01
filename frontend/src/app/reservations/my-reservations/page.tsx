@@ -102,7 +102,9 @@ export default function MyReservationsPage() {
     setError(null);
     
     try {
-      await cancelReservation(selectedReservation.id, { reason: cancelReason });
+      // Call the cancellation API with the reason
+      const result = await cancelReservation(selectedReservation.id, { reason: cancelReason });
+      console.log('Cancellation result:', result);
       
       // Show success message
       setSuccessMessage('Reservation cancelled successfully.');
@@ -110,7 +112,25 @@ export default function MyReservationsPage() {
       // Close modal
       setShowCancelModal(false);
       
-      // Refresh reservations
+      // Use the returned reservation if available, otherwise construct it
+      const updatedReservation: Reservation = result.reservation || {
+        ...selectedReservation,
+        cancelled: true,
+        cancelled_at: new Date().toISOString(),
+        cancellation_reason: cancelReason || null
+      };
+      
+      // Log the state update
+      console.log('Moving reservation from active to past:', updatedReservation);
+      
+      // Move the cancelled reservation from active to past
+      setActiveReservations(prev => 
+        prev.filter(res => res.id !== selectedReservation.id)
+      );
+      
+      setPastReservations(prev => [updatedReservation, ...prev]);
+      
+      // Then refresh all reservations from server to ensure UI is up to date
       await fetchReservations();
     } catch (err: any) {
       console.error('Error cancelling reservation:', err);

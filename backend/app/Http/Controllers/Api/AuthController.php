@@ -167,6 +167,17 @@ class AuthController extends Controller
                 ], 401);
             }
             
+       
+            $user->load('subscription');
+            
+            if ($user->subscription) {
+                $user->subscription_name = $user->subscription->subscription_name;
+                $user->has_subscription = true;
+            } else {
+                // Explicitly set to false for frontend compatibility
+                $user->has_subscription = !empty($user->subscription_id);
+            }
+
             return response()->json([
                 'status' => true,
                 'user' => $user
@@ -219,7 +230,23 @@ class AuthController extends Controller
             $user->address = $request->address;
             $user->postalcode = $request->postalcode;
             $user->phone = $request->phone;
+            // Preserve subscription_name if it exists
+            if ($request->has('subscription_name')) {
+                $user->subscription_name = $request->subscription_name;
+            }
             $user->save();
+            
+            // Load the subscription relationship
+            $user->load('subscription');
+            
+            // If user has a subscription, ensure the subscription_name is set
+            if ($user->subscription) {
+                $user->subscription_name = $user->subscription->subscription_name;
+                $user->has_subscription = true;
+            } else {
+                // Explicitly set to false for frontend compatibility
+                $user->has_subscription = !empty($user->subscription_id);
+            }
 
             \Log::info('Profile updated successfully', ['user_id' => $user->id]);
 
