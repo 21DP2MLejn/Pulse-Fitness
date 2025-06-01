@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\SubscriptionController;
 use App\Http\Controllers\TrainingSessionController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\OrderController;
 
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
@@ -140,6 +141,22 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/training-sessions/{id}', [TrainingSessionController::class, 'destroy']);
     Route::post('/training-sessions/{id}/cancel', [TrainingSessionController::class, 'cancel']);
     Route::get('/training-sessions/{sessionId}/reservations', [ReservationController::class, 'getSessionReservations']);
+});
+
+// Order routes - public route for creating orders (guest checkout)
+Route::post('/orders', [OrderController::class, 'store']);
+Route::get('/orders/{id}', [OrderController::class, 'show']);
+Route::post('/orders/email', [OrderController::class, 'getByEmail']);
+
+// Protected order routes - for authenticated users
+Route::middleware('auth:sanctum')->group(function () {
+    // User order routes
+    Route::get('/orders', [OrderController::class, 'index']);
+    
+    // Admin order routes
+    Route::middleware('ability:admin')->group(function () {
+        Route::put('/orders/{id}/status', [OrderController::class, 'updateStatus']);
+    });
 });
 
 // Route to serve product images

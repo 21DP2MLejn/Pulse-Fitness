@@ -14,13 +14,14 @@ return new class extends Migration
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->constrained()->onDelete('cascade');
-            $table->foreignId('product_id')->nullable()->constrained()->nullOnDelete();
-            $table->string('name');
+            $table->unsignedBigInteger('product_id');
+            $table->string('product_name');
+            $table->decimal('product_price', 10, 2);
             $table->integer('quantity');
-            $table->decimal('price', 10, 2);
-            $table->boolean('is_subscription')->default(false);
-            $table->foreignId('subscription_id')->nullable()->constrained()->nullOnDelete();
+            $table->decimal('total', 10, 2);
             $table->timestamps();
+            
+            $table->index(['order_id', 'product_id']);
         });
     }
 

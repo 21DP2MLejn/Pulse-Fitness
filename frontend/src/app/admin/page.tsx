@@ -42,21 +42,18 @@ export default function AdminDashboard() {
         return;
       }
       
-      // Fetch product count
       const productsResponse = await fetch('http://localhost:8000/api/get-products', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
       
-      // Fetch user stats
       const usersResponse = await fetch('http://localhost:8000/api/get-users', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
       
-
       const ordersCount = 156;
       
       if (!productsResponse.ok || !usersResponse.ok) {

@@ -6,6 +6,7 @@ import { useCart } from '@/context/CartContext';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FiMinus, FiPlus, FiTrash2, FiArrowLeft, FiShoppingBag } from 'react-icons/fi';
+import router from 'next/router';
 
 export default function CartPage() {
   const { theme } = useTheme();
@@ -168,13 +169,14 @@ export default function CartPage() {
                   <span>${total.toFixed(2)}</span>
                 </div>
               </div>
+              <Link href="/checkout" className="text-white">
               <button 
                 className="w-full py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors mt-6 flex items-center justify-center gap-2"
-                onClick={() => alert('Checkout functionality coming soon!')}
               >
                 <FiShoppingBag size={18} />
                 Proceed to Checkout
               </button>
+              </Link>
               <Link
                 href="/products"
                 className="block text-center text-indigo-600 hover:text-indigo-500 transition-colors mt-4"

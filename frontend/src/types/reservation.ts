@@ -13,16 +13,13 @@ export interface TrainingSession {
   created_at: string;
   updated_at: string;
   
-  // Calculated properties from backend
   remaining_spaces?: number;
   is_full?: boolean;
   user_has_reservation?: boolean;
   user_reservation_id?: number | null;
-  // Alternative property name that might be used by some endpoints
   reservation_id?: number | null;
   active_reservations_count?: number;
   
-  // Full reservation object that might be included
   user_reservation?: Reservation | Record<string, any> | null;
 }
 
@@ -38,7 +35,7 @@ export interface Reservation {
   created_at: string;
   updated_at: string;
   
-  // Related objects
+
   trainingSession?: TrainingSession;
   user?: {
     id: number;

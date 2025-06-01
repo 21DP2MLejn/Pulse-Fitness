@@ -9,7 +9,7 @@ use App\Models\User;
 use App\Models\Subscription;
 use Illuminate\Support\Facades\Hash;
 
-// Create a test user
+
 $user = User::where('email', 'testuser@example.com')->first();
 
 if (!$user) {
@@ -26,7 +26,7 @@ if (!$user) {
     echo "Using existing user with ID: " . $user->id . "\n";
 }
 
-// Create a subscription for the user
+
 $subscription = Subscription::where('user_id', $user->id)->first();
 
 if (!$subscription) {
@@ -47,7 +47,7 @@ if (!$subscription) {
     echo "User already has subscription with ID: " . $subscription->id . "\n";
 }
 
-// Update the user with the subscription ID
+
 $user->subscription_id = $subscription->id;
 $user->save();
 
