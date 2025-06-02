@@ -8,13 +8,14 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     zip \
-    unzip
+    unzip \
+    libzip-dev
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
 # Install PostgreSQL driver
 RUN apt-get update && apt-get install -y libpq-dev \
@@ -27,14 +28,20 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www
 
+# Copy composer files first for better caching
+COPY composer.json composer.lock ./
+
+# Set Composer memory limit
+ENV COMPOSER_MEMORY_LIMIT=-1
+
+# Install dependencies (without running scripts or autoloader)
+RUN composer install --no-scripts --no-autoloader --no-interaction
+
 # Copy existing application directory contents
 COPY . /var/www
 
-# Install dependencies
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
-
-# Generate key
-RUN php artisan key:generate
+# Generate optimized autoloader
+RUN composer dump-autoload --optimize
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www
