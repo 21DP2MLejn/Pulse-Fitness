@@ -12,17 +12,17 @@ services:
       - key: APP_KEY
         generateValue: true
       - key: DB_CONNECTION
-        value: mysql
+        value: pgsql
       - key: DB_HOST
-        value: ${DB_HOST}
+        value: ${pulse_fitness_db.HOSTNAME}
       - key: DB_PORT
-        value: ${DB_PORT}
+        value: ${pulse_fitness_db.PORT}
       - key: DB_DATABASE
-        value: ${DB_DATABASE}
+        value: ${pulse_fitness_db.DATABASE}
       - key: DB_USERNAME
-        value: ${DB_USERNAME}
+        value: ${pulse_fitness_db.USERNAME}
       - key: DB_PASSWORD
-        value: ${DB_PASSWORD}
+        value: ${pulse_fitness_db.PASSWORD}
       - key: LOG_CHANNEL
         value: errorlog
       - key: SANCTUM_STATEFUL_DOMAINS
@@ -31,3 +31,9 @@ services:
         value: pulse-fitness-backend.onrender.com
       - key: CORS_ALLOWED_ORIGINS
         value: https://pulse-fitness.vercel.app
+
+databases:
+  - name: pulse_fitness_db
+    databaseName: pulse_fitness
+    user: pulse_fitness_user
+    plan: free
