@@ -73,7 +73,6 @@
         
         <p>If this was a mistake or if you'd like to make a new reservation, you can do so through your account on our website.</p>
         
-        <a href="{{ url('/reservations/new') }}" class="button">Make New Reservation</a>
         
         <p>If you have any questions, please don't hesitate to contact us.</p>
         

@@ -72,7 +72,6 @@
         
         <p>If you need to cancel your reservation, you can do so through your account on our website.</p>
         
-        <a href="{{ url('/reservations') }}" class="button">View Your Reservations</a>
         
         <p>If you have any questions, please don't hesitate to contact us.</p>
         
