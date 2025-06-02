@@ -1,0 +1,11 @@
+[phases.setup]
+aptPkgs = ["php8.1-cli", "php8.1-common", "php8.1-mysql", "php8.1-zip", "php8.1-gd", "php8.1-mbstring", "php8.1-curl", "php8.1-xml", "php8.1-bcmath"]
+
+[phases.install]
+cmds = ["composer install --no-interaction --prefer-dist"]
+
+[phases.build]
+cmds = ["php artisan key:generate --force", "php artisan config:cache", "php artisan route:cache"]
+
+[start]
+cmd = "php artisan serve --host=0.0.0.0 --port=$PORT"
