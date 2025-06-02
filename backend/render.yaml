@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: pulse-fitness-backend
+    env: php
+    buildCommand: composer install --no-interaction --prefer-dist && php artisan migrate --force
+    startCommand: php artisan serve --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_KEY
+        generateValue: true
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        value: ${DB_HOST}
+      - key: DB_PORT
+        value: ${DB_PORT}
+      - key: DB_DATABASE
+        value: ${DB_DATABASE}
+      - key: DB_USERNAME
+        value: ${DB_USERNAME}
+      - key: DB_PASSWORD
+        value: ${DB_PASSWORD}
+      - key: LOG_CHANNEL
+        value: errorlog
+      - key: SANCTUM_STATEFUL_DOMAINS
+        value: pulse-fitness.vercel.app
+      - key: SESSION_DOMAIN
+        value: pulse-fitness-backend.onrender.com
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://pulse-fitness.vercel.app
