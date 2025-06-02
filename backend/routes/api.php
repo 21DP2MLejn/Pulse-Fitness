@@ -7,7 +7,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\SubscriptionController;
+use App\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TrainingSessionController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\OrderController;
@@ -75,6 +76,18 @@ Route::get('/products/{product}', [ProductController::class, 'show']);
 // Public subscription routes - for viewing available subscription plans
 Route::get('/subscriptions', [SubscriptionController::class, 'index']);
 Route::get('/subscriptions/{subscription}', [SubscriptionController::class, 'show']);
+
+// Protected subscription routes (require authentication)
+Route::middleware('auth:sanctum')->group(function () {
+    // Subscribe to a plan
+    Route::post('/subscriptions', [SubscriptionController::class, 'subscribe']);
+    
+    // Check if user has a specific subscription
+    Route::get('/subscriptions/{id}/check', [SubscriptionController::class, 'checkSubscription']);
+    
+    // Get user's subscriptions
+    Route::get('/user/subscriptions', [SubscriptionController::class, 'getUserSubscriptions']);
+});
 
 // Protected training sessions and reservations routes
 Route::middleware('auth:sanctum')->group(function () {

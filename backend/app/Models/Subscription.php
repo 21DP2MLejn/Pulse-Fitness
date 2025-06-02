@@ -38,6 +38,6 @@ class Subscription extends Model
 
     public function plan()
     {
-        return $this->belongsTo(Plan::class);
+        return $this->belongsTo(SubscriptionPlan::class, 'subscription_id');
     }
 }

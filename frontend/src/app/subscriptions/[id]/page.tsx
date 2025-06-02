@@ -14,7 +14,7 @@ interface Subscription {
   name: string;
   description: string;
   price: number;
-  features: string[];
+  features: string[] | string;
   specifications?: Record<string, string>;
   subscription_name?: string;
   start_date?: string;
@@ -111,48 +111,8 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
     }
 
     setSubscribing(true);
-    try {
-      // Get user data
-      const userResponse = await fetch('http://localhost:8000/api/user', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (!userResponse.ok) {
-        throw new Error('Failed to fetch user data');
-      }
-      
-      const userData = await userResponse.json();
-      
-      // Create subscription
-      const response = await fetch('http://localhost:8000/api/subscriptions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          subscription_id: subscription.id,
-          start_date: new Date().toISOString().split('T')[0],
-          status: 'active'
-        })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Failed to subscribe');
-      }
-
-      toast.success(t('subscriptions.subscribeSuccess'));
-      router.push('/profile');
-    } catch (err: any) {
-      console.error('Error subscribing:', err);
-      toast.error(err.message || t('subscriptions.subscribeError'));
-    } finally {
-      setSubscribing(false);
-    }
+    // Redirect to checkout page for this subscription using dynamic route
+    router.push(`/subscriptions/checkout/${subscription.id}`);
   };
 
   if (loading) {
@@ -166,24 +126,26 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
     );
   }
 
-  if (error || !subscription) {
+  if (error) {
     return (
       <div className={`min-h-screen ${isDark ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
         <div className="container mx-auto px-4 py-16">
-          <div className={`p-6 rounded-lg ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-md text-center`}>
-            <h2 className="text-2xl font-bold mb-4 text-red-500">{t('error')}</h2>
-            <p className="mb-6">{error || t('subscriptions.notFound')}</p>
+          <div className={`p-6 rounded-lg ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-md text-center max-w-md mx-auto`}>
+            <div className="text-red-500 mb-4 text-xl">⚠️ {error}</div>
             <Link 
-              href="/subscriptions" 
-              className={`px-4 py-2 rounded-lg ${isDark ? 'bg-purple-600 hover:bg-purple-700' : 'bg-purple-500 hover:bg-purple-600'} text-white transition-colors inline-flex items-center`}
+              href="/subscriptions"
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg ${isDark ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'} transition-colors`}
             >
-              <FiArrowLeft className="mr-2" />
-              {t('subscriptions.backToPlans')}
+              <FiArrowLeft /> {t('back')}
             </Link>
           </div>
         </div>
       </div>
     );
+  }
+
+  if (!subscription) {
+    return null;
   }
 
   const isCurrentPlan = userSubscription && userSubscription.id === subscription.id;
@@ -212,32 +174,46 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
               
               <h2 className="text-xl font-semibold mb-4">{t('subscriptions.features')}</h2>
               <ul className="space-y-4">
-                {subscription.features && subscription.features.map((feature, index) => (
-                  <li key={index} className="flex items-start">
+                {subscription.features && Array.isArray(subscription.features) ? 
+                  subscription.features.map((feature, index) => (
+                    <li key={index} className="flex items-start">
+                      <FiCheck className="text-green-500 mt-1 mr-3 flex-shrink-0" size={20} />
+                      <span>{feature}</span>
+                    </li>
+                  ))
+                : typeof subscription.features === 'string' ?
+                  <li className="flex items-start">
                     <FiCheck className="text-green-500 mt-1 mr-3 flex-shrink-0" size={20} />
-                    <span>{feature}</span>
+                    <span>{subscription.features}</span>
                   </li>
-                ))}
+                : null
+                }
               </ul>
             </div>
 
-            {subscription.specifications && Object.keys(subscription.specifications).length > 0 && (
+            {subscription.specifications && (
               <div className="mt-8">
                 <h2 className="text-xl font-semibold mb-4">{t('subscriptions.specifications')}</h2>
                 <div className={`rounded-lg overflow-hidden border ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
-                  {Object.entries(subscription.specifications).map(([key, value], index) => (
-                    <div 
-                      key={key} 
-                      className={`flex ${index % 2 === 0 ? isDark ? 'bg-gray-700' : 'bg-gray-50' : ''}`}
-                    >
-                      <div className={`w-1/3 p-3 ${isDark ? 'border-r border-gray-700' : 'border-r border-gray-200'} font-medium`}>
-                        {key}
+                  {typeof subscription.specifications === 'object' && !Array.isArray(subscription.specifications) ? (
+                    Object.entries(subscription.specifications).map(([key, value], index) => (
+                      <div 
+                        key={key} 
+                        className={`flex ${index % 2 === 0 ? isDark ? 'bg-gray-700' : 'bg-gray-50' : ''}`}
+                      >
+                        <div className={`w-1/3 p-3 ${isDark ? 'border-r border-gray-700' : 'border-r border-gray-200'} font-medium`}>
+                          {key}
+                        </div>
+                        <div className="w-2/3 p-3">
+                          {value}
+                        </div>
                       </div>
-                      <div className="w-2/3 p-3">
-                        {value}
-                      </div>
+                    ))
+                  ) : (
+                    <div className="p-3">
+                      <div className="opacity-80">No detailed specifications available</div>
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
             )}

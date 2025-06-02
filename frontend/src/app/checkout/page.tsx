@@ -18,7 +18,25 @@ export default function CheckoutPage() {
   
   const [loading, setLoading] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
-  const [formData, setFormData] = useState({
+  // Define types for form data and errors
+  interface FormData {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    address: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+    notes: string;
+  }
+
+  interface FormErrors {
+    [key: string]: string;
+  }
+
+  const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
     email: '',
@@ -30,7 +48,7 @@ export default function CheckoutPage() {
     country: '',
     notes: ''
   });
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<FormErrors>({});
 
   const subtotal = getCartTotal();
   const shipping = subtotal > 0 ? 10 : 0;
@@ -43,7 +61,7 @@ export default function CheckoutPage() {
     }
   }, [items, router, orderPlaced]);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -93,7 +111,7 @@ export default function CheckoutPage() {
     }
   }, [isAuthenticated, user]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     
     if (!validateForm()) return;

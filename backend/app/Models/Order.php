@@ -38,9 +38,7 @@ class Order extends Model
         'updated_at' => 'datetime',
     ];
 
-    /**
-     * Get the items for the order.
-     */
+
     public function items()
     {
         return $this->hasMany(OrderItem::class);
