@@ -1,0 +1,41 @@
+name: pulse-fitness
+regions:
+- ams
+services:
+- name: backend
+  github:
+    branch: main
+    deploy_on_push: true
+    repo: YOUR_GITHUB_USERNAME/Pulse-Fitness
+  source_dir: /backend
+  envs:
+  - key: APP_ENV
+    value: production
+  - key: APP_DEBUG
+    value: "false"
+  - key: APP_KEY
+    value: "" # You'll need to set this in the DigitalOcean dashboard
+  - key: DB_CONNECTION
+    value: mysql
+  - key: SANCTUM_STATEFUL_DOMAINS
+    value: ${APP_URL}
+  - key: SESSION_DOMAIN
+    value: ${APP_URL}
+  - key: CORS_ALLOWED_ORIGINS
+    value: ${APP_URL}
+  http_port: 8080
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  routes:
+  - path: /api
+  run_command: php artisan serve --host=0.0.0.0 --port=8080
+  build_command: composer install --no-interaction --prefer-dist && php artisan migrate --force
+
+databases:
+- name: pulse-fitness-db
+  engine: mysql
+  version: "8"
+  production: false
+  cluster_size: db-s-dev-database
+  db_user: pulse_fitness_user
+  db_name: pulse_fitness

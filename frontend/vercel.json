@@ -7,6 +7,6 @@
     }
   ],
   "env": {
-    "NEXT_PUBLIC_API_URL": "https://pulse-fitness-backend.onrender.com/api"
+    "NEXT_PUBLIC_API_URL": "https://pulse-fitness-backend-xxxxx.ondigitalocean.app/api"
   }
 }
