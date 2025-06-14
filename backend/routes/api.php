@@ -61,6 +61,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/products/{product}', [AdminProductController::class, 'show']);
         Route::put('/products/{product}', [AdminProductController::class, 'update']);
         Route::delete('/products/{product}', [AdminProductController::class, 'destroy']);
+        
+        // Orders management
+        Route::get('/orders', [App\Http\Controllers\Admin\OrderController::class, 'index']);
+        
+        // Subscription management
         Route::get('/subscriptions', [SubscriptionController::class, 'index']);
         Route::post('/subscriptions', [SubscriptionController::class, 'store']);
         Route::get('/subscriptions/{subscription}', [SubscriptionController::class, 'show']);

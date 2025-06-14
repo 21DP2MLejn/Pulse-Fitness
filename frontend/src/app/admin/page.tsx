@@ -182,7 +182,7 @@ export default function AdminDashboard() {
         </div>
         
         {/* Feature Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className={`p-6 rounded-lg shadow-sm ${isDark ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
             <div className="flex items-center mb-4">
               <div className="p-2 rounded-full bg-blue-100 text-blue-500">
@@ -201,7 +201,6 @@ export default function AdminDashboard() {
             </Link>
           </div>
           
-          
           <div className={`p-6 rounded-lg shadow-sm ${isDark ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
             <div className="flex items-center mb-4">
               <div className="p-2 rounded-full bg-green-100 text-green-500">
@@ -219,8 +218,24 @@ export default function AdminDashboard() {
               {t('admin.viewUsers')} →
             </Link>
           </div>
-          
 
+          <div className={`p-6 rounded-lg shadow-sm ${isDark ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
+            <div className="flex items-center mb-4">
+              <div className="p-2 rounded-full bg-purple-100 text-purple-500">
+                <FiShoppingCart size={20} />
+              </div>
+              <h3 className="ml-3 text-xl font-semibold">{t('admin.orders')}</h3>
+            </div>
+            <p className={`mb-4 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+              {t('admin.manageOrders')}
+            </p>
+            <Link
+              href="/admin/orders"
+              className="inline-flex items-center text-indigo-600 hover:text-indigo-500"
+            >
+              {t('admin.viewOrders')} →
+            </Link>
+          </div>
 
           <div className={`p-6 rounded-lg shadow-sm ${isDark ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
             <div className="flex items-center mb-4">
