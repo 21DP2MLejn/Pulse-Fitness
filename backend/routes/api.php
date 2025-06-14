@@ -34,6 +34,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/cart/{id}', [CartController::class, 'updateCartItem']);
     Route::delete('/cart/{id}', [CartController::class, 'removeFromCart']);
     
+    // Order routes
+    Route::post('/orders', [OrderController::class, 'store']);
+    Route::get('/orders', [OrderController::class, 'index']);
+    Route::get('/orders/{id}', [OrderController::class, 'show']);
+    
     // Training sessions routes - MOVED TO PROTECTED SECTION
     Route::get('/training-sessions', [TrainingSessionController::class, 'index']);
     Route::get('/training-sessions/{id}', [TrainingSessionController::class, 'show']);
@@ -161,9 +166,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/training-sessions/{sessionId}/reservations', [ReservationController::class, 'getSessionReservations']);
 });
 
-// Order routes - public route for creating orders (guest checkout)
-Route::post('/orders', [OrderController::class, 'store']);
-Route::get('/orders/{id}', [OrderController::class, 'show']);
+// Guest order lookup by email
 Route::post('/orders/email', [OrderController::class, 'getByEmail']);
 
 // Protected order routes - for authenticated users

@@ -70,10 +70,19 @@ class OrderController extends Controller
             // Generate order number
             $orderNumber = 'ORD-' . strtoupper(Str::random(8));
 
+            // Get the authenticated user ID
+            $userId = null;
+            if ($request->bearerToken()) {
+                $user = Auth::guard('sanctum')->user();
+                if ($user) {
+                    $userId = $user->id;
+                }
+            }
+
             // Create the order
             $order = Order::create([
                 'order_number' => $orderNumber,
-                'user_id' => Auth::check() ? Auth::id() : null,
+                'user_id' => $userId,
                 'customer_first_name' => $request->customer['firstName'],
                 'customer_last_name' => $request->customer['lastName'],
                 'customer_email' => $request->customer['email'],

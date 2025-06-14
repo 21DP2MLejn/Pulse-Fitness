@@ -108,19 +108,19 @@ export default function AdminOrdersPage() {
             <thead className={isDark ? 'bg-gray-700' : 'bg-gray-50'}>
               <tr>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                  Order ID
+                  {t('admin.orderId')}
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                  Customer
+                  {t('admin.customer')}
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                  Amount
+                  {t('admin.amount')}
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                  Status
+                  {t('admin.status')}
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                  Date
+                  {t('admin.date')}
                 </th>
               </tr>
             </thead>
@@ -160,7 +160,7 @@ export default function AdminOrdersPage() {
                         ? 'bg-yellow-100 text-yellow-800'
                         : 'bg-gray-100 text-gray-800'
                     }`}>
-                      {order.status}
+                      {t(`admin.orderStatus.${order.status}`)}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">

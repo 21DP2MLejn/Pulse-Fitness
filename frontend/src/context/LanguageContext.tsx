@@ -236,13 +236,27 @@ const translations: Translations = {
     'admin.description': 'Subscription Description',
     'admin.price': 'Subscription Price',
     'admin.features': 'Subscription Features',
-    // 'admin.startDate': 'Subscription Start Date',
-    // 'admin.status': 'Subscription Status',
     'admin.save': 'Save',
     'admin.cancel': 'Cancel',
     'admin.addFeature': 'Add Feature',
     'admin.saveSubscription': 'Save Subscription',
     'admin.fillSubscriptionDetails': 'Fill Subscription Details',
+    
+    // Orders translations
+    'admin.manageOrders': 'View and manage all customer orders, track order status and fulfillment.',
+    'admin.viewOrders': 'View Orders',
+    'admin.searchOrders': 'Search orders by customer name, email or order ID...',
+    'admin.noOrdersFound': 'No orders found matching your search.',
+    'admin.orderId': 'Order ID',
+    'admin.customer': 'Customer',
+    'admin.amount': 'Amount',
+    'admin.status': 'Status',
+    'admin.date': 'Date',
+    'admin.orderStatus.pending': 'Pending',
+    'admin.orderStatus.processing': 'Processing',
+    'admin.orderStatus.shipped': 'Shipped',
+    'admin.orderStatus.delivered': 'Delivered',
+    'admin.orderStatus.cancelled': 'Cancelled',
     
     // Language
     'language.select': 'Select Language',
@@ -484,9 +498,21 @@ const translations: Translations = {
     'admin.subscriptionPrice': 'Abonomenta cena',
     'admin.subscriptionDescription': 'Abonomenta apraksts',
   
-
-    
-    
+    // Orders translations
+    'admin.manageOrders': 'Skatiet un pārvaldiet visas klientu pasūtījumu, izsekojiet pasūtījumu statusu un izpildi.',
+    'admin.viewOrders': 'Skatīt Pasūtījumus',
+    'admin.searchOrders': 'Meklēt pasūtījumus pēc klienta vārda, e-pasta vai pasūtījuma ID...',
+    'admin.noOrdersFound': 'Nav atrasts neviens pasūtījums, kas atbilst jūsu meklējumam.',
+    'admin.orderId': 'Pasūtījuma ID',
+    'admin.customer': 'Klients',
+    'admin.amount': 'Summa',
+    'admin.status': 'Statuss',
+    'admin.date': 'Datums',
+    'admin.orderStatus.pending': 'Gaida',
+    'admin.orderStatus.processing': 'Apstrādā',
+    'admin.orderStatus.shipped': 'Nosūtīts',
+    'admin.orderStatus.delivered': 'Piegādāts',
+    'admin.orderStatus.cancelled': 'Atcelts',
     
     // Language
     'language.select': 'Izvēlies valodu',

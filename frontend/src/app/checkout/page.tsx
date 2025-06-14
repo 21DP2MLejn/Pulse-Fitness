@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { FiArrowLeft, FiMail, FiPhone, FiMapPin, FiUser, FiShoppingBag, FiCheck } from 'react-icons/fi';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { toast } from 'react-hot-toast';
 
 export default function CheckoutPage() {
   const { theme } = useTheme();
@@ -153,17 +154,18 @@ export default function CheckoutPage() {
         body: JSON.stringify(orderData)
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        setOrderPlaced(true);
-        clearCart();
-        console.log('Order placed successfully:', result);
-      } else {
-        throw new Error('Failed to place order');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to place order');
       }
+
+      const result = await response.json();
+      setOrderPlaced(true);
+      clearCart();
+      console.log('Order placed successfully:', result);
     } catch (error) {
       console.error('Error placing order:', error);
-      alert('There was an error placing your order. Please try again.');
+      toast.error(error instanceof Error ? error.message : 'There was an error placing your order. Please try again.');
     } finally {
       setLoading(false);
     }
