@@ -6,6 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import { FiArrowLeft, FiPackage, FiClock, FiAlertCircle } from 'react-icons/fi';
 import { useRouter } from 'next/navigation';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface OrderItem {
   id: number;
@@ -35,6 +36,7 @@ export default function OrdersPage() {
   const { isAuthenticated, getToken } = useAuth();
   const router = useRouter();
   const isDark = theme === 'dark';
+  const { t, language } = useLanguage();
   
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -122,13 +124,13 @@ export default function OrdersPage() {
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="mb-8">
           <Link
-            href="/"
+            href="/home"
             className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-500 transition-colors mb-4"
           >
             <FiArrowLeft />
-            Back to Home
+            {t('nav.home')}
           </Link>
-          <h1 className="text-3xl font-bold">My Orders</h1>
+          <h1 className="text-3xl font-bold">{t('my.orders')}</h1>
         </div>
 
         {loading ? (
@@ -139,13 +141,13 @@ export default function OrdersPage() {
           <div className={`${isDark ? 'bg-red-900/20 border-red-800' : 'bg-red-50 border-red-200'} border p-4 rounded-lg flex items-start gap-3`}>
             <FiAlertCircle className="text-red-500 mt-0.5" />
             <div>
-              <h3 className="font-medium">Error loading orders</h3>
+              <h3 className="font-medium">{t('error')}</h3>
               <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} mt-1`}>{error}</p>
               <button 
                 onClick={fetchOrders}
                 className="mt-2 text-indigo-600 hover:text-indigo-500 font-medium"
               >
-                Try again
+                {t('tryAgain')}
               </button>
             </div>
           </div>
@@ -154,15 +156,15 @@ export default function OrdersPage() {
             <div className="inline-flex justify-center items-center w-16 h-16 rounded-full bg-indigo-100 text-indigo-500 mb-4">
               <FiPackage size={24} />
             </div>
-            <h2 className="text-xl font-bold mb-2">No Orders Yet</h2>
+            <h2 className="text-xl font-bold mb-2">{t('admin.noOrdersFound')}</h2>
             <p className={`${isDark ? 'text-gray-400' : 'text-gray-500'} mb-6`}>
-              You haven't placed any orders yet. Start shopping to see your orders here.
+              {t('my.orders.desc')}
             </p>
             <Link
               href="/products"
               className="inline-block bg-indigo-600 text-white py-2 px-6 rounded-lg hover:bg-indigo-700 transition-colors"
             >
-              Browse Products
+              {t('view.products.button')}
             </Link>
           </div>
         ) : (
@@ -175,7 +177,7 @@ export default function OrdersPage() {
                 <div className={`p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 ${isDark ? 'border-gray-700' : 'border-gray-200'} border-b`}>
                   <div>
                     <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'} mb-1`}>
-                      Order #{order.order_number}
+                      {t('admin.orderId')}: #{order.order_number}
                     </p>
                     <h3 className="font-bold">
                       {order.customer_first_name} {order.customer_last_name}
@@ -189,16 +191,16 @@ export default function OrdersPage() {
                   </div>
                   <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                      {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                      {t(`admin.orderStatus.${order.status.toLowerCase()}`) || order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                     </span>
                     <span className="font-bold">
-                      ${order.total.toFixed(2)}
+                      ${Number(order.total).toFixed(2)}
                     </span>
                   </div>
                 </div>
                 
                 <div className="p-4">
-                  <h4 className="font-medium mb-3">Order Items</h4>
+                  <h4 className="font-medium mb-3">{t('checkout.items')}</h4>
                   <div className="space-y-3">
                     {order.items.map((item) => (
                       <div 
@@ -208,11 +210,11 @@ export default function OrdersPage() {
                         <div>
                           <p className="font-medium">{item.product_name}</p>
                           <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                            Qty: {item.quantity} × ${item.product_price.toFixed(2)}
+                            {t('cart.quantity')}: {item.quantity} × ${Number(item.product_price).toFixed(2)}
                           </p>
                         </div>
                         <div className="font-medium">
-                          ${item.total.toFixed(2)}
+                          ${Number(item.total).toFixed(2)}
                         </div>
                       </div>
                     ))}
@@ -220,16 +222,16 @@ export default function OrdersPage() {
                   
                   <div className={`mt-4 pt-4 ${isDark ? 'border-gray-700' : 'border-gray-200'} border-t`}>
                     <div className="flex justify-between items-center">
-                      <span className={`${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Subtotal:</span>
-                      <span>${order.subtotal.toFixed(2)}</span>
+                      <span className={`${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{t('cart.subtotal')}:</span>
+                      <span>${Number(order.subtotal).toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between items-center mt-1">
-                      <span className={`${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Shipping:</span>
-                      <span>${order.shipping_cost.toFixed(2)}</span>
+                      <span className={`${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{t('cart.shipping')}:</span>
+                      <span>${Number(order.shipping_cost).toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between items-center mt-2 font-bold">
-                      <span>Total:</span>
-                      <span>${order.total.toFixed(2)}</span>
+                      <span>{t('cart.total')}:</span>
+                      <span>${Number(order.total).toFixed(2)}</span>
                     </div>
                   </div>
                 </div>

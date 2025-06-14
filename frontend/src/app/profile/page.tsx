@@ -9,6 +9,7 @@ import { useAuth } from "@/context/AuthContext"
 import { FiEdit2, FiSave, FiCamera, FiTrash2 } from "react-icons/fi"
 import Cookies from "js-cookie"
 import ConfirmModal from "@/components/ConfirmModal"
+import { useLanguage } from '@/context/LanguageContext'
 
 interface UserProfile {
   name: string
@@ -25,6 +26,7 @@ export default function ProfilePage() {
   const router = useRouter()
   const { theme } = useTheme()
   const { user, isAuthenticated, isLoading, logout, getToken } = useAuth()
+  const { t } = useLanguage()
   const isDark = theme === "dark"
 
   const [isEditing, setIsEditing] = useState(false)
@@ -214,33 +216,24 @@ export default function ProfilePage() {
             {saveError}
           </div>
         )}
+        {/* Top section with gradient background and edit/save button, but no profile picture */}
         <div className="relative mb-8">
           <div className="h-40 w-full rounded-t-lg bg-gradient-to-r from-purple-500 to-blue-500"></div>
-          <div className="absolute -bottom-16 left-8">
-            <div className="relative">
-              <div className="h-32 w-32 rounded-full border-4 border-white overflow-hidden bg-gray-200">
-                <div className="h-full w-full flex items-center justify-center text-gray-500">
-                  <FiCamera size={32} />
-                </div>
-              </div>
-            </div>
-          </div>
           <div className="absolute top-4 right-4">
             <button
               onClick={(e) => {
                 e.preventDefault();
-                console.log("Button clicked, isEditing:", isEditing);
                 isEditing ? handleSave() : setIsEditing(true);
               }}
               className={`p-2 rounded-lg flex items-center gap-2 ${isEditing ? "bg-green-500 hover:bg-green-600" : "bg-purple-600 hover:bg-purple-700"} text-white transition-colors`}
             >
               {isEditing ? (
                 <>
-                  <FiSave /> Save
+                  <FiSave /> {t('profile.save')}
                 </>
               ) : (
                 <>
-                  <FiEdit2 /> Edit
+                  <FiEdit2 /> {t('profile.editProfile')}
                 </>
               )}
             </button>
@@ -248,14 +241,14 @@ export default function ProfilePage() {
         </div>
 
         {/* Profile Information */}
-        <div className="mt-20">
+        <div className="mt-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h2 className="text-2xl font-bold mb-4">Personal Information</h2>
+              <h2 className="text-2xl font-bold mb-4">{t('profile.personalInfo')}</h2>
               {isEditing ? (
                 <div className="space-y-4">
                   <div>
-                    <label className={`block text-sm font-medium mb-1 ${isDark ? "text-gray-200" : ""}`}>Name</label>
+                    <label className={`block text-sm font-medium mb-1 ${isDark ? "text-gray-200" : ""}`}>{t('auth.firstName')}</label>
                     <input
                       type="text"
                       name="name"
@@ -265,7 +258,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div>
-                    <label className={`block text-sm font-medium mb-1 ${isDark ? "text-gray-200" : ""}`}>Last Name</label>
+                    <label className={`block text-sm font-medium mb-1 ${isDark ? "text-gray-200" : ""}`}>{t('auth.lastName')}</label>
                     <input
                       type="text"
                       name="lastname"
@@ -275,7 +268,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div>
-                    <label className={`block text-sm font-medium mb-1 ${isDark ? "text-gray-200" : ""}`}>Email</label>
+                    <label className={`block text-sm font-medium mb-1 ${isDark ? "text-gray-200" : ""}`}>{t('auth.email')}</label>
                     <input
                       type="email"
                       name="email"
@@ -284,10 +277,10 @@ export default function ProfilePage() {
                       className={`w-full p-2 rounded border ${isDark ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300"}`}
                       disabled
                     />
-                    <p className={`text-xs mt-1 ${isDark ? "text-gray-400" : "text-gray-500"}`}>Email cannot be changed</p>
+                    <p className={`text-xs mt-1 ${isDark ? "text-gray-400" : "text-gray-500"}`}>{t('profile.emailCannotChange')}</p>
                   </div>
                   <div>
-                    <label className={`block text-sm font-medium mb-1 ${isDark ? "text-gray-200" : ""}`}>Phone Number</label>
+                    <label className={`block text-sm font-medium mb-1 ${isDark ? "text-gray-200" : ""}`}>{t('auth.phone')}</label>
                     <input
                       type="tel"
                       name="phone"
@@ -301,27 +294,27 @@ export default function ProfilePage() {
               ) : (
                 <div className="space-y-2">
                   <p>
-                    <span className={`font-medium ${isDark ? "text-gray-300" : "text-gray-600"}`}>Name: </span>
+                    <span className={`font-medium ${isDark ? "text-gray-300" : "text-gray-600"}`}>{t('auth.firstName')}: </span>
                     {profile.name} {profile.lastname}
                   </p>
                   <p>
-                    <span className={`font-medium ${isDark ? "text-gray-300" : "text-gray-600"}`}>Email: </span>
+                    <span className={`font-medium ${isDark ? "text-gray-300" : "text-gray-600"}`}>{t('auth.email')}: </span>
                     {profile.email}
                   </p>
                   <p>
-                    <span className={`font-medium ${isDark ? "text-gray-300" : "text-gray-600"}`}>Phone: </span>
-                    {profile.phone || "Not provided"}
+                    <span className={`font-medium ${isDark ? "text-gray-300" : "text-gray-600"}`}>{t('auth.phone')}: </span>
+                    {profile.phone || t('profile.notProvided')}
                   </p>
                 </div>
               )}
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold mb-4">Address Information</h2>
+              <h2 className="text-2xl font-bold mb-4">{t('profile.addressInfo')}</h2>
               {isEditing ? (
                 <div className="space-y-4">
                   <div>
-                    <label className={`block text-sm font-medium mb-1 ${isDark ? "text-gray-200" : ""}`}>City</label>
+                    <label className={`block text-sm font-medium mb-1 ${isDark ? "text-gray-200" : ""}`}>{t('auth.city')}</label>
                     <input
                       type="text"
                       name="city"
@@ -331,7 +324,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div>
-                    <label className={`block text-sm font-medium mb-1 ${isDark ? "text-gray-200" : ""}`}>Address</label>
+                    <label className={`block text-sm font-medium mb-1 ${isDark ? "text-gray-200" : ""}`}>{t('auth.address')}</label>
                     <input
                       type="text"
                       name="address"
@@ -341,7 +334,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div>
-                    <label className={`block text-sm font-medium mb-1 ${isDark ? "text-gray-200" : ""}`}>Postal Code</label>
+                    <label className={`block text-sm font-medium mb-1 ${isDark ? "text-gray-200" : ""}`}>{t('auth.postalcode')}</label>
                     <input
                       type="text"
                       name="postalcode"
@@ -354,15 +347,15 @@ export default function ProfilePage() {
               ) : (
                 <div className="space-y-2">
                   <p>
-                    <span className={`font-medium ${isDark ? "text-gray-300" : "text-gray-600"}`}>City: </span>
+                    <span className={`font-medium ${isDark ? "text-gray-300" : "text-gray-600"}`}>{t('auth.city')}: </span>
                     {profile.city}
                   </p>
                   <p>
-                    <span className={`font-medium ${isDark ? "text-gray-300" : "text-gray-600"}`}>Address: </span>
+                    <span className={`font-medium ${isDark ? "text-gray-300" : "text-gray-600"}`}>{t('auth.address')}: </span>
                     {profile.address}
                   </p>
                   <p>
-                    <span className={`font-medium ${isDark ? "text-gray-300" : "text-gray-600"}`}>Postal Code: </span>
+                    <span className={`font-medium ${isDark ? "text-gray-300" : "text-gray-600"}`}>{t('auth.postalcode')}: </span>
                     {profile.postalcode}
                   </p>
                 </div>
@@ -370,11 +363,11 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold mb-4">Subscription</h2>
+              <h2 className="text-2xl font-bold mb-4">{t('profile.subscription')}</h2>
               <div className="space-y-2">
                 <p>
-                  <span className={`font-medium ${isDark ? "text-gray-300" : "text-gray-600"}`}>Subscription Name: </span>
-                  {profile.subscription_name || "No active subscription"}
+                  <span className={`font-medium ${isDark ? "text-gray-300" : "text-gray-600"}`}>{t('profile.subscriptionName')}: </span>
+                  {profile.subscription_name || t('profile.noActiveSubscription')}
                 </p>
               </div>
             </div>
@@ -384,7 +377,7 @@ export default function ProfilePage() {
                 onClick={() => setIsDeleteModalOpen(true)}
                 className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center gap-2"
               >
-                <FiTrash2 /> Delete Account
+                <FiTrash2 /> {t('profile.deleteAccount')}
               </button>
             </div>
           </div>
@@ -394,13 +387,12 @@ export default function ProfilePage() {
       {/* Delete Account Confirmation Modal */}
       <ConfirmModal
         isOpen={isDeleteModalOpen}
-        title="Delete Account"
-        message="Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently removed."
-        confirmText="Delete Account"
-        cancelText="Cancel"
+        title={t('profile.deleteAccount')}
+        message={t('profile.deleteAccountMessage')}
+        confirmText={t('profile.deleteAccount')}
+        cancelText={t('profile.cancel')}
         onConfirm={handleDeleteAccount}
         onCancel={() => setIsDeleteModalOpen(false)}
-        isDanger={true}
       />
     </div>
   )

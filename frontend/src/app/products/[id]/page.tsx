@@ -7,10 +7,12 @@ import Image from 'next/image';
 import { FiMinus, FiPlus, FiStar, FiShoppingCart, FiHeart, FiCheck } from 'react-icons/fi';
 import type { Product } from '@/types/product';
 import { toast } from 'react-hot-toast';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function ProductPage({ params }: { params: { id: string } }) {
   const { theme } = useTheme();
   const { addToCart } = useCart();
+  const { t } = useLanguage();
   const isDark = theme === 'dark';
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -55,7 +57,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     
     // Visual feedback
     setAddedToCart(true);
-    toast.success(`${product.name} added to cart!`);
+    toast.success(`${product.name} ${t('products.addedToCart')}`);
     
     // Reset after 2 seconds
     setTimeout(() => {
@@ -124,7 +126,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                       : parseFloat(rating).toFixed(1)}
                   </span>
                   <span className={`ml-1 ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>
-                    ({reviews.length} reviews)
+                    ({reviews.length} {t('products.reviews')})
                   </span>
                 </div>
                 <button
@@ -149,7 +151,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             {/* Features */}
             {product.features && product.features.length > 0 && (
               <div>
-                <h2 className="text-xl font-semibold mb-3">Key Features</h2>
+                <h2 className="text-xl font-semibold mb-3">{t('products.features')}</h2>
                 <ul className={`list-disc pl-5 space-y-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
                   {product.features.map((feature, index) => (
                     <li key={index}>{feature}</li>
@@ -161,7 +163,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             {/* Specifications */}
             {product.specifications && Object.keys(product.specifications).length > 0 && (
               <div>
-                <h2 className="text-xl font-semibold mb-3">Specifications</h2>
+                <h2 className="text-xl font-semibold mb-3">{t('products.specifications')}</h2>
                 <div className={`grid grid-cols-2 gap-4 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
                   {Object.entries(product.specifications).map(([key, value]) => (
                     <div key={key}>
@@ -205,12 +207,12 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 {addedToCart ? (
                   <>
                     <FiCheck />
-                    Added to Cart
+                    {t('products.addedToCart')}
                   </>
                 ) : (
                   <>
                     <FiShoppingCart />
-                    Add to Cart
+                    {t('products.addToCart')}
                   </>
                 )}
               </button>
@@ -223,8 +225,8 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 : 'text-red-500'
             }`}>
               {(product.stock || 0) > 0
-                ? `${product.stock} in stock`
-                : 'Out of stock'
+                ? `${product.stock} ${t('products.inStock')}`
+                : t('products.outOfStock')
               }
             </p>
           </div>
@@ -232,7 +234,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
         {/* Reviews Section */}
         <div className="mt-12">
-          <h2 className="text-2xl font-bold mb-6">Customer Reviews</h2>
+          <h2 className="text-2xl font-bold mb-6">{t('products.reviews')}</h2>
           {reviews.length > 0 ? (
             <div className="space-y-6">
               {reviews.map((review: any) => (
@@ -266,7 +268,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             </div>
           ) : (
             <p className={`text-center py-8 ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>
-              No reviews yet. Be the first to review this product!
+              {t('products.noReviews')}
             </p>
           )}
         </div>

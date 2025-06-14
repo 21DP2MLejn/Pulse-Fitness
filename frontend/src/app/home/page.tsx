@@ -4,11 +4,13 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useTheme } from "@/context/ThemeContext"
 import { useAuth } from "@/context/AuthContext"
+import { useLanguage } from "@/context/LanguageContext"
 
 export default function HomePage() {
   const router = useRouter()
   const { theme } = useTheme()
   const { user, isAuthenticated, isLoading } = useAuth()
+  const { t } = useLanguage()
 
   useEffect(() => {
     console.log("Home page - Auth state:", { isLoading, isAuthenticated });
@@ -42,50 +44,50 @@ export default function HomePage() {
     <div className={`${theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"} min-h-screen`}>
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold mb-8">Welcome back, {userName}! 👋</h1>
+          <h1 className="text-3xl font-bold mb-8">{t('welcome.back.home', { name: userName })}</h1>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className={`${theme === "dark" ? "bg-gray-800" : "bg-white"} p-6 rounded-lg shadow-lg`}>
-              <h2 className="text-xl font-semibold mb-4">See Latest Products</h2>
-              <p className="text-sm mb-4">Check out our latest products and get ready to take your fitness journey to the next level.</p>
+              <h2 className="text-xl font-semibold mb-4">{t('see.latest.products')}</h2>
+              <p className="text-sm mb-4">{t('see.latest.products.desc')}</p>
               <button
                 onClick={() => router.push("/products")}
                 className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition-colors"
               >
-                View Products
+                {t('view.products.button')}
               </button>
             </div>
 
             <div className={`${theme === "dark" ? "bg-gray-800" : "bg-white"} p-6 rounded-lg shadow-lg`}>
-              <h2 className="text-xl font-semibold mb-4">Group Workout</h2>
-              <p className="text-sm mb-4">Make a reservation to a group workout</p>
+              <h2 className="text-xl font-semibold mb-4">{t('group.workout')}</h2>
+              <p className="text-sm mb-4">{t('group.workout.desc')}</p>
               <button
                 onClick={() => router.push("/reservations")}
                 className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition-colors"
               >
-                Make a reservation
+                {t('make.reservation')}
               </button>
             </div>
 
             <div className={`${theme === "dark" ? "bg-gray-800" : "bg-white"} p-6 rounded-lg shadow-lg`}>
-              <h2 className="text-xl font-semibold mb-4"> My Subscriptions</h2>
-              <p className="text-sm mb-4">Manage your subscriptions and view your subscription history.</p>
+              <h2 className="text-xl font-semibold mb-4">{t('my.subscriptions')}</h2>
+              <p className="text-sm mb-4">{t('my.subscriptions.desc')}</p>
               <button
                 onClick={() => router.push("/subscriptions")}
                 className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition-colors"
               >
-                View Subscriptions
+                {t('view.subscriptions')}
               </button>
             </div>
 
             <div className={`${theme === "dark" ? "bg-gray-800" : "bg-white"} p-6 rounded-lg shadow-lg`}>
-              <h2 className="text-xl font-semibold mb-4">My Orders</h2>
-              <p className="text-sm mb-4">View your order history and manage your orders.</p>
+              <h2 className="text-xl font-semibold mb-4">{t('my.orders')}</h2>
+              <p className="text-sm mb-4">{t('my.orders.desc')}</p>
               <button
                 onClick={() => router.push("/orders")}
                 className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition-colors"
               >
-                View Orders
+                {t('view.orders')}
               </button>
             </div>
           </div>

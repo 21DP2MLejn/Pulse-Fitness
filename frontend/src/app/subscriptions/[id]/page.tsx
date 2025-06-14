@@ -168,7 +168,7 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
             
             <div className="mb-8">
               <div className="flex items-baseline mb-6">
-                <span className="text-4xl font-bold">${subscription.price}</span>
+                <span className="text-4xl font-bold">€{subscription.price}</span>
                 <span className="text-lg ml-2 opacity-70">/month</span>
               </div>
               
@@ -235,7 +235,7 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
                 <div className="border-t my-3 border-gray-600"></div>
                 <div className="flex justify-between font-bold">
                   <span>{t('subscriptions.total')}</span>
-                  <span>${subscription.price}/month</span>
+                  <span>€{subscription.price}/month</span>
                 </div>
               </div>
               

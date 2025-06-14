@@ -281,7 +281,7 @@ export default function AdminTrainingSessionsPage() {
         {session.is_cancelled && (
           <div className="mb-2 text-red-500 font-bold flex items-center">
             <FiAlertCircle className="mr-1" />
-            Cancelled
+            {t('sessions.cancelled')}
           </div>
         )}
         
@@ -291,10 +291,10 @@ export default function AdminTrainingSessionsPage() {
         
         <div className="mt-2 space-y-1 text-sm">
           <div>{startTime} - {endTime}</div>
-          {session.location && <div>Location: {session.location}</div>}
-          {session.trainer_name && <div>Trainer: {session.trainer_name}</div>}
+          {session.location && <div>{t('sessions.location')}: {session.location}</div>}
+          {session.trainer_name && <div>{t('sessions.trainer')}: {session.trainer_name}</div>}
           <div>
-            Capacity: {session.active_reservations_count || 0}/{session.capacity}
+            {t('sessions.capacity')}: {session.active_reservations_count || 0}/{session.capacity}
           </div>
         </div>
         
@@ -303,7 +303,7 @@ export default function AdminTrainingSessionsPage() {
             onClick={() => viewSessionReservations(session.id)}
             className="px-2 py-1 text-xs rounded flex items-center bg-blue-500 text-white hover:bg-blue-600"
           >
-            <FiUsers className="mr-1" /> Reservations
+            <FiUsers className="mr-1" /> {t('sessions.reservations')}
           </button>
           
           {!session.is_cancelled && (
@@ -312,14 +312,14 @@ export default function AdminTrainingSessionsPage() {
                 onClick={() => openEditSessionForm(session)}
                 className="px-2 py-1 text-xs rounded flex items-center bg-green-500 text-white hover:bg-green-600"
               >
-                <FiEdit className="mr-1" /> Edit
+                <FiEdit className="mr-1" /> {t('sessions.editSession')}
               </button>
               
               <button
                 onClick={() => handleCancelSession(session)}
                 className="px-2 py-1 text-xs rounded flex items-center bg-yellow-500 text-white hover:bg-yellow-600"
               >
-                <FiX className="mr-1" /> Cancel
+                <FiX className="mr-1" /> {t('sessions.cancelSession')}
               </button>
             </>
           )}
@@ -328,7 +328,7 @@ export default function AdminTrainingSessionsPage() {
             onClick={() => handleDeleteSession(session)}
             className="px-2 py-1 text-xs rounded flex items-center bg-red-500 text-white hover:bg-red-600"
           >
-            <FiTrash2 className="mr-1" /> Delete
+            <FiTrash2 className="mr-1" /> {t('sessions.deleteSession')}
           </button>
         </div>
       </div>
@@ -355,7 +355,7 @@ export default function AdminTrainingSessionsPage() {
             day.sessions.map(session => renderSessionCard(session))
           ) : (
             <div className="text-center p-4 text-gray-500">
-              No sessions scheduled
+              {t('sessions.noSessions')}
             </div>
           )}
         </div>
@@ -366,19 +366,54 @@ export default function AdminTrainingSessionsPage() {
   const renderSessionForm = () => {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className={`rounded-lg shadow-lg p-6 max-w-lg w-full ${isDark ? 'bg-gray-800 text-white' : 'bg-white'}`}>
-          <h2 className="text-xl font-bold mb-4">
-            {editingSession ? 'Edit Training Session' : 'Add New Training Session'}
-          </h2>
+        <div className={`rounded-lg shadow-lg p-6 max-w-2xl w-full ${isDark ? 'bg-gray-800 text-white' : 'bg-white'}`}>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold">
+              {editingSession ? t('sessions.editSession') : t('sessions.addSession')}
+            </h2>
+            <button
+              onClick={() => setShowSessionForm(false)}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <FiX size={24} />
+            </button>
+          </div>
           
-          <form onSubmit={handleSubmitSession}>
-            <div className="space-y-4">
+          <form onSubmit={handleSubmitSession} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">{t('sessions.sessionTitle')}</label>
+              <input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleFormChange}
+                className={`w-full px-3 py-2 border rounded-md ${
+                  isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                }`}
+                required
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">{t('sessions.description')}</label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleFormChange}
+                className={`w-full px-3 py-2 border rounded-md ${
+                  isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                }`}
+                rows={3}
+              />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Title</label>
+                <label className="block text-sm font-medium mb-1">{t('sessions.startTime')}</label>
                 <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
+                  type="datetime-local"
+                  name="start_time"
+                  value={formData.start_time}
                   onChange={handleFormChange}
                   className={`w-full px-3 py-2 border rounded-md ${
                     isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
@@ -388,147 +423,75 @@ export default function AdminTrainingSessionsPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium mb-1">Description</label>
-                <textarea
-                  name="description"
-                  value={formData.description}
+                <label className="block text-sm font-medium mb-1">{t('sessions.endTime')}</label>
+                <input
+                  type="datetime-local"
+                  name="end_time"
+                  value={formData.end_time}
                   onChange={handleFormChange}
-                  rows={3}
                   className={`w-full px-3 py-2 border rounded-md ${
                     isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                   }`}
+                  required
                 />
               </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Start Time</label>
-                  <input
-                    type="datetime-local"
-                    name="start_time"
-                    value={formData.start_time}
-                    onChange={handleFormChange}
-                    className={`w-full px-3 py-2 border rounded-md ${
-                      isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                    }`}
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium mb-1">End Time</label>
-                  <input
-                    type="datetime-local"
-                    name="end_time"
-                    value={formData.end_time}
-                    onChange={handleFormChange}
-                    className={`w-full px-3 py-2 border rounded-md ${
-                      isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                    }`}
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Capacity</label>
-                  <input
-                    type="number"
-                    name="capacity"
-                    value={formData.capacity}
-                    onChange={handleFormChange}
-                    min="1"
-                    className={`w-full px-3 py-2 border rounded-md ${
-                      isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                    }`}
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium mb-1">Trainer Name</label>
-                  <input
-                    type="text"
-                    name="trainer_name"
-                    value={formData.trainer_name}
-                    onChange={handleFormChange}
-                    className={`w-full px-3 py-2 border rounded-md ${
-                      isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                    }`}
-                  />
-                </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">{t('sessions.difficultyLevel')}</label>
+                <select
+                  name="difficulty_level"
+                  value={formData.difficulty_level}
+                  onChange={handleFormChange}
+                  className={`w-full px-3 py-2 border rounded-md ${
+                    isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                  }`}
+                >
+                  <option value="beginner">{t('sessions.difficulty.beginner')}</option>
+                  <option value="intermediate">{t('sessions.difficulty.intermediate')}</option>
+                  <option value="advanced">{t('sessions.difficulty.advanced')}</option>
+                </select>
               </div>
               
               <div>
-                <label className="block text-sm font-medium mb-1">Location</label>
-                <input
-                  type="text"
-                  name="location"
-                  value={formData.location}
+                <label className="block text-sm font-medium mb-1">{t('sessions.type')}</label>
+                <select
+                  name="type"
+                  value={formData.type}
                   onChange={handleFormChange}
                   className={`w-full px-3 py-2 border rounded-md ${
                     isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                   }`}
-                />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Difficulty Level</label>
-                  <select
-                    name="difficulty_level"
-                    value={formData.difficulty_level}
-                    onChange={handleFormChange}
-                    className={`w-full px-3 py-2 border rounded-md ${
-                      isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                    }`}
-                  >
-                    <option value="beginner">Beginner</option>
-                    <option value="intermediate">Intermediate</option>
-                    <option value="advanced">Advanced</option>
-                  </select>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium mb-1">Type</label>
-                  <input
-                    type="text"
-                    name="type"
-                    value={formData.type}
-                    onChange={handleFormChange}
-                    className={`w-full px-3 py-2 border rounded-md ${
-                      isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                    }`}
-                  />
-                </div>
-              </div>
-              
-              {error && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                  {error}
-                </div>
-              )}
-              
-              <div className="flex justify-end space-x-3 mt-6">
-                <button
-                  type="button"
-                  onClick={() => setShowSessionForm(false)}
-                  className={`px-4 py-2 rounded ${
-                    isDark ? 'bg-gray-600 hover:bg-gray-700' : 'bg-gray-200 hover:bg-gray-300'
-                  }`}
                 >
-                  Cancel
-                </button>
-                
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50"
-                >
-                  {loading ? 'Saving...' : 'Save Session'}
-                </button>
+                  <option value="group">{t('sessions.type.group')}</option>
+                  <option value="personal">{t('sessions.type.personal')}</option>
+                </select>
               </div>
+            </div>
+            
+            {error && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                {error}
+              </div>
+            )}
+            
+            <div className="flex justify-end space-x-2">
+              <button
+                type="button"
+                onClick={() => setShowSessionForm(false)}
+                className={`px-4 py-2 rounded ${
+                  isDark ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'
+                }`}
+              >
+                {t('sessions.cancel')}
+              </button>
+              <button
+                type="submit"
+                className="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"
+              >
+                {t('sessions.save')}
+              </button>
             </div>
           </form>
         </div>
@@ -550,7 +513,7 @@ export default function AdminTrainingSessionsPage() {
         <div className={`rounded-lg shadow-lg p-6 max-w-2xl w-full ${isDark ? 'bg-gray-800 text-white' : 'bg-white'}`}>
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold">
-              Reservations: {session.title}
+              {t('sessions.reservationsTitle')}: {session.title}
             </h2>
             <button
               onClick={() => setShowReservations(false)}
@@ -561,9 +524,9 @@ export default function AdminTrainingSessionsPage() {
           </div>
           
           <div className="mb-4">
-            <p><strong>Date:</strong> {format(parseISO(session.start_time), 'EEEE, MMMM d, yyyy')}</p>
-            <p><strong>Time:</strong> {format(parseISO(session.start_time), 'h:mm a')} - {format(parseISO(session.end_time), 'h:mm a')}</p>
-            <p><strong>Reservations:</strong> {reservations.length} / {session.capacity}</p>
+            <p><strong>{t('sessions.date')}:</strong> {format(parseISO(session.start_time), 'EEEE, MMMM d, yyyy')}</p>
+            <p><strong>{t('sessions.time')}:</strong> {format(parseISO(session.start_time), 'h:mm a')} - {format(parseISO(session.end_time), 'h:mm a')}</p>
+            <p><strong>{t('sessions.reservations')}:</strong> {t('sessions.reservationsCount', { count: reservations.length.toString(), capacity: session.capacity.toString() })}</p>
           </div>
           
           {reservationsLoading ? (
@@ -575,7 +538,7 @@ export default function AdminTrainingSessionsPage() {
             <>
               {reservations.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
-                  No reservations yet
+                  {t('sessions.noReservations')}
                 </div>
               ) : (
                 <div className={`border rounded-lg overflow-hidden ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
@@ -611,11 +574,11 @@ export default function AdminTrainingSessionsPage() {
                           <td className="px-6 py-4 whitespace-nowrap">
                             {reservation.cancelled ? (
                               <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                Cancelled
+                                {t('sessions.cancelled')}
                               </span>
                             ) : (
                               <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                Active
+                                {t('sessions.active')}
                               </span>
                             )}
                           </td>
@@ -636,13 +599,13 @@ export default function AdminTrainingSessionsPage() {
     <div className={`min-h-screen ${isDark ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Manage Training Sessions</h1>
+          <h1 className="text-3xl font-bold">{t('sessions.title')}</h1>
           
           <button
             onClick={openAddSessionForm}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 flex items-center"
+            className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
           >
-            <FiPlus className="mr-2" /> Add New Session
+            <FiPlus /> {t('sessions.addSession')}
           </button>
         </div>
         
@@ -674,7 +637,7 @@ export default function AdminTrainingSessionsPage() {
                 isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-200'
               }`}
             >
-              ← Previous Week
+              ← {t('sessions.previousWeek')}
             </button>
             
             <button
@@ -683,7 +646,7 @@ export default function AdminTrainingSessionsPage() {
                 isDark ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'
               }`}
             >
-              <FiCalendar className="mr-1" /> Current Week
+              <FiCalendar className="mr-1" /> {t('sessions.currentWeek')}
             </button>
             
             <button
@@ -692,7 +655,7 @@ export default function AdminTrainingSessionsPage() {
                 isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-200'
               }`}
             >
-              Next Week →
+              {t('sessions.nextWeek')} →
             </button>
           </div>
           
@@ -705,7 +668,7 @@ export default function AdminTrainingSessionsPage() {
         {loading ? (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mx-auto"></div>
-            <p className="mt-4">Loading schedule...</p>
+            <p className="mt-4">{t('sessions.loading')}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">

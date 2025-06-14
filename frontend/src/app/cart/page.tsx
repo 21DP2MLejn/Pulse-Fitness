@@ -7,10 +7,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { FiMinus, FiPlus, FiTrash2, FiArrowLeft, FiShoppingBag } from 'react-icons/fi';
 import router from 'next/router';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function CartPage() {
   const { theme } = useTheme();
   const { items, updateQuantity, removeFromCart, getCartTotal } = useCart();
+  const { t } = useLanguage();
   const isDark = theme === 'dark';
   const [loading, setLoading] = useState(true);
 
@@ -54,16 +56,14 @@ export default function CartPage() {
             <div className="flex justify-center mb-6">
               <FiShoppingBag size={60} className={`${isDark ? 'text-gray-400' : 'text-gray-300'}`} />
             </div>
-            <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
-            <p className={`mb-8 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-              Add some products to your cart and they will show up here
-            </p>
+            <h2 className="text-2xl font-bold mb-4">{t('cart.empty')}</h2>
+            <p className={`mb-8 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{t('cart.emptyMessage')}</p>
             <Link
               href="/products"
               className="inline-flex items-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
             >
               <FiArrowLeft />
-              Continue Shopping
+              {t('cart.continueShopping')}
             </Link>
           </div>
         </div>
@@ -74,7 +74,7 @@ export default function CartPage() {
   return (
     <div className={`min-h-screen ${isDark ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
       <div className="container mx-auto px-4 py-8 max-w-6xl">
-        <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
+        <h1 className="text-3xl font-bold mb-8">{t('cart.title')}</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
@@ -104,7 +104,7 @@ export default function CartPage() {
                         <h3 className="font-semibold">{item.product.name}</h3>
                       </Link>
                       <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                        ${typeof item.product.price === 'number' 
+                        €{typeof item.product.price === 'number' 
                           ? item.product.price.toFixed(2) 
                           : parseFloat(item.product.price).toFixed(2)}
                       </p>
@@ -141,7 +141,7 @@ export default function CartPage() {
                       </button>
                     </div>
                     <p className="font-semibold">
-                      ${(typeof item.product.price === 'number' 
+                      €{(typeof item.product.price === 'number' 
                         ? item.product.price * item.quantity 
                         : parseFloat(item.product.price) * item.quantity).toFixed(2)}
                     </p>
@@ -153,20 +153,20 @@ export default function CartPage() {
 
           {/* Order Summary */}
           <div className={`lg:col-span-1 ${isDark ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'} p-6 rounded-lg shadow-sm h-fit sticky top-20`}>
-            <h2 className="text-xl font-bold mb-6">Order Summary</h2>
+            <h2 className="text-xl font-bold mb-6">{t('cart.orderSummary')}</h2>
             <div className="space-y-4">
               <div className="flex justify-between">
-                <span>Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>{t('cart.subtotal')}</span>
+                <span>€{subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
-                <span>Shipping</span>
-                <span>${shipping.toFixed(2)}</span>
+                <span>{t('cart.shipping')}</span>
+                <span>€{shipping.toFixed(2)}</span>
               </div>
               <div className={`border-t ${isDark ? 'border-gray-700' : 'border-gray-200'} pt-4 mt-4`}>
                 <div className="flex justify-between font-bold">
-                  <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>{t('cart.total')}</span>
+                  <span>€{total.toFixed(2)}</span>
                 </div>
               </div>
               <Link href="/checkout" className="text-white">
@@ -174,14 +174,14 @@ export default function CartPage() {
                 className="w-full py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors mt-6 flex items-center justify-center gap-2"
               >
                 <FiShoppingBag size={18} />
-                Proceed to Checkout
+                {t('cart.checkout')}
               </button>
               </Link>
               <Link
                 href="/products"
                 className="block text-center text-indigo-600 hover:text-indigo-500 transition-colors mt-4"
               >
-                Continue Shopping
+                {t('cart.continueShopping')}
               </Link>
             </div>
           </div>

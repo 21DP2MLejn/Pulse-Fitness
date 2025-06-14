@@ -2,19 +2,21 @@
 
 import { useState, useEffect } from 'react';
 import { useTheme } from '@/context/ThemeContext';
+import { useLanguage } from '@/context/LanguageContext';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FiSearch, FiStar, FiShoppingCart } from 'react-icons/fi';
+import { FiSearch, FiShoppingCart } from 'react-icons/fi';
 import type { Product } from '@/types/product';
 
 export default function ProductsPage() {
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const isDark = theme === 'dark';
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState<'price-asc' | 'price-desc' | 'rating'>('rating');
+  const [sortBy, setSortBy] = useState<'price-asc' | 'price-desc'>('price-asc');
 
   useEffect(() => {
     // Fetch products from the API
@@ -58,8 +60,6 @@ export default function ProductsPage() {
           return a.price - b.price;
         case 'price-desc':
           return b.price - a.price;
-        case 'rating':
-          return b.rating - a.rating;
         default:
           return 0;
       }
@@ -82,7 +82,7 @@ export default function ProductsPage() {
             <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
               type="text"
-              placeholder="Search products..."
+              placeholder={t('products.search')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className={`w-full pl-10 pr-4 py-2 rounded-lg border ${
@@ -94,16 +94,15 @@ export default function ProductsPage() {
           </div>
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as 'price-asc' | 'price-desc' | 'rating')}
+            onChange={(e) => setSortBy(e.target.value as 'price-asc' | 'price-desc')}
             className={`py-2 px-4 rounded-lg border ${
               isDark
                 ? 'bg-gray-800 border-gray-700 text-white'
                 : 'bg-white border-gray-300'
             }`}
           >
-            <option value="rating">Top Rated</option>
-            <option value="price-asc">Price: Low to High</option>
-            <option value="price-desc">Price: High to Low</option>
+            <option value="price-asc">{t('products.sort.priceAsc') || 'Price: Low to High'}</option>
+            <option value="price-desc">{t('products.sort.priceDesc') || 'Price: High to Low'}</option>
           </select>
         </div>
 
@@ -120,7 +119,7 @@ export default function ProductsPage() {
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              {category.charAt(0).toUpperCase() + category.slice(1)}
+              {category === 'all' ? t('products.filter') : t(`products.category.${category.toLowerCase()}`) || (category.charAt(0).toUpperCase() + category.slice(1))}
             </button>
           ))}
         </div>
@@ -150,21 +149,13 @@ export default function ProductsPage() {
               </div>
             </div>
             <div className="p-3">
-              <h3 className="font-medium text-base">{product.name}</h3>
+              <h3 className={`font-medium text-base ${isDark ? 'text-white' : 'text-gray-900'}`}>{product.name}</h3>
               <div className="flex items-center justify-between mt-2">
                 <span className="font-bold text-primary">
-                  ${typeof product.price === 'number' 
+                  €{typeof product.price === 'number' 
                     ? product.price.toFixed(2) 
                     : parseFloat(product.price).toFixed(2)}
                 </span>
-                <div className="flex items-center text-sm">
-                  <FiStar className="text-yellow-400 mr-1" size={14} />
-                  <span>
-                    {typeof product.rating === 'number'
-                      ? product.rating.toFixed(1)
-                      : parseFloat(product.rating).toFixed(1)}
-                  </span>
-                </div>
               </div>
             </div>
           </Link>
@@ -173,7 +164,7 @@ export default function ProductsPage() {
 
       {filteredProducts.length === 0 && (
         <div className="text-center py-8">
-          <p>No products found matching your criteria.</p>
+          <p>{t('products.noProductsFound') || 'No products found matching your criteria.'}</p>
         </div>
       )}
     </div>

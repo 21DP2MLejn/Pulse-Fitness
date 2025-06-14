@@ -10,11 +10,33 @@ import { useLanguage } from '@/context/LanguageContext';
 import * as reservationService from '@/services/reservationService';
 import { TrainingSession, DaySchedule, WeekSchedule } from '@/types/reservation';
 
+// Add day name mapping after imports
+const dayNames: Record<string, Record<string, string>> = {
+  en: {
+    Monday: 'Monday',
+    Tuesday: 'Tuesday',
+    Wednesday: 'Wednesday',
+    Thursday: 'Thursday',
+    Friday: 'Friday',
+    Saturday: 'Saturday',
+    Sunday: 'Sunday',
+  },
+  lv: {
+    Monday: 'Pirmdiena',
+    Tuesday: 'Otrdiena',
+    Wednesday: 'Trešdiena',
+    Thursday: 'Ceturtdiena',
+    Friday: 'Piektdiena',
+    Saturday: 'Sestdiena',
+    Sunday: 'Svētdiena',
+  },
+};
+
 export default function ReservationsPage() {
   const router = useRouter();
   const { theme } = useTheme();
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const isDark = theme === 'dark';
   
   // State
@@ -189,7 +211,7 @@ export default function ReservationsPage() {
               {session.title}
               {session.is_cancelled && (
                 <span className="ml-2 px-2 py-1 bg-red-100 text-red-800 text-xs rounded">
-                  Cancelled
+                  {t('sessions.cancelled')}
                 </span>
               )}
             </h3>
@@ -265,12 +287,12 @@ export default function ReservationsPage() {
             )}
             
             {!isPast && !session.is_cancelled && !hasReservation && session.is_full && (
-              <span className="text-sm text-red-500">Session Full</span>
+              <span className="text-sm text-red-500">{t('sessions.full')}</span>
             )}
             
-            {isPast && <span className="text-sm text-gray-500">Session Ended</span>}
+            {isPast && <span className="text-sm text-gray-500">{t('sessions.ended')}</span>}
             
-            {session.is_cancelled && <span className="text-sm text-red-500">Session Cancelled</span>}
+            {session.is_cancelled && <span className="text-sm text-red-500">{t('sessions.cancelled')}</span>}
           </div>
         </div>
       </div>
@@ -279,7 +301,9 @@ export default function ReservationsPage() {
   
   // Render a day's schedule
   const renderDay = (day: DaySchedule) => {
-    const formattedDate = format(day.date, 'EEEE, MMMM d');
+    const dayNameEn = format(day.date, 'EEEE');
+    const localizedDayName = dayNames[language][dayNameEn] || dayNameEn;
+    const formattedDate = `${localizedDayName}, ${format(day.date, 'MMMM d')}`;
     
     return (
       <div key={formattedDate} className="mb-6">
@@ -290,7 +314,7 @@ export default function ReservationsPage() {
           day.sessions.map(session => renderSessionCard(session))
         ) : (
           <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-            No sessions scheduled for this day
+            {t('sessions.noSessionsForDay')}
           </p>
         )}
       </div>
@@ -309,7 +333,7 @@ export default function ReservationsPage() {
     <div className={`min-h-screen py-8 px-4 md:px-8 ${isDark ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Training Sessions</h1>
+          <h1 className="text-2xl font-bold">{t('sessions.title')}</h1>
           
           <div className="flex items-center space-x-4">
             <button

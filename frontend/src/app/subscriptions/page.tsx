@@ -157,7 +157,7 @@ export default function SubscriptionsPage() {
                     <h3 className="text-2xl font-bold mb-2">{subscription.name}</h3>
                     <p className="opacity-90 mb-4">{subscription.description}</p>
                     <div className="flex items-baseline">
-                      <span className="text-3xl font-bold">${subscription.price}</span>
+                      <span className="text-3xl font-bold">€{subscription.price}</span>
                       <span className="text-sm ml-2">/month</span>
                     </div>
                   </div>
