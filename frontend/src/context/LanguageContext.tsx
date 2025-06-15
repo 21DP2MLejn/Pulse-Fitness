@@ -109,6 +109,7 @@ const translations: Translations = {
     'auth.of2' : 'of 2',
     'auth.back' : 'Back',
     'login.to.pulsefitness' : 'Login to Pulse Fitness',
+    'auth.selectCountry' : 'Select Country',
 
      
     // Subscriptions
@@ -303,6 +304,7 @@ const translations: Translations = {
     'checkout.shortly': 'shortly',
     'checkout.continueShopping': 'Continue Shopping',
     'checkout.backToHome': 'Back to Home',
+
     
     // Admin
     'admin.dashboard': 'Admin Dashboard',
@@ -462,6 +464,7 @@ const translations: Translations = {
     'auth.back' : 'Atpakaļ',
     'auth.selectCountry' : 'Izvēlies valsti',
     'login.to.pulsefitness' : 'Pieteikties Pulse Fitness',
+    'auth.SelectCountry' : 'Izvēlies valsti',
 
     
     // Subscriptions
