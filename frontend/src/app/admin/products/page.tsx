@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { FiPlus, FiEdit2, FiTrash2, FiSearch } from 'react-icons/fi';
 import type { Product } from '@/types/product';
 import toast from 'react-hot-toast';
+import { API_URL } from '@/config/api';
 
 export default function AdminProductsPage() {
   const { theme } = useTheme();
@@ -31,7 +32,7 @@ export default function AdminProductsPage() {
       }
       
       console.log('Fetching products with token');
-      const response = await fetch('http://localhost:8000/api/get-products', {
+      const response = await fetch(`${API_URL}/get-products`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -70,7 +71,7 @@ export default function AdminProductsPage() {
         return;
       }
       
-      const response = await fetch(`http://localhost:8000/api/admin/products/${productId}`, {
+      const response = await fetch(`${API_URL}/admin/products/${productId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,

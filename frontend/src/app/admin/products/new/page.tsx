@@ -6,6 +6,7 @@ import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from '@/context/AuthContext';
 import { FiUpload, FiX } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import { API_URL } from '@/config/api';
 
 export default function NewProductPage() {
   const router = useRouter();
@@ -130,7 +131,7 @@ export default function NewProductPage() {
         const xhr = new XMLHttpRequest();
         
         // Using the new direct endpoint that bypasses the abilities middleware
-        xhr.open('POST', 'http://localhost:8000/api/create-product', true);
+        xhr.open('POST', `${API_URL}/create-product`, true);
         xhr.setRequestHeader('Authorization', `Bearer ${token}`);
         
         xhr.onload = function() {

@@ -6,6 +6,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { FiCheck, FiX, FiLoader } from 'react-icons/fi';
 import Link from 'next/link';
 import Cookies from 'js-cookie';
+import { API_URL } from '@/config/api';
 
 interface Subscription {
   id: number;
@@ -35,7 +36,7 @@ export default function SubscriptionsPage() {
     setIsAuthenticated(!!token);
 
     // Fetch all available subscriptions
-    fetch('http://localhost:8000/api/subscriptions')
+    fetch(`${API_URL}/subscriptions`)
       .then(res => {
         if (!res.ok) {
           throw new Error('Failed to fetch subscriptions');
@@ -62,7 +63,7 @@ export default function SubscriptionsPage() {
 
     // If authenticated, fetch user's current subscription
     if (token) {
-      fetch('http://localhost:8000/api/user', {
+      fetch(`${API_URL}/user`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

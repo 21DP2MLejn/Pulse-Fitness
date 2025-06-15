@@ -37,4 +37,21 @@ class OrderController extends Controller
             'data' => $orders
         ]);
     }
+
+    /**
+     * Get the total count of orders.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function count()
+    {
+        $totalOrders = Order::count();
+        
+        return response()->json([
+            'status' => true,
+            'data' => [
+                'total_orders' => $totalOrders
+            ]
+        ]);
+    }
 } 

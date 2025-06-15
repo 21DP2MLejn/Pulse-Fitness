@@ -7,6 +7,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { FiPlus, FiEdit2, FiTrash2, FiCheck, FiX } from 'react-icons/fi';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
+import { API_URL } from '@/config/api';
 
 interface Subscription {
   id: number;
@@ -39,7 +40,7 @@ export default function SubscriptionsPage() {
         return;
       }
 
-      const response = await fetch('http://localhost:8000/api/admin/subscriptions', {
+      const response = await fetch(`${API_URL}/admin/subscriptions`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -72,7 +73,7 @@ export default function SubscriptionsPage() {
         return;
       }
 
-      const response = await fetch(`http://localhost:8000/api/admin/subscriptions/${id}`, {
+      const response = await fetch(`${API_URL}/admin/subscriptions/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

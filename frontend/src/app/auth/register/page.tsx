@@ -10,6 +10,7 @@ import countryList from 'react-select-country-list';
 import Select from 'react-select';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
+import { API_URL } from '@/config/api';
 
 interface FormData {
   name: string;
@@ -72,7 +73,7 @@ export default function RegisterPage() {
     try {
       console.log("Registration data being sent:", formData);
       
-      const response = await fetch('http://localhost:8000/api/auth/register', {
+      const response = await fetch(`${API_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),

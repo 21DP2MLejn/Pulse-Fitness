@@ -1,7 +1,6 @@
 import { TrainingSession, Reservation, ReservationFormData, CancellationFormData } from '../types/reservation';
 import Cookies from 'js-cookie';
-
-const API_URL = 'http://localhost:8000/api';
+import { API_URL } from '../config/api';
 
 // Helper function to handle API responses
 const handleResponse = async (response: Response) => {

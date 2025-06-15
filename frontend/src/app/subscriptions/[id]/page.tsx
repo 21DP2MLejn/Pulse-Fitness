@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import { toast } from 'react-hot-toast';
+import { API_URL } from '@/config/api';
 
 interface Subscription {
   id: number;
@@ -43,7 +44,7 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
     }
 
     // Fetch subscription details
-    fetch(`http://localhost:8000/api/subscriptions/${resolvedParams.id}`)
+    fetch(`${API_URL}/subscriptions/${resolvedParams.id}`)
       .then(res => {
         if (!res.ok) {
           throw new Error('Failed to fetch subscription details');
@@ -66,7 +67,7 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
       });
 
     // Fetch user's current subscription if any
-    fetch('http://localhost:8000/api/user', {
+    fetch(`${API_URL}/user`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -81,7 +82,7 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
       .then(userData => {
         // If user has subscription data, fetch the details
         if (userData.subscription_id) {
-          fetch(`http://localhost:8000/api/subscriptions/${userData.subscription_id}`, {
+          fetch(`${API_URL}/subscriptions/${userData.subscription_id}`, {
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'

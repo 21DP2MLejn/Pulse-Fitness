@@ -17,6 +17,7 @@ import 'swiper/css/effect-coverflow';
 
 import { Autoplay, Pagination, Navigation, EffectCoverflow } from 'swiper/modules';
 import type { Product } from '@/types/product';
+import { API_URL, API_BASE_URL } from '@/config/api';
 
 export default function Home() {
   const { theme } = useTheme();
@@ -27,7 +28,7 @@ export default function Home() {
 
   useEffect(() => {
     // Fetch products from the API
-    fetch('http://localhost:8000/api/products')
+    fetch(`${API_URL}/products`)
       .then(res => {
         if (!res.ok) {
           throw new Error('Failed to fetch products');
@@ -137,7 +138,7 @@ export default function Home() {
                         <div className="relative aspect-square overflow-hidden">
                           {product.images && product.images.length > 0 ? (
                             <Image 
-                              src={`http://localhost:8000/api/images/${product.images[0].replace(/^\/storage\//, '')}`}
+                              src={`${API_BASE_URL}/api/images/${product.images[0].replace(/^\/storage\//, '')}`}
                               alt={product.name} 
                               width={300}
                               height={300}

@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { API_URL } from '../config/api';
 
 interface User {
   id: string;
@@ -107,7 +108,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     try {
       console.log("Fetching user data with token:", token);
-      const response = await fetch("http://localhost:8000/api/user", {
+      const response = await fetch(`${API_URL}/user`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

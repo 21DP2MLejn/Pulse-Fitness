@@ -9,6 +9,7 @@ import { useTheme } from "@/context/ThemeContext"
 import { useAuth } from "@/context/AuthContext"
 import Cookies from "js-cookie"
 import { useLanguage } from '@/context/LanguageContext';
+import { API_URL } from '@/config/api';
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -28,7 +29,7 @@ export default function LoginPage() {
     try {
       console.log("Attempting login with:", { email });
       
-      const response = await fetch("http://localhost:8000/api/auth/login", {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

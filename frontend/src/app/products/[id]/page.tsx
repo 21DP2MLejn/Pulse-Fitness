@@ -8,6 +8,7 @@ import { FiMinus, FiPlus, FiStar, FiShoppingCart, FiHeart, FiCheck } from 'react
 import type { Product } from '@/types/product';
 import { toast } from 'react-hot-toast';
 import { useLanguage } from '@/context/LanguageContext';
+import { API_URL, API_BASE_URL } from '@/config/api';
 
 export default function ProductPage({ params }: { params: { id: string } }) {
   const { theme } = useTheme();
@@ -23,7 +24,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     // Fetch product data
-    fetch(`http://localhost:8000/api/products/${params.id}`)
+    fetch(`${API_URL}/products/${params.id}`)
       .then(res => {
         if (!res.ok) {
           throw new Error('Failed to fetch product');
@@ -86,7 +87,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             <div className="aspect-square relative rounded-lg overflow-hidden shadow-md">
               <Image
                 src={product.images && product.images.length > 0 
-                  ? `http://localhost:8000/api/images/${product.images[selectedImage].replace(/^\/storage\//, '')}`
+                  ? `${API_BASE_URL}/api/images/${product.images[selectedImage].replace(/^\/storage\//, '')}`
                   : '/images/placeholder.jpg'}
                 alt={product.name}
                 fill
@@ -103,7 +104,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                   }`}
                 >
                   <Image
-                    src={image ? `http://localhost:8000/api/images/${image.replace(/^\/storage\//, '')}` : '/images/placeholder.jpg'}
+                    src={image ? `${API_BASE_URL}/api/images/${image.replace(/^\/storage\//, '')}` : '/images/placeholder.jpg'}
                     alt={`${product.name} ${index + 1}`}
                     fill
                     className="object-cover"

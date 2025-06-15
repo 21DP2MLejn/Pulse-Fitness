@@ -7,6 +7,7 @@ import { FiPackage, FiUsers, FiShoppingCart, FiClipboard } from 'react-icons/fi'
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { API_URL } from '@/config/api';
 
 interface DashboardStats {
   products: number;
@@ -42,19 +43,23 @@ export default function AdminDashboard() {
         return;
       }
       
-      const productsResponse = await fetch('http://localhost:8000/api/get-products', {
+      const productsResponse = await fetch(`${API_URL}/get-products`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
       
-      const usersResponse = await fetch('http://localhost:8000/api/get-users', {
+      const usersResponse = await fetch(`${API_URL}/get-users`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
       
-      const ordersCount = 156;
+      const ordersCountResponse = await fetch(`${API_URL}/admin/orders/count`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       
       if (!productsResponse.ok || !usersResponse.ok) {
         throw new Error('Failed to fetch stats');
@@ -72,7 +77,7 @@ export default function AdminDashboard() {
     
       let subscriptionsCount = 0;
       try {
-        const subscriptionsResponse = await fetch('http://localhost:8000/api/admin/subscriptions', {
+        const subscriptionsResponse = await fetch(`${API_URL}/admin/subscriptions`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -87,6 +92,14 @@ export default function AdminDashboard() {
       } catch (subscriptionError) {
         console.warn('Could not fetch subscriptions:', subscriptionError);
         
+      }
+      
+      let ordersCount = 0;
+      if (ordersCountResponse.ok) {
+        const ordersCountData = await ordersCountResponse.json();
+        ordersCount = ordersCountData.data?.total_orders ?? 0;
+      } else {
+        console.warn('Orders count endpoint returned non-OK response:', ordersCountResponse.status);
       }
       
       setStats({

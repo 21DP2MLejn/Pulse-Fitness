@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'react-hot-toast';
 import { useLanguage } from '@/context/LanguageContext';
+import { API_URL, API_BASE_URL } from '@/config/api';
 
 export default function CheckoutPage() {
   const { theme } = useTheme();
@@ -147,7 +148,7 @@ export default function CheckoutPage() {
         }
       }
 
-      const response = await fetch('http://localhost:8000/api/orders', {
+      const response = await fetch(`${API_URL}/orders`, {
         method: 'POST',
         headers,
         body: JSON.stringify(orderData)
@@ -423,7 +424,7 @@ export default function CheckoutPage() {
                   <div className="relative w-16 h-16">
                     <Image
                       src={item.product.images && item.product.images.length > 0 
-                        ? `http://localhost:8000/api/images/${item.product.images[0].replace(/^\/storage\//, '')}` 
+                        ? `${API_BASE_URL}/api/images/${item.product.images[0].replace(/^\/storage\//, '')}` 
                         : '/images/placeholder.jpg'}
                       alt={item.product.name}
                       fill

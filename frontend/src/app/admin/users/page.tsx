@@ -6,6 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { FiSearch, FiMail, FiPhone, FiMapPin, FiCalendar, FiEdit, FiTrash2 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import { API_URL } from '@/config/api';
 
 interface User {
   id: string | number;
@@ -46,7 +47,7 @@ export default function AdminUsersPage() {
       }
       
       console.log('Fetching users with token');
-      const response = await fetch('http://localhost:8000/api/get-users', {
+      const response = await fetch(`${API_URL}/get-users`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

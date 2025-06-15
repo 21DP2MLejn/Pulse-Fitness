@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { FiSearch, FiShoppingCart } from 'react-icons/fi';
 import type { Product } from '@/types/product';
+import { API_URL, API_BASE_URL } from '@/config/api';
 
 export default function ProductsPage() {
   const { theme } = useTheme();
@@ -20,7 +21,7 @@ export default function ProductsPage() {
 
   useEffect(() => {
     // Fetch products from the API
-    fetch('http://localhost:8000/api/products')
+    fetch(`${API_URL}/products`)
       .then(res => {
         if (!res.ok) {
           throw new Error('Failed to fetch products');
@@ -138,7 +139,7 @@ export default function ProductsPage() {
             <div className="aspect-square relative">
               <Image
                 src={product.images && product.images.length > 0 
-                  ? `http://localhost:8000/api/images/${product.images[0].replace(/^\/storage\//, '')}`
+                  ? `${API_BASE_URL}/api/images/${product.images[0].replace(/^\/storage\//, '')}`
                   : '/images/placeholder.jpg'}
                 alt={product.name}
                 fill

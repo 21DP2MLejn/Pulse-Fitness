@@ -10,6 +10,7 @@ import { FiEdit2, FiSave, FiCamera, FiTrash2 } from "react-icons/fi"
 import Cookies from "js-cookie"
 import ConfirmModal from "@/components/ConfirmModal"
 import { useLanguage } from '@/context/LanguageContext'
+import { API_URL } from '@/config/api'
 
 interface UserProfile {
   name: string
@@ -91,7 +92,7 @@ export default function ProfilePage() {
       if (localToken) {
         try {
           console.log("Sending profile update with localStorage token");
-          const response = await fetch("http://localhost:8000/api/profile", {
+          const response = await fetch(`${API_URL}/profile`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
@@ -134,7 +135,7 @@ export default function ProfilePage() {
     try {
       console.log("Sending profile update:", profile);
       
-      const response = await fetch("http://localhost:8000/api/profile", {
+      const response = await fetch(`${API_URL}/profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -184,7 +185,7 @@ export default function ProfilePage() {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/api/profile", {
+      const response = await fetch(`${API_URL}/profile`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

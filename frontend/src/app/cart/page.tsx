@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { FiMinus, FiPlus, FiTrash2, FiArrowLeft, FiShoppingBag } from 'react-icons/fi';
 import router from 'next/router';
 import { useLanguage } from '@/context/LanguageContext';
+import { API_BASE_URL } from '@/config/api';
 
 export default function CartPage() {
   const { theme } = useTheme();
@@ -89,7 +90,7 @@ export default function CartPage() {
                 <div className="relative w-24 h-24">
                   <Image
                     src={item.product.images && item.product.images.length > 0 
-                      ? `http://localhost:8000/api/images/${item.product.images[0].replace(/^\/storage\//, '')}` 
+                      ? `${API_BASE_URL}/api/images/${item.product.images[0].replace(/^\/storage\//, '')}` 
                       : '/images/placeholder.jpg'}
                     alt={item.product.name}
                     fill

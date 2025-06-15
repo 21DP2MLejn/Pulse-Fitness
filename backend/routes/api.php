@@ -69,6 +69,7 @@ Route::middleware('auth:sanctum')->group(function () {
         
         // Orders management
         Route::get('/orders', [App\Http\Controllers\Admin\OrderController::class, 'index']);
+        Route::get('/orders/count', [App\Http\Controllers\Admin\OrderController::class, 'count']);
         
         // Subscription management
         Route::get('/subscriptions', [SubscriptionController::class, 'index']);

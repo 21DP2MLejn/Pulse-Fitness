@@ -192,9 +192,10 @@ export default function ReservationsPage() {
   
   // Render a session card
   const renderSessionCard = (session: TrainingSession) => {
-    const startTime = parseISO(session.start_time);
-    const endTime = parseISO(session.end_time);
-    const isPast = new Date() > endTime;
+    // Use string slicing to get time as entered (e.g., '19:00' from '2025-06-15 19:00:00')
+    const startTime = session.start_time.slice(11, 16);
+    const endTime = session.end_time.slice(11, 16);
+    const isPast = new Date() > new Date(session.end_time);
     const isProcessing = processingSessionId === session.id;
     const hasReservation = session.user_has_reservation === true;
     
@@ -219,7 +220,7 @@ export default function ReservationsPage() {
             <div className="flex items-center mt-2 text-sm text-gray-500 space-x-4">
               <div className="flex items-center">
                 <FiClock className="mr-1" />
-                <span>{format(startTime, 'HH:mm')} - {format(endTime, 'HH:mm')}</span>
+                <span>{startTime} - {endTime}</span>
               </div>
               
               {session.location && (

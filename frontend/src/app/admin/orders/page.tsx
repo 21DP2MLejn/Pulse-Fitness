@@ -6,6 +6,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { FiSearch, FiShoppingCart, FiCalendar, FiUser, FiDollarSign } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { API_URL } from '@/config/api';
 
 interface Order {
   id: number;
@@ -42,7 +43,7 @@ export default function AdminOrdersPage() {
         return;
       }
 
-      const response = await fetch('http://localhost:8000/api/admin/orders', {
+      const response = await fetch(`${API_URL}/admin/orders`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

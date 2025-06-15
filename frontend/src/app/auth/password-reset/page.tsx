@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useTheme } from "@/context/ThemeContext"
 import { useLanguage } from '@/context/LanguageContext';
+import { API_URL } from '@/config/api';
 
 export default function PasswordResetPage() {
   const [email, setEmail] = useState("")
@@ -24,7 +25,7 @@ export default function PasswordResetPage() {
     try {
       console.log("Requesting password reset for:", { email });
       
-      const response = await fetch("http://localhost:8000/api/auth/forgot-password", {
+      const response = await fetch(`${API_URL}/auth/forgot-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
