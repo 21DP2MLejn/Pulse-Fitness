@@ -266,8 +266,8 @@ export default function AdminTrainingSessionsPage() {
   
   // Render functions
   const renderSessionCard = (session: TrainingSession) => {
-    const startTime = format(parseISO(session.start_time), 'h:mm a');
-    const endTime = format(parseISO(session.end_time), 'h:mm a');
+    const startTime = session.start_time.slice(11, 16);
+    const endTime = session.end_time.slice(11, 16);
     
     return (
       <div 
@@ -525,7 +525,7 @@ export default function AdminTrainingSessionsPage() {
           
           <div className="mb-4">
             <p><strong>{t('sessions.date')}:</strong> {format(parseISO(session.start_time), 'EEEE, MMMM d, yyyy')}</p>
-            <p><strong>{t('sessions.time')}:</strong> {format(parseISO(session.start_time), 'h:mm a')} - {format(parseISO(session.end_time), 'h:mm a')}</p>
+            <p><strong>{t('sessions.time')}:</strong> {session.start_time.slice(11, 16)} - {session.end_time.slice(11, 16)}</p>
             <p><strong>{t('sessions.reservations')}:</strong> {t('sessions.reservationsCount', { count: reservations.length.toString(), capacity: session.capacity.toString() })}</p>
           </div>
           
