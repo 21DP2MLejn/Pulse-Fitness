@@ -297,6 +297,12 @@ const translations: Translations = {
     'checkout.notes': 'Notes',
     'checkout.specialInstructions': 'Any special instructions for your order...',
     'checkout.backToCart': 'Back to Cart',
+    'checkout.thankYou': 'Thank you for your order',
+    'checkout.orderConfirmation': 'We have received your payment and will process your order.',
+    'checkout.orderDetails': 'Your order details and tracking information will be sent to your email.',
+    'checkout.shortly': 'shortly',
+    'checkout.continueShopping': 'Continue Shopping',
+    'checkout.backToHome': 'Back to Home',
     
     // Admin
     'admin.dashboard': 'Admin Dashboard',
@@ -738,6 +744,13 @@ const translations: Translations = {
     'checkout.invalidCard': 'Lūdzu, ievadiet derīgu kartes numuru',
     'checkout.invalidExpiry': 'Lūdzu, ievadiet derīgu derīguma termiņu',
     'checkout.invalidCVV': 'Lūdzu, ievadiet derīgu CVV',
+
+    'checkout.thankYou': 'Paldies par jūsu pasūtījumu',
+    'checkout.orderConfirmation': 'Mēs esam saņēmuši jūsu maksājumu un drīzumā apstrādāsim jūsu pasūtījumu.',
+    'checkout.orderDetails': 'Jūsu pasūtījuma detalizēta informācija un sekošanas informācija tiks nosūtīta jūsu e-pastā.',
+    'checkout.shortly': 'drīzumā',
+    'checkout.continueShopping': 'Turpināt iepirkšanās',
+    'checkout.backToHome': 'Atgriezties uz sākumu',
     
     // Language
     'language.select': 'Izvēlies valodu',

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('customer_phone');
             $table->text('shipping_address');
             $table->string('shipping_city');
-            $table->string('shipping_state');
+            $table->string('shipping_state')->nullable();
             $table->string('shipping_zip_code');
             $table->string('shipping_country');
             $table->text('notes')->nullable();
