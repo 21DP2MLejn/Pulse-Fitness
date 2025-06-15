@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect, use, Suspense } from 'react';
 import { useTheme } from '@/context/ThemeContext';
 import { useLanguage } from '@/context/LanguageContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { FiArrowLeft, FiCheck, FiLoader, FiAlertCircle } from 'react-icons/fi';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
@@ -29,8 +29,9 @@ interface ApiResponse {
   errors?: Record<string, string[]>;
 }
 
-export default function SubscriptionCheckoutPage({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = use(params);
+function CheckoutForm() {
+  const searchParams = useSearchParams();
+  const subscriptionId = searchParams.get('id');
   const { theme } = useTheme();
   const { t } = useLanguage();
   const router = useRouter();
@@ -58,13 +59,13 @@ export default function SubscriptionCheckoutPage({ params }: { params: Promise<{
       return;
     }
 
-    if (resolvedParams.id) {
+    if (subscriptionId) {
       fetchSubscriptionDetails();
     } else {
       setError('No subscription selected');
       setLoading(false);
     }
-  }, [isAuthenticated, resolvedParams.id, router]);
+  }, [isAuthenticated, subscriptionId, router]);
 
   const fetchSubscriptionDetails = async () => {
     try {
@@ -78,7 +79,7 @@ export default function SubscriptionCheckoutPage({ params }: { params: Promise<{
         headers['Authorization'] = `Bearer ${token}`;
       }
 
-      const response = await fetch(`http://localhost:8000/api/subscriptions/${resolvedParams.id}`, {
+      const response = await fetch(`http://localhost:8000/api/subscriptions/${subscriptionId}`, {
         method: 'GET',
         headers
       });
@@ -375,5 +376,13 @@ export default function SubscriptionCheckoutPage({ params }: { params: Promise<{
         </div>
       )}
     </div>
+  );
+}
+
+export default function SubscriptionCheckoutPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CheckoutForm />
+    </Suspense>
   );
 }

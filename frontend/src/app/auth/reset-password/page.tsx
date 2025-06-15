@@ -1,11 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { useTheme } from "@/context/ThemeContext"
+import { useLanguage } from "@/context/LanguageContext"
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
   const [email, setEmail] = useState("")
   const [token, setToken] = useState("")
   const [password, setPassword] = useState("")
@@ -16,15 +17,7 @@ export default function ResetPasswordPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { theme } = useTheme()
-
-  useEffect(() => {
-    // Get token and email from URL parameters
-    const tokenParam = searchParams.get("token")
-    const emailParam = searchParams.get("email")
-    
-    if (tokenParam) setToken(tokenParam)
-    if (emailParam) setEmail(emailParam)
-  }, [searchParams])
+  const { t } = useLanguage()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -34,15 +27,15 @@ export default function ResetPasswordPage() {
 
     // Validate passwords match
     if (password !== passwordConfirmation) {
-      setError("Passwords do not match")
+      setError(t('passwordsDoNotMatch'))
       setIsLoading(false)
       return
     }
 
     try {
-      console.log("Resetting password for:", { email, token });
+      console.log("Resetting password for:", { email, token })
       
-      const response = await fetch("http://localhost:8000/api/auth/reset-password", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/reset-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -56,21 +49,20 @@ export default function ResetPasswordPage() {
       })
 
       const data = await response.json()
-      console.log("Password reset response:", response.status, data);
+      console.log("Password reset response:", response.status, data)
 
       if (!response.ok) {
-        throw new Error(data.message || "Failed to reset password")
+        throw new Error(data.message || t('resetPasswordError'))
       }
 
-      setMessage("Your password has been reset successfully. You can now login with your new password.")
-      
+      setMessage(t('passwordResetSuccess'))
       
       setTimeout(() => {
         router.push("/auth/login")
       }, 3000)
     } catch (err) {
-      console.error("Password reset error:", err);
-      setError(err instanceof Error ? err.message : "An error occurred while resetting password")
+      console.error("Password reset error:", err)
+      setError(err instanceof Error ? err.message : t('resetPasswordError'))
     } finally {
       setIsLoading(false)
     }
@@ -81,7 +73,7 @@ export default function ResetPasswordPage() {
       className={`min-h-screen flex items-center justify-center ${theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"}`}
     >
       <div className={`max-w-md w-full p-8 rounded-lg shadow-lg ${theme === "dark" ? "bg-gray-800" : "bg-white"}`}>
-        <h1 className="text-3xl font-bold text-center mb-6">Reset Your Password</h1>
+        <h1 className="text-3xl font-bold text-center mb-6">{t('resetPassword')}</h1>
 
         {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
         {message && <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">{message}</div>}
@@ -89,7 +81,7 @@ export default function ResetPasswordPage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium mb-1">
-              Email
+              {t('email')}
             </label>
             <input
               id="email"
@@ -112,7 +104,7 @@ export default function ResetPasswordPage() {
 
           <div>
             <label htmlFor="password" className="block text-sm font-medium mb-1">
-              New Password
+              {t('newPassword')}
             </label>
             <input
               id="password"
@@ -128,7 +120,7 @@ export default function ResetPasswordPage() {
 
           <div>
             <label htmlFor="password-confirmation" className="block text-sm font-medium mb-1">
-              Confirm New Password
+              {t('confirmPassword')}
             </label>
             <input
               id="password-confirmation"
@@ -145,17 +137,25 @@ export default function ResetPasswordPage() {
             disabled={isLoading}
             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            {isLoading ? "Resetting..." : "Reset Password"}
+            {isLoading ? t('resetPassword') : t('resetPassword')}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm">
-          Remember your password?{" "}
+          {t('rememberPassword')}
           <Link href="/auth/login" className="text-indigo-600 hover:text-indigo-500">
-            Sign in
+            {t('signIn')}
           </Link>
         </p>
       </div>
     </div>
+  )
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPasswordForm />
+    </Suspense>
   )
 }
