@@ -1,32 +1,41 @@
 version: '3.8'
 
 services:
-  frontend:
-    build: ./frontend
-    environment:
-      - NODE_ENV=production
-    networks:
-      - app-network
-
-  backend:
-    build: ./backend
-    volumes:
-      - ./backend:/var/www
-      - ./backend/database:/var/www/database
-    networks:
-      - app-network
-
   nginx:
     image: nginx:alpine
     ports:
       - "80:80"
     volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./frontend:/var/www/frontend
-      - ./backend:/var/www/backend
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - frontend
       - backend
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      - NEXT_PUBLIC_API_URL=http://159.223.26.190/api
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - APP_URL=http://159.223.26.190
+      - FRONTEND_URL=http://159.223.26.190
+      - DB_CONNECTION=sqlite
+    volumes:
+      - ./backend:/var/www
+      - /var/www/vendor
     networks:
       - app-network
 

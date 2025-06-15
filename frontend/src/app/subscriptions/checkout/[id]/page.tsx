@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect, use, Suspense } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useTheme } from '@/context/ThemeContext';
 import { useLanguage } from '@/context/LanguageContext';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { FiArrowLeft, FiCheck, FiLoader, FiAlertCircle } from 'react-icons/fi';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
@@ -29,9 +29,8 @@ interface ApiResponse {
   errors?: Record<string, string[]>;
 }
 
-function CheckoutForm() {
-  const searchParams = useSearchParams();
-  const subscriptionId = searchParams.get('id');
+export default function SubscriptionCheckoutPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params);
   const { theme } = useTheme();
   const { t } = useLanguage();
   const router = useRouter();
@@ -59,13 +58,13 @@ function CheckoutForm() {
       return;
     }
 
-    if (subscriptionId) {
+    if (resolvedParams.id) {
       fetchSubscriptionDetails();
     } else {
       setError('No subscription selected');
       setLoading(false);
     }
-  }, [isAuthenticated, subscriptionId, router]);
+  }, [isAuthenticated, resolvedParams.id, router]);
 
   const fetchSubscriptionDetails = async () => {
     try {
@@ -79,7 +78,7 @@ function CheckoutForm() {
         headers['Authorization'] = `Bearer ${token}`;
       }
 
-      const response = await fetch(`http://localhost:8000/api/subscriptions/${subscriptionId}`, {
+      const response = await fetch(`http://localhost:8000/api/subscriptions/${resolvedParams.id}`, {
         method: 'GET',
         headers
       });
@@ -376,13 +375,5 @@ function CheckoutForm() {
         </div>
       )}
     </div>
-  );
-}
-
-export default function SubscriptionCheckoutPage() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <CheckoutForm />
-    </Suspense>
   );
 }
