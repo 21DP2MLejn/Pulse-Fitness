@@ -30,6 +30,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
                   style: {
                     background: '#EF4444',
                   },
+                  duration: 0,
                 },
               }}
             />
