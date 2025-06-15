@@ -176,11 +176,34 @@ export const deleteTrainingSession = async (id: number): Promise<void> => {
   const response = await fetch(`${API_URL}/training-sessions/${id}`, {
     method: 'DELETE',
     headers: {
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/json'
     },
     credentials: 'include',
   });
-  return handleResponse(response);
+
+  if (!response.ok) {
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to delete training session');
+    } else {
+      throw new Error('Failed to delete training session');
+    }
+  }
+
+  // If the response is empty (204 No Content), just return
+  if (response.status === 204) {
+    return;
+  }
+
+  // If there is content, try to parse it
+  try {
+    return await response.json();
+  } catch (e) {
+    // If parsing fails, just return
+    return;
+  }
 };
 
 export const cancelTrainingSession = async (id: number): Promise<any> => {

@@ -16,6 +16,7 @@ import {
   getSessionReservations
 } from '@/services/reservationService';
 import { TrainingSession, DaySchedule, WeekSchedule } from '@/types/reservation';
+import ReservationModals from '@/components/ReservationModals';
 
 export default function AdminTrainingSessionsPage() {
   const router = useRouter();
@@ -56,6 +57,11 @@ export default function AdminTrainingSessionsPage() {
   const [selectedSessionId, setSelectedSessionId] = useState<number | null>(null);
   const [reservations, setReservations] = useState<any[]>([]);
   const [reservationsLoading, setReservationsLoading] = useState(false);
+
+  // Add modals
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [selectedSession, setSelectedSession] = useState<TrainingSession | null>(null);
 
   // Fetch sessions for the current week
   const fetchSessions = useCallback(async () => {
@@ -208,15 +214,18 @@ export default function AdminTrainingSessionsPage() {
 
   // Session management functions
   const handleDeleteSession = async (session: TrainingSession) => {
-    if (!confirm(`Are you sure you want to delete "${session.title}"?`)) {
-      return;
-    }
+    setSelectedSession(session);
+    setShowDeleteModal(true);
+  };
+  
+  const handleConfirmDelete = async () => {
+    if (!selectedSession) return;
     
     setLoading(true);
     setError(null);
     
     try {
-      await deleteTrainingSession(session.id);
+      await deleteTrainingSession(selectedSession.id);
       setSuccessMessage('Training session deleted successfully');
       await fetchSessions();
     } catch (err: any) {
@@ -224,19 +233,24 @@ export default function AdminTrainingSessionsPage() {
       setError(err.message || 'Failed to delete training session. Please try again.');
     } finally {
       setLoading(false);
+      setShowDeleteModal(false);
+      setSelectedSession(null);
     }
   };
   
   const handleCancelSession = async (session: TrainingSession) => {
-    if (!confirm(`Are you sure you want to cancel "${session.title}"? All reservations will be cancelled.`)) {
-      return;
-    }
+    setSelectedSession(session);
+    setShowCancelModal(true);
+  };
+
+  const handleConfirmCancel = async (reason?: string) => {
+    if (!selectedSession) return;
     
     setLoading(true);
     setError(null);
     
     try {
-      await cancelTrainingSession(session.id);
+      await cancelTrainingSession(selectedSession.id);
       setSuccessMessage('Training session cancelled successfully');
       await fetchSessions();
     } catch (err: any) {
@@ -244,6 +258,8 @@ export default function AdminTrainingSessionsPage() {
       setError(err.message || 'Failed to cancel training session. Please try again.');
     } finally {
       setLoading(false);
+      setShowCancelModal(false);
+      setSelectedSession(null);
     }
   };
 
@@ -272,61 +288,90 @@ export default function AdminTrainingSessionsPage() {
     return (
       <div 
         key={session.id} 
-        className={`p-4 mb-2 rounded-lg shadow ${
+        className={`p-3 mb-2 rounded-lg shadow ${
           isDark 
             ? (session.is_cancelled ? 'bg-gray-700 opacity-70' : 'bg-gray-800') 
             : (session.is_cancelled ? 'bg-gray-100 opacity-70' : 'bg-white')
         }`}
       >
         {session.is_cancelled && (
-          <div className="mb-2 text-red-500 font-bold flex items-center">
+          <div className="mb-2 text-red-500 font-bold flex items-center text-sm">
             <FiAlertCircle className="mr-1" />
             {t('sessions.cancelled')}
           </div>
         )}
         
-        <h3 className={`font-bold text-lg ${isDark ? 'text-white' : 'text-gray-800'}`}>
+        <h3 className={`font-bold text-base ${isDark ? 'text-white' : 'text-gray-800'}`}>
           {session.title}
         </h3>
         
-        <div className="mt-2 space-y-1 text-sm">
-          <div>{startTime} - {endTime}</div>
-          {session.location && <div>{t('sessions.location')}: {session.location}</div>}
-          {session.trainer_name && <div>{t('sessions.trainer')}: {session.trainer_name}</div>}
-          <div>
-            {t('sessions.capacity')}: {session.active_reservations_count || 0}/{session.capacity}
+        <div className="mt-2 grid grid-cols-2 gap-x-2 gap-y-1 text-sm">
+          <div className="col-span-2 font-medium text-primary">
+            {startTime} - {endTime}
+          </div>
+          
+          {session.location && (
+            <div className="col-span-2 flex items-center">
+              <span className="font-medium mr-1">{t('sessions.location')}:</span>
+              <span className="truncate">{session.location}</span>
+            </div>
+          )}
+          
+          {session.trainer_name && (
+            <div className="col-span-2 flex items-center">
+              <span className="font-medium mr-1">{t('sessions.trainer')}:</span>
+              <span className="truncate">{session.trainer_name}</span>
+            </div>
+          )}
+          
+          <div className="flex items-center">
+            <span className="font-medium mr-1">{t('sessions.type')}:</span>
+            <span className="capitalize">{t(`sessions.type.${session.type}`)}</span>
+          </div>
+          
+          <div className="flex items-center">
+            <span className="font-medium mr-1">{t('sessions.difficulty')}:</span>
+            <span className="capitalize">{t(`sessions.difficulty.${session.difficulty_level}`)}</span>
+          </div>
+          
+          <div className="col-span-2 flex items-center">
+            <span className="font-medium mr-1">{t('sessions.capacity')}:</span>
+            <span>{t('sessions.reservationsCount', { 
+              count: (session.active_reservations_count || 0).toString(),
+              capacity: session.capacity.toString()
+            })}</span>
           </div>
         </div>
         
-        <div className="mt-3 flex space-x-2">
+        <div className="mt-3 grid grid-cols-2 gap-2">
           <button
             onClick={() => viewSessionReservations(session.id)}
-            className="px-2 py-1 text-xs rounded flex items-center bg-blue-500 text-white hover:bg-blue-600"
+            className="px-2 py-1 text-xs rounded flex items-center justify-center bg-blue-500 text-white hover:bg-blue-600"
           >
             <FiUsers className="mr-1" /> {t('sessions.reservations')}
           </button>
           
           {!session.is_cancelled && (
-            <>
-              <button
-                onClick={() => openEditSessionForm(session)}
-                className="px-2 py-1 text-xs rounded flex items-center bg-green-500 text-white hover:bg-green-600"
-              >
-                <FiEdit className="mr-1" /> {t('sessions.editSession')}
-              </button>
-              
-              <button
-                onClick={() => handleCancelSession(session)}
-                className="px-2 py-1 text-xs rounded flex items-center bg-yellow-500 text-white hover:bg-yellow-600"
-              >
-                <FiX className="mr-1" /> {t('sessions.cancelSession')}
-              </button>
-            </>
+            <button
+              onClick={() => openEditSessionForm(session)}
+              className="px-2 py-1 text-xs rounded flex items-center justify-center bg-green-500 text-white hover:bg-green-600"
+            >
+              <FiEdit className="mr-1" /> {t('sessions.editSession')}
+            </button>
+          )}
+          
+          {!session.is_cancelled && (
+            <button
+              onClick={() => handleCancelSession(session)}
+              className="px-2 py-1 text-xs rounded flex items-center justify-center bg-yellow-500 text-white hover:bg-yellow-600"
+            >
+              <FiX className="mr-1" /> {t('sessions.cancelSession')}
+            </button>
           )}
           
           <button
             onClick={() => handleDeleteSession(session)}
-            className="px-2 py-1 text-xs rounded flex items-center bg-red-500 text-white hover:bg-red-600"
+            className="px-2 py-1 text-xs rounded flex items-center justify-center bg-red-500 text-white hover:bg-red-600"
           >
             <FiTrash2 className="mr-1" /> {t('sessions.deleteSession')}
           </button>
@@ -339,12 +384,23 @@ export default function AdminTrainingSessionsPage() {
     const dayName = format(day.date, 'EEEE');
     const dayDate = format(day.date, 'MMM d');
     
+    // Map English day names to translation keys
+    const dayTranslations: { [key: string]: string } = {
+      'Monday': 'sessions.days.monday',
+      'Tuesday': 'sessions.days.tuesday',
+      'Wednesday': 'sessions.days.wednesday',
+      'Thursday': 'sessions.days.thursday',
+      'Friday': 'sessions.days.friday',
+      'Saturday': 'sessions.days.saturday',
+      'Sunday': 'sessions.days.sunday'
+    };
+    
     return (
-      <div key={dayName} className="flex-1 min-w-[170px]">
+      <div key={dayName} className="flex-1 min-w-[250px]">
         <div className={`text-center p-2 font-medium ${
           isDark ? 'bg-gray-700 text-white' : 'bg-gray-100'
         }`}>
-          <div>{dayName}</div>
+          <div>{t(dayTranslations[dayName])}</div>
           <div className="text-sm">{dayDate}</div>
         </div>
         
@@ -684,6 +740,31 @@ export default function AdminTrainingSessionsPage() {
       
       {/* Reservations modal */}
       {showReservations && renderReservationsModal()}
+      
+      {/* Add modals */}
+      <ReservationModals
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setSelectedSession(null);
+        }}
+        onConfirm={handleConfirmDelete}
+        type="admin-cancel"
+        sessionTitle={selectedSession?.title}
+        isLoading={loading}
+      />
+
+      <ReservationModals
+        isOpen={showCancelModal}
+        onClose={() => {
+          setShowCancelModal(false);
+          setSelectedSession(null);
+        }}
+        onConfirm={handleConfirmCancel}
+        type="admin-cancel"
+        sessionTitle={selectedSession?.title}
+        isLoading={loading}
+      />
     </div>
   );
 }

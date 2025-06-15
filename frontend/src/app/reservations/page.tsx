@@ -9,6 +9,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import * as reservationService from '@/services/reservationService';
 import { TrainingSession, DaySchedule, WeekSchedule } from '@/types/reservation';
+import ReservationModals from '@/components/ReservationModals';
 
 // Add day name mapping after imports
 const dayNames: Record<string, Record<string, string>> = {
@@ -45,6 +46,9 @@ export default function ReservationsPage() {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [processingSessionId, setProcessingSessionId] = useState<number | null>(null);
+  const [showReserveModal, setShowReserveModal] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [selectedSession, setSelectedSession] = useState<TrainingSession | null>(null);
   
   // Current week navigation
   const [currentWeek, setCurrentWeek] = useState(() => {
@@ -139,24 +143,27 @@ export default function ReservationsPage() {
       return;
     }
     
-    if (!confirm('Do you want to reserve a spot for this session?')) {
-      return;
-    }
+    setSelectedSession(session);
+    setShowReserveModal(true);
+  };
+
+  const handleConfirmReserve = async () => {
+    if (!selectedSession) return;
     
-    setProcessingSessionId(session.id);
+    setProcessingSessionId(selectedSession.id);
     setError(null);
     
     try {
-      await reservationService.createReservation({ training_session_id: session.id });
+      await reservationService.createReservation({ training_session_id: selectedSession.id });
       setSuccessMessage('Reservation successful!');
-      
-      // Always fetch fresh data after making a reservation
       await fetchSessions();
     } catch (err: any) {
       const message = err?.message || 'Failed to make reservation';
       setError(message);
     } finally {
       setProcessingSessionId(null);
+      setShowReserveModal(false);
+      setSelectedSession(null);
     }
   };
   
@@ -169,24 +176,27 @@ export default function ReservationsPage() {
       return;
     }
     
-    if (!confirm('Are you sure you want to cancel this reservation?')) {
-      return;
-    }
+    setSelectedSession(session);
+    setShowCancelModal(true);
+  };
+
+  const handleConfirmCancel = async (reason?: string) => {
+    if (!selectedSession?.user_reservation_id) return;
     
-    setProcessingSessionId(session.id);
+    setProcessingSessionId(selectedSession.id);
     setError(null);
     
     try {
-      await reservationService.cancelReservation(reservationId);
+      await reservationService.cancelReservation(selectedSession.user_reservation_id);
       setSuccessMessage('Reservation cancelled successfully!');
-      
-      // Always fetch fresh data after cancelling
       await fetchSessions();
     } catch (err: any) {
       const message = err?.message || 'Failed to cancel reservation';
       setError(message);
     } finally {
       setProcessingSessionId(null);
+      setShowCancelModal(false);
+      setSelectedSession(null);
     }
   };
   
@@ -267,7 +277,7 @@ export default function ReservationsPage() {
                         : 'bg-red-600 hover:bg-red-700'
                     }`}
                   >
-                    {isProcessing ? 'Processing...' : 'Cancel Reservation'}
+                    {isProcessing ? t('common.loading') : t('reservations.cancelTitle')}
                   </button>
                 ) : (
                   !session.is_full && (
@@ -280,7 +290,7 @@ export default function ReservationsPage() {
                           : 'bg-blue-600 hover:bg-blue-700'
                       }`}
                     >
-                      {isProcessing ? 'Processing...' : 'Reserve Spot'}
+                      {isProcessing ? t('common.loading') : t('reservations.reserveSpot')}
                     </button>
                   )
                 )}
@@ -421,6 +431,29 @@ export default function ReservationsPage() {
         {/* Week schedule */}
         {!loading && weekSchedule.map(day => renderDay(day))}
       </div>
+      
+      {/* Add modals */}
+      <ReservationModals
+        isOpen={showReserveModal}
+        onClose={() => {
+          setShowReserveModal(false);
+          setSelectedSession(null);
+        }}
+        onConfirm={handleConfirmReserve}
+        type="create"
+        isLoading={loading}
+      />
+
+      <ReservationModals
+        isOpen={showCancelModal}
+        onClose={() => {
+          setShowCancelModal(false);
+          setSelectedSession(null);
+        }}
+        onConfirm={handleConfirmCancel}
+        type="cancel"
+        isLoading={loading}
+      />
     </div>
   );
 }
