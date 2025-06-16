@@ -22,7 +22,6 @@ export default function CheckoutPage() {
   
   const [loading, setLoading] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
-  // Define types for form data and errors
   interface FormData {
     firstName: string;
     lastName: string;

@@ -20,7 +20,6 @@ export default function HomePage() {
     }
   }, [isLoading, isAuthenticated, router])
 
-  // Show loading state while checking authentication
   if (isLoading) {
     console.log("Home page - Still loading auth state");
     return (
@@ -37,7 +36,6 @@ export default function HomePage() {
 
   console.log("Home page - Rendering for authenticated user:", user);
   
-  // Extract user name safely
   const userName = user?.name || "User";
 
   return (

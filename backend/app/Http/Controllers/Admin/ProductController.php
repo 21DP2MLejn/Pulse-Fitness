@@ -65,7 +65,7 @@ class ProductController extends Controller
             $product->images = $imageUrls;
             $product->features = $request->features ?? [];
             $product->specifications = $request->specifications ?? [];
-            $product->rating = 0; // Default rating for new products
+            $product->rating = 0;
             $product->save();
             
             \Log::info('Product created successfully', ['product_id' => $product->id]);

@@ -59,7 +59,6 @@ export default function CreateSubscriptionPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate form
     if (!formData.name.trim()) {
       toast.error('Subscription name is required');
       return;
@@ -75,7 +74,6 @@ export default function CreateSubscriptionPage() {
       return;
     }
     
-    // Filter out empty features
     const filteredFeatures = formData.features.filter(feature => feature.trim() !== '');
     
     try {

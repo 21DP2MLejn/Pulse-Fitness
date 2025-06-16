@@ -16,18 +16,14 @@ const handleResponse = async (response: Response) => {
   return response.json();
 };
 
-// Get auth token
 const getAuthToken = (): string => {
-  // Try to get token from cookies first
   const cookieToken = Cookies.get('token');
   if (cookieToken) {
     return cookieToken;
   }
   
-  // If not in cookies, try localStorage with the correct key
-  const localToken = localStorage.getItem('authToken'); // Changed from 'token' to 'authToken'
+  const localToken = localStorage.getItem('authToken'); 
   if (localToken) {
-    // If found in localStorage but not in cookie, restore the cookie
     console.log("Token found in localStorage but not in cookie, restoring cookie");
     Cookies.set("token", localToken, { 
       expires: 7,
@@ -40,7 +36,7 @@ const getAuthToken = (): string => {
   throw new Error('Authentication token is missing. Please log in again.');
 };
 
-// Training Sessions API
+
 export const getTrainingSessions = async (startDate?: string, endDate?: string, forceFresh?: boolean): Promise<TrainingSession[]> => {
   const token = getAuthToken();
   console.log('[getTrainingSessions] Using token:', token ? `${token.substring(0, 10)}...` : 'NO TOKEN');
@@ -50,7 +46,6 @@ export const getTrainingSessions = async (startDate?: string, endDate?: string, 
     url += `?start_date=${startDate}&end_date=${endDate}`;
   }
   
-  // Add cache-busting parameter to ensure fresh data
   if (forceFresh) {
     const cacheBuster = Date.now();
     url += url.includes('?') ? `&_=${cacheBuster}` : `?_=${cacheBuster}`;
@@ -87,7 +82,7 @@ export const getTrainingSession = async (id: number): Promise<TrainingSession> =
   return handleResponse(response);
 };
 
-// Reservations API
+
 export const getUserReservations = async (status?: string): Promise<Reservation[]> => {
   const token = getAuthToken();
 
@@ -139,7 +134,7 @@ export const cancelReservation = async (id: number, options?: { reason?: string 
   return handleResponse(response);
 };
 
-// Admin functions
+
 export const createTrainingSession = async (data: Partial<TrainingSession>): Promise<TrainingSession> => {
   const token = getAuthToken();
 
@@ -192,16 +187,13 @@ export const deleteTrainingSession = async (id: number): Promise<void> => {
     }
   }
 
-  // If the response is empty (204 No Content), just return
   if (response.status === 204) {
     return;
   }
 
-  // If there is content, try to parse it
   try {
     return await response.json();
   } catch (e) {
-    // If parsing fails, just return
     return;
   }
 };

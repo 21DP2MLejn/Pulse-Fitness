@@ -18,7 +18,6 @@ export default function ResetPasswordPage() {
   const { theme } = useTheme()
 
   useEffect(() => {
-    // Get token and email from URL parameters
     const tokenParam = searchParams.get("token")
     const emailParam = searchParams.get("email")
     
@@ -32,7 +31,6 @@ export default function ResetPasswordPage() {
     setError("")
     setMessage("")
 
-    // Validate passwords match
     if (password !== passwordConfirmation) {
       setError("Passwords do not match")
       setIsLoading(false)

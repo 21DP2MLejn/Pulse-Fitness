@@ -60,11 +60,9 @@ export default function AdminUsersPage() {
       const data = await response.json();
       console.log('Users fetched:', data);
       
-      // Check if the response has the expected structure
       if (data.data) {
         setUsers(data.data);
       } else {
-        // Handle legacy response format
         setUsers(Array.isArray(data) ? data : []);
       }
     } catch (error) {

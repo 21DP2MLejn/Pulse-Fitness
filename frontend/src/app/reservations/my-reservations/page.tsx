@@ -17,7 +17,6 @@ export default function MyReservationsPage() {
   const { t } = useLanguage();
   const isDark = theme === 'dark';
 
-  // State
   const [activeReservations, setActiveReservations] = useState<Reservation[]>([]);
   const [pastReservations, setPastReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -27,7 +26,6 @@ export default function MyReservationsPage() {
   const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
   const [cancelReason, setCancelReason] = useState('');
 
-  // Fetch user's reservations
   const fetchReservations = async () => {
     setLoading(true);
     setError(null);
@@ -35,7 +33,6 @@ export default function MyReservationsPage() {
     try {
       const reservations = await getUserReservations();
       
-      // Split into active and past reservations
       const now = new Date();
       const active: Reservation[] = [];
       const past: Reservation[] = [];
@@ -45,7 +42,6 @@ export default function MyReservationsPage() {
         
         const sessionEndTime = parseISO(reservation.trainingSession.end_time);
         
-        // Skip cancelled reservations for active list
         if (reservation.cancelled) {
           past.push(reservation);
         } else if (sessionEndTime < now) {
@@ -55,7 +51,6 @@ export default function MyReservationsPage() {
         }
       });
       
-      // Sort by start time
       active.sort((a, b) => {
         return new Date(a.trainingSession!.start_time).getTime() - 
                new Date(b.trainingSession!.start_time).getTime();
@@ -79,7 +74,6 @@ export default function MyReservationsPage() {
   useEffect(() => {
     if (!authLoading) {
       if (!isAuthenticated) {
-        // Redirect to login if not authenticated
         router.push('/auth/login?redirect=/reservations/my-reservations');
         return;
       }
@@ -88,7 +82,6 @@ export default function MyReservationsPage() {
     }
   }, [authLoading, isAuthenticated, router]);
   
-  // Cancel reservation
   const openCancelModal = (reservation: Reservation) => {
     setSelectedReservation(reservation);
     setCancelReason('');
@@ -102,17 +95,13 @@ export default function MyReservationsPage() {
     setError(null);
     
     try {
-      // Call the cancellation API with the reason
       const result = await cancelReservation(selectedReservation.id, { reason: cancelReason });
       console.log('Cancellation result:', result);
       
-      // Show success message
       setSuccessMessage('Reservation cancelled successfully.');
       
-      // Close modal
       setShowCancelModal(false);
       
-      // Use the returned reservation if available, otherwise construct it
       const updatedReservation: Reservation = result.reservation || {
         ...selectedReservation,
         cancelled: true,
@@ -120,17 +109,14 @@ export default function MyReservationsPage() {
         cancellation_reason: cancelReason || null
       };
       
-      // Log the state update
       console.log('Moving reservation from active to past:', updatedReservation);
       
-      // Move the cancelled reservation from active to past
       setActiveReservations(prev => 
         prev.filter(res => res.id !== selectedReservation.id)
       );
       
       setPastReservations(prev => [updatedReservation, ...prev]);
-      
-      // Then refresh all reservations from server to ensure UI is up to date
+    
       await fetchReservations();
     } catch (err: any) {
       console.error('Error cancelling reservation:', err);
@@ -140,7 +126,6 @@ export default function MyReservationsPage() {
     }
   };
   
-  // Render functions
   const renderReservationCard = (reservation: Reservation, isActive: boolean) => {
     if (!reservation.trainingSession) return null;
     

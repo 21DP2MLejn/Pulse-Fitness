@@ -22,24 +22,20 @@ export default function TrainingSessionsPage() {
   const isDark = theme === 'dark';
   const router = useRouter();
 
-  // State for training sessions
   const [weekSchedule, setWeekSchedule] = useState<WeekSchedule>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   
-  // State for week navigation
   const [currentWeek, setCurrentWeek] = useState({
     startDate: startOfWeek(new Date(), { weekStartsOn: 1 }),
     endDate: endOfWeek(new Date(), { weekStartsOn: 1 }),
   });
 
-  // Modal states
   const [showReserveModal, setShowReserveModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [selectedSession, setSelectedSession] = useState<TrainingSession | null>(null);
 
-  // Fetch sessions for the current week
   const fetchSessions = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -50,7 +46,6 @@ export default function TrainingSessionsPage() {
       
       const sessions = await getTrainingSessions(startDateStr, endDateStr);
       
-      // Organize sessions by day
       const days: WeekSchedule = [];
       
       for (let i = 0; i < 7; i++) {

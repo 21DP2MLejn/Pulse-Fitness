@@ -45,11 +45,9 @@ export default function AdminProductsPage() {
       const data = await response.json();
       console.log('Products fetched:', data);
       
-      // Check if the response has the expected structure
       if (data.data) {
         setProducts(data.data);
       } else {
-        // Handle legacy response format
         setProducts(Array.isArray(data) ? data : []);
       }
     } catch (error) {
@@ -140,7 +138,6 @@ export default function AdminProductsPage() {
               <th className="px-4 py-3 text-left">Category</th>
               <th className="px-4 py-3 text-left">Price</th>
               <th className="px-4 py-3 text-left">Stock</th>
-              <th className="px-4 py-3 text-left">Rating</th>
               <th className="px-4 py-3 text-left">Actions</th>
             </tr>
           </thead>

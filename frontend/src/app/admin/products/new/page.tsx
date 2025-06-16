@@ -83,14 +83,11 @@ export default function NewProductPage() {
     setLoading(true);
     
     try {
-      // Validate form
       if (!formData.name || !formData.description || !formData.price || !formData.category || !formData.stock) {
         toast.error('Please fill in all required fields');
         setLoading(false);
         return;
       }
-      
-      // Create FormData object
       const productData = new FormData();
       productData.append('name', formData.name);
       productData.append('description', formData.description);
@@ -98,19 +95,16 @@ export default function NewProductPage() {
       productData.append('category', formData.category);
       productData.append('stock', formData.stock.toString());
       
-      // Add features
       formData.features.forEach((feature, index) => {
         if (feature.trim()) {
           productData.append(`features[${index}]`, feature);
         }
       });
       
-      // Add specifications
       Object.entries(formData.specifications).forEach(([key, value]) => {
         productData.append(`specifications[${key}]`, value);
       });
       
-      // Add images
       if (images.length > 0) {
         images.forEach(image => {
           productData.append('images[]', image);
@@ -126,11 +120,9 @@ export default function NewProductPage() {
       
       console.log('Sending product data to server with token:', token);
       
-      // Using XMLHttpRequest instead of fetch for better FormData handling
       return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         
-        // Using the new direct endpoint that bypasses the abilities middleware
         xhr.open('POST', `${API_URL}/create-product`, true);
         xhr.setRequestHeader('Authorization', `Bearer ${token}`);
         

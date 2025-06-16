@@ -2,17 +2,14 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-// Define available languages
 export type Language = 'en' | 'lv';
 
-// Define translations interface
 interface Translations {
   [key: string]: {
     [key: string]: string;
   };
 }
 
-// Create translations object
 const translations: Translations = {
   en: {
     // Common
@@ -173,6 +170,7 @@ const translations: Translations = {
     'products.sort.priceAsc' : 'Price: Low to High',
     'products.sort.priceDesc' : 'Price: High to Low',
     'products.sort.topRated' : 'Top Rated',
+    'products.noProductsFound': 'No products found',
 
     
     // Cart
@@ -312,6 +310,7 @@ const translations: Translations = {
     'checkout.shortly': 'shortly',
     'checkout.continueShopping': 'Continue Shopping',
     'checkout.backToHome': 'Back to Home',
+    'checkout.subtotal': 'Subtotal',
 
     
     // Admin
@@ -552,6 +551,7 @@ const translations: Translations = {
     'products.sort.priceAsc' : 'Cena: Augošā secībā',
     'products.sort.priceDesc' : 'Cena: Dilstošā secībā',
     'products.sort.topRated' : 'Augstākais Reitings',
+    'products.noProductsFound': 'Netika atrasts neviens produkts',
     
     // Cart
     'cart.title': 'Iepirkumu grozs',
@@ -743,47 +743,6 @@ const translations: Translations = {
     'common.loading' : 'Ielādē...',	
     
     // Checkout
-    'checkout.title': 'Norēķināšanās',
-    'checkout.shippingAddress': 'Piegādes adrese',
-    'checkout.billingAddress': 'Norēķinu adrese',
-    'checkout.paymentMethod': 'Maksājuma veids',
-    'checkout.orderSummary': 'Pasūtījuma kopsavilkums',
-    'checkout.firstName': 'Vārds',
-    'checkout.lastName': 'Uzvārds',
-    'checkout.email': 'E-pasts',
-    'checkout.phone': 'Tālrunis',
-    'checkout.address': 'Adrese',
-    'checkout.city': 'Pilsēta',
-    'checkout.state': 'Novads/Reģions',
-    'checkout.postalCode': 'Pasta indekss',
-    'checkout.country': 'Valsts',
-    'checkout.sameAsShipping': 'Tāda pati kā piegādes adrese',
-    'checkout.cardNumber': 'Kartes numurs',
-    'checkout.cardName': 'Vārds uz kartes',
-    'checkout.expiryDate': 'Derīguma termiņš',
-    'checkout.cvv': 'CVV',
-    'checkout.placeOrder': 'Veikt pasūtījumu',
-    'checkout.back': 'Atpakaļ',
-    'checkout.next': 'Tālāk',
-    'checkout.step': 'Solis',
-    'checkout.of': 'no',
-    'checkout.items': 'Preces',
-    'checkout.shipping': 'Piegāde',
-    'checkout.tax': 'Nodoklis',
-    'checkout.total': 'Kopā',
-    'checkout.orderSuccess': 'Pasūtījums veiksmīgi veikts!',
-    'checkout.orderError': 'Kļūda veicot pasūtījumu. Lūdzu, mēģiniet vēlreiz.',
-    'checkout.orderSuccessMessage': 'Paldies par jūsu pasūtījumu. Mēs esam saņēmuši jūsu maksājumu un drīzumā apstrādāsim jūsu pasūtījumu.',
-    'checkout.returnToShopping': 'Atgriezties pie iepirkšanās',
-    'checkout.viewOrder': 'Apskatīt pasūtījumu',
-    'checkout.paymentProcessing': 'Maksājuma apstrāde...',
-    'checkout.requiredField': 'Šis lauks ir obligāts',
-    'checkout.invalidEmail': 'Lūdzu, ievadiet derīgu e-pasta adresi',
-    'checkout.invalidPhone': 'Lūdzu, ievadiet derīgu tālruņa numuru',
-    'checkout.invalidCard': 'Lūdzu, ievadiet derīgu kartes numuru',
-    'checkout.invalidExpiry': 'Lūdzu, ievadiet derīgu derīguma termiņu',
-    'checkout.invalidCVV': 'Lūdzu, ievadiet derīgu CVV',
-
     'checkout.thankYou': 'Paldies par jūsu pasūtījumu',
     'checkout.orderConfirmation': 'Mēs esam saņēmuši jūsu maksājumu un drīzumā apstrādāsim jūsu pasūtījumu.',
     'checkout.orderDetails': 'Jūsu pasūtījuma detalizēta informācija un sekošanas informācija tiks nosūtīta jūsu e-pastā.',
@@ -808,13 +767,9 @@ const translations: Translations = {
     'reservations.cancelReasonPlaceholder': 'Lūdzu, norādiet atcelšanas iemeslu...',
     'reservations.adminCancelReasonPlaceholder': 'Lūdzu, norādiet sesijas atcelšanas iemeslu...',
     'reservations.reserveSpot': 'Rezervēt Vietu',
-    'common.cancel' : 'Atcelt',
-    'common.save' : 'Saglabāt',
-    'common.confirm' : 'Apstiprināt',
   },
 };
 
-// Create language context
 interface LanguageContextType {
   language: Language;
   setLanguage: (language: Language) => void;
@@ -823,7 +778,6 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-// Create provider component
 interface LanguageProviderProps {
   children: ReactNode;
 }
@@ -831,7 +785,6 @@ interface LanguageProviderProps {
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
   const [language, setLanguage] = useState<Language>('en');
 
-  // Load language preference from localStorage on mount
   useEffect(() => {
     const savedLanguage = localStorage.getItem('language') as Language;
     if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'lv' || savedLanguage === 'es')) {
@@ -839,16 +792,13 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     }
   }, []);
 
-  // Save language preference to localStorage when it changes
   useEffect(() => {
     localStorage.setItem('language', language);
   }, [language]);
 
-  // Translation function
   const t = (key: string, params?: Record<string, string>): string => {
     let translation = translations[language][key] || key;
     
-    // Replace parameters if provided
     if (params) {
       Object.entries(params).forEach(([paramKey, paramValue]) => {
         translation = translation.replace(`{${paramKey}}`, paramValue);
@@ -865,7 +815,6 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   );
 };
 
-// Create hook for using the language context
 export const useLanguage = (): LanguageContextType => {
   const context = useContext(LanguageContext);
   if (context === undefined) {

@@ -18,7 +18,6 @@ export default function CartPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading to prevent layout shift
     const timer = setTimeout(() => {
       setLoading(false);
     }, 300);
@@ -38,7 +37,7 @@ export default function CartPage() {
   };
 
   const subtotal = getCartTotal();
-  const shipping = subtotal > 0 ? 10 : 0; // Example shipping cost, free if cart is empty
+  const shipping = subtotal > 0 ? 10 : 0; 
   const total = subtotal + shipping;
 
   if (loading) {

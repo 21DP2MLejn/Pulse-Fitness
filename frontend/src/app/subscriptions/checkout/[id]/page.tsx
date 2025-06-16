@@ -37,10 +37,8 @@ export default function SubscriptionCheckoutPage({ params }: { params: Promise<{
   const { isAuthenticated, user, getToken } = useAuth();
   const isDark = theme === 'dark';
   
-  // Client-side only code flag
   const [isMounted, setIsMounted] = useState(false);
   
-  // Use useEffect to handle browser-only code
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -52,7 +50,6 @@ export default function SubscriptionCheckoutPage({ params }: { params: Promise<{
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    // Check if user is authenticated
     if (!isAuthenticated) {
       router.push('/auth/login');
       return;
@@ -116,10 +113,8 @@ export default function SubscriptionCheckoutPage({ params }: { params: Promise<{
         return;
       }
       
-      // Current date as start date
       const startDate = new Date().toISOString().split('T')[0];
       
-      // Prepare the request data
       const subscriptionId = subscription?.id ? 
         (typeof subscription.id === 'string' ? parseInt(subscription.id, 10) : subscription.id) : 
         0;
@@ -132,7 +127,6 @@ export default function SubscriptionCheckoutPage({ params }: { params: Promise<{
       
       console.log('Subscription request data:', requestData);
       
-      // Make the API request
       const response = await fetch('http://localhost:8000/api/subscriptions', {
         method: 'POST',
         headers: {
@@ -145,7 +139,6 @@ export default function SubscriptionCheckoutPage({ params }: { params: Promise<{
       
       console.log('Response status:', response.status);
       
-      // Check if response is JSON
       const contentType = response.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
         const textResponse = await response.text();
@@ -158,12 +151,10 @@ export default function SubscriptionCheckoutPage({ params }: { params: Promise<{
       
       if (response.ok && data.status) {
         setSuccess(true);
-        // Wait 2 seconds before redirecting to profile
         setTimeout(() => {
           router.push('/profile');
         }, 2000);
       } else {
-        // Handle validation errors
         if (data.errors) {
           const errorMessages = Object.values(data.errors).flat();
           setError(errorMessages.join(', '));

@@ -43,7 +43,6 @@ export default function OrdersPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // Redirect if not authenticated
     if (!isAuthenticated) {
       router.push('/auth/login');
       return;
@@ -70,7 +69,6 @@ export default function OrdersPage() {
 
       if (!response.ok) {
         if (response.status === 401) {
-          // Handle unauthorized - redirect to login
           router.push('/auth/login');
           return;
         }

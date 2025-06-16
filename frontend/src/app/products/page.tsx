@@ -20,7 +20,6 @@ export default function ProductsPage() {
   const [sortBy, setSortBy] = useState<'price-asc' | 'price-desc'>('price-asc');
 
   useEffect(() => {
-    // Fetch products from the API
     fetch(`${API_URL}/products`)
       .then(res => {
         if (!res.ok) {
@@ -30,7 +29,6 @@ export default function ProductsPage() {
       })
       .then(data => {
         console.log('Products fetched:', data);
-        // Check if the response has the expected structure
         if (data.data) {
           setProducts(data.data);
         } else if (Array.isArray(data)) {
@@ -76,7 +74,7 @@ export default function ProductsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
-      {/* Search and Filter Section - Simplified */}
+      {/* Search and Filter Section */}
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row gap-4 items-center mb-4">
           <div className="relative flex-grow">
@@ -145,9 +143,6 @@ export default function ProductsPage() {
                 fill
                 className="object-cover"
               />
-              <div className="absolute top-2 right-2 bg-white dark:bg-gray-800 rounded-full p-1 shadow-sm">
-                <FiShoppingCart className="text-primary" size={16} />
-              </div>
             </div>
             <div className="p-3">
               <h3 className={`font-medium text-base ${isDark ? 'text-white' : 'text-gray-900'}`}>{product.name}</h3>

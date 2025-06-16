@@ -11,7 +11,6 @@ import * as reservationService from '@/services/reservationService';
 import { TrainingSession, DaySchedule, WeekSchedule } from '@/types/reservation';
 import ReservationModals from '@/components/ReservationModals';
 
-// Add day name mapping after imports
 const dayNames: Record<string, Record<string, string>> = {
   en: {
     Monday: 'Monday',
@@ -33,95 +32,20 @@ const dayNames: Record<string, Record<string, string>> = {
   },
 };
 
-export default function ReservationsPage() {
-  const router = useRouter();
-  const { theme } = useTheme();
-  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
-  const { t, language } = useLanguage();
-  const isDark = theme === 'dark';
-  
-  // State
-  const [weekSchedule, setWeekSchedule] = useState<WeekSchedule>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [processingSessionId, setProcessingSessionId] = useState<number | null>(null);
-  const [showReserveModal, setShowReserveModal] = useState(false);
-  const [showCancelModal, setShowCancelModal] = useState(false);
-  const [selectedSession, setSelectedSession] = useState<TrainingSession | null>(null);
-  
-  // Current week navigation
-  const [currentWeek, setCurrentWeek] = useState(() => {
-    const today = new Date();
-    return {
-      startDate: startOfWeek(today, { weekStartsOn: 1 }),
-      endDate: addDays(startOfWeek(today, { weekStartsOn: 1 }), 6)
-    };
-  });
-  
-  // Clear messages after a delay
-  useEffect(() => {
-    if (error || successMessage) {
-      const timer = setTimeout(() => {
-        setError(null);
-        setSuccessMessage(null);
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [error, successMessage]);
-  
-  // Fetch sessions data - simplified version
-  const fetchSessions = useCallback(async () => {
-    if (!isAuthenticated) return;
-    
-    setLoading(true);
-    
-    try {
-      const startDateStr = format(currentWeek.startDate, 'yyyy-MM-dd');
-      const endDateStr = format(currentWeek.endDate, 'yyyy-MM-dd');
-      
-      const sessions = await reservationService.getTrainingSessions(startDateStr, endDateStr, true);
-      
-      // Organize sessions by day
-      const days: WeekSchedule = [];
-      
-      for (let i = 0; i < 7; i++) {
-        const date = addDays(currentWeek.startDate, i);
-        const daySessions = sessions.filter(session => 
-          isSameDay(parseISO(session.start_time), date)
-        );
-        
-        days.push({
-          date,
-          sessions: daySessions,
-        });
-      }
-      
-      setWeekSchedule(days);
-      setError(null);
-    } catch (err) {
-      console.error('Error fetching sessions:', err);
-      setError('Failed to load training sessions. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  }, [currentWeek, isAuthenticated]);
-  
-  // Authentication check
+d
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
       router.push('/auth/login?redirect=/reservations');
     }
   }, [authLoading, isAuthenticated, router]);
   
-  // Load sessions when authenticated or week changes
+
   useEffect(() => {
     if (isAuthenticated) {
       fetchSessions();
     }
   }, [isAuthenticated, currentWeek, fetchSessions]);
   
-  // Navigate weeks
   const goToPreviousWeek = () => {
     setCurrentWeek(prev => ({
       startDate: addDays(prev.startDate, -7),
@@ -136,7 +60,6 @@ export default function ReservationsPage() {
     }));
   };
   
-  // Make a reservation - simplified
   const makeReservation = async (session: TrainingSession) => {
     if (!user?.has_subscription) {
       setError('You need an active subscription to make reservations');
@@ -167,7 +90,6 @@ export default function ReservationsPage() {
     }
   };
   
-  // Cancel a reservation - simplified
   const cancelReservation = async (session: TrainingSession) => {
     const reservationId = session.user_reservation_id;
     
@@ -200,9 +122,7 @@ export default function ReservationsPage() {
     }
   };
   
-  // Render a session card
   const renderSessionCard = (session: TrainingSession) => {
-    // Use string slicing to get time as entered (e.g., '19:00' from '2025-06-15 19:00:00')
     const startTime = session.start_time.slice(11, 16);
     const endTime = session.end_time.slice(11, 16);
     const isPast = new Date() > new Date(session.end_time);
@@ -310,7 +230,6 @@ export default function ReservationsPage() {
     );
   };
   
-  // Render a day's schedule
   const renderDay = (day: DaySchedule) => {
     const dayNameEn = format(day.date, 'EEEE');
     const localizedDayName = dayNames[language][dayNameEn] || dayNameEn;
@@ -346,22 +265,7 @@ export default function ReservationsPage() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">{t('sessions.title')}</h1>
           
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={fetchSessions}
-              disabled={loading}
-              className={`p-2 rounded transition-colors ${
-                loading
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : isDark 
-                    ? 'bg-gray-800 hover:bg-gray-700' 
-                    : 'bg-white hover:bg-gray-100'
-              }`}
-              title="Refresh sessions"
-            >
-              <FiRefreshCw className={loading ? 'animate-spin' : ''} />
-            </button>
-            
+          <div className="flex items-center space-x-4">            
             <div className="flex items-center">
               <button
                 onClick={goToPreviousWeek}
@@ -397,16 +301,7 @@ export default function ReservationsPage() {
               </button>
             </div>
           </div>
-        </div>
-        
-        {/* Subscription check */}
-        {user && !user.has_subscription && (
-          <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6 rounded">
-            <p className="font-semibold">Active subscription required</p>
-            <p>You need an active subscription to make reservations. Please subscribe to continue.</p>
-          </div>
-        )}
-        
+        </div>        
         {/* Error message */}
         {error && (
           <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded">

@@ -38,12 +38,10 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
   useEffect(() => {
     const token = Cookies.get('token');
     if (!token) {
-      // Redirect to login if not authenticated
       router.push('/auth/login');
       return;
     }
 
-    // Fetch subscription details
     fetch(`${API_URL}/subscriptions/${resolvedParams.id}`)
       .then(res => {
         if (!res.ok) {
@@ -66,7 +64,6 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
         setLoading(false);
       });
 
-    // Fetch user's current subscription if any
     fetch(`${API_URL}/user`, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -80,7 +77,6 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
         return res.json();
       })
       .then(userData => {
-        // If user has subscription data, fetch the details
         if (userData.subscription_id) {
           fetch(`${API_URL}/subscriptions/${userData.subscription_id}`, {
             headers: {
@@ -112,7 +108,6 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
     }
 
     setSubscribing(true);
-    // Redirect to checkout page for this subscription using dynamic route
     router.push(`/subscriptions/checkout/${subscription.id}`);
   };
 

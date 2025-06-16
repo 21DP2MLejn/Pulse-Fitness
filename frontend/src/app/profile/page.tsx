@@ -64,7 +64,6 @@ export default function ProfilePage() {
     }
   }, [isLoading, isAuthenticated, user, router])
 
-  // Show loading state while checking authentication
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -72,8 +71,6 @@ export default function ProfilePage() {
       </div>
     )
   }
-
-  // If not authenticated, don't render the page content
   if (!isAuthenticated) {
     return null
   }

@@ -25,13 +25,11 @@ export default function AdminTrainingSessionsPage() {
   const { t } = useLanguage();
   const isDark = theme === 'dark';
 
-  // State for training sessions
   const [weekSchedule, setWeekSchedule] = useState<WeekSchedule>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   
-  // State for session form
   const [showSessionForm, setShowSessionForm] = useState(false);
   const [editingSession, setEditingSession] = useState<TrainingSession | null>(null);
   const [formData, setFormData] = useState({
@@ -46,24 +44,20 @@ export default function AdminTrainingSessionsPage() {
     type: 'group',
   });
   
-  // State for week navigation
   const [currentWeek, setCurrentWeek] = useState({
     startDate: startOfWeek(new Date(), { weekStartsOn: 1 }),
     endDate: endOfWeek(new Date(), { weekStartsOn: 1 }),
   });
   
-  // State for reservations view
   const [showReservations, setShowReservations] = useState(false);
   const [selectedSessionId, setSelectedSessionId] = useState<number | null>(null);
   const [reservations, setReservations] = useState<any[]>([]);
   const [reservationsLoading, setReservationsLoading] = useState(false);
 
-  // Add modals
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [selectedSession, setSelectedSession] = useState<TrainingSession | null>(null);
 
-  // Fetch sessions for the current week
   const fetchSessions = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -74,7 +68,6 @@ export default function AdminTrainingSessionsPage() {
       
       const sessions = await getTrainingSessions(startDateStr, endDateStr);
       
-      // Organize sessions by day
       const days: WeekSchedule = [];
       
       for (let i = 0; i < 7; i++) {
@@ -103,7 +96,6 @@ export default function AdminTrainingSessionsPage() {
   
   useEffect(() => {
     if (!authLoading) {
-      // Check if user is admin
       if (!isAuthenticated || (user && user.role !== 'admin')) {
         router.push('/auth/login?redirect=/admin/training-sessions');
         return;
@@ -113,7 +105,6 @@ export default function AdminTrainingSessionsPage() {
     }
   }, [authLoading, isAuthenticated, user, router, fetchSessions]);
 
-  // Navigation functions
   const goToPreviousWeek = () => {
     setCurrentWeek({
       startDate: addDays(currentWeek.startDate, -7),
@@ -135,9 +126,7 @@ export default function AdminTrainingSessionsPage() {
     });
   };
 
-  // Session form handlers
   const openAddSessionForm = () => {
-    // Reset form data
     setFormData({
       title: '',
       description: '',
@@ -154,7 +143,6 @@ export default function AdminTrainingSessionsPage() {
   };
   
   const openEditSessionForm = (session: TrainingSession) => {
-    // Format dates for datetime-local input
     const startDateTime = format(new Date(session.start_time), "yyyy-MM-dd'T'HH:mm");
     const endDateTime = format(new Date(session.end_time), "yyyy-MM-dd'T'HH:mm");
     
@@ -177,7 +165,6 @@ export default function AdminTrainingSessionsPage() {
     const { name, value } = e.target;
     
     if (name === 'difficulty_level') {
-      // Ensure difficulty_level is one of the allowed values
       const difficultyLevel = value as 'beginner' | 'intermediate' | 'advanced';
       setFormData(prev => ({ ...prev, [name]: difficultyLevel }));
     } else {
@@ -192,16 +179,13 @@ export default function AdminTrainingSessionsPage() {
     
     try {
       if (editingSession) {
-        // Update existing session
         await updateTrainingSession(editingSession.id, formData);
         setSuccessMessage('Training session updated successfully');
       } else {
-        // Create new session
         await createTrainingSession(formData);
         setSuccessMessage('Training session created successfully');
       }
       
-      // Close form and refresh data
       setShowSessionForm(false);
       await fetchSessions();
     } catch (err: any) {
@@ -212,7 +196,6 @@ export default function AdminTrainingSessionsPage() {
     }
   };
 
-  // Session management functions
   const handleDeleteSession = async (session: TrainingSession) => {
     setSelectedSession(session);
     setShowDeleteModal(true);
@@ -263,7 +246,6 @@ export default function AdminTrainingSessionsPage() {
     }
   };
 
-  // Reservations view handlers
   const viewSessionReservations = async (sessionId: number) => {
     setSelectedSessionId(sessionId);
     setReservationsLoading(true);
@@ -280,7 +262,6 @@ export default function AdminTrainingSessionsPage() {
     }
   };
   
-  // Render functions
   const renderSessionCard = (session: TrainingSession) => {
     const startTime = session.start_time.slice(11, 16);
     const endTime = session.end_time.slice(11, 16);

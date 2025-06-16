@@ -61,7 +61,6 @@ export default function SubscriptionsPage() {
         setLoading(false);
       });
 
-    // If authenticated, fetch user's current subscription
     if (token) {
       fetch(`${API_URL}/user`, {
         headers: {
@@ -77,16 +76,13 @@ export default function SubscriptionsPage() {
         })
         .then(userData => {
           console.log('User data received:', userData);
-          // Check if user has a subscription
           if (userData.user && userData.user.subscription_id) {
             console.log('User has subscription_id:', userData.user.subscription_id);
-            // Set the subscription data directly from the user data
-            // This avoids making an additional API call that might not exist
             setUserSubscription({
               id: userData.user.subscription_id,
               name: userData.user.subscription_name || 'Your Subscription',
               description: 'Your active fitness subscription',
-              price: 0, // We don't know the price from this endpoint
+              price: 0,
               features: ['Access to all training sessions', 'Make reservations'],
               status: 'active',
               start_date: userData.user.subscription?.start_date,

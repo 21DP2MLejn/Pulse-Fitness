@@ -23,7 +23,6 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   const [addedToCart, setAddedToCart] = useState(false);
 
   useEffect(() => {
-    // Fetch product data
     fetch(`${API_URL}/products/${params.id}`)
       .then(res => {
         if (!res.ok) {
@@ -33,7 +32,6 @@ export default function ProductPage({ params }: { params: { id: string } }) {
       })
       .then(data => {
         console.log('Product fetched:', data);
-        // Check if the response has the expected structure
         if (data.data) {
           setProduct(data.data);
         } else {
@@ -56,11 +54,9 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     
     addToCart(product, quantity);
     
-    // Visual feedback
     setAddedToCart(true);
     toast.success(`${product.name} ${t('products.addedToCart')}`);
     
-    // Reset after 2 seconds
     setTimeout(() => {
       setAddedToCart(false);
     }, 2000);
@@ -74,8 +70,6 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     );
   }
 
-  // Ensure rating and reviews are properly initialized
-  const rating = product.rating || 4.5;
   const reviews = product.reviews || [];
 
   return (
@@ -119,25 +113,6 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             <div>
               <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
               <div className="flex items-center gap-4 mb-4">
-                <div className="flex items-center">
-                  <FiStar className="text-yellow-400 mr-1" />
-                  <span className="font-semibold">
-                    {typeof rating === 'number' 
-                      ? rating.toFixed(1) 
-                      : parseFloat(rating).toFixed(1)}
-                  </span>
-                  <span className={`ml-1 ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>
-                    ({reviews.length} {t('products.reviews')})
-                  </span>
-                </div>
-                <button
-                  onClick={() => setIsWishlisted(!isWishlisted)}
-                  className={`p-2 rounded-full transition-colors duration-300 ${
-                    isWishlisted ? 'text-red-500' : isDark ? 'text-gray-400' : 'text-gray-500'
-                  }`}
-                >
-                  <FiHeart className={isWishlisted ? 'fill-current' : ''} />
-                </button>
               </div>
               <p className="text-2xl font-bold text-indigo-600 mb-4">
                 ${typeof product.price === 'number' 
@@ -231,47 +206,6 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               }
             </p>
           </div>
-        </div>
-
-        {/* Reviews Section */}
-        <div className="mt-12">
-          <h2 className="text-2xl font-bold mb-6">{t('products.reviews')}</h2>
-          {reviews.length > 0 ? (
-            <div className="space-y-6">
-              {reviews.map((review: any) => (
-                <div
-                  key={review.id}
-                  className={`p-4 rounded-lg ${
-                    isDark ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <div>
-                      <p className="font-medium">{review.userName}</p>
-                      <div className="flex items-center">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <FiStar
-                            key={i}
-                            className={`${
-                              i < review.rating ? 'text-yellow-400' : 'text-gray-300'
-                            } ${i < review.rating ? 'fill-current' : ''}`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                    <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                      {new Date(review.date).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <p className={isDark ? 'text-gray-300' : 'text-gray-600'}>{review.comment}</p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className={`text-center py-8 ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>
-              {t('products.noReviews')}
-            </p>
-          )}
         </div>
       </div>
     </div>

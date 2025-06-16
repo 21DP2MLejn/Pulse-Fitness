@@ -30,18 +30,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  // Function to get the current token
   const getToken = (): string | null => {
-    // Try to get token from cookie first
     const cookieToken = Cookies.get("token");
     if (cookieToken) {
       return cookieToken;
     }
     
-    // If not in cookie, try localStorage
     const localToken = localStorage.getItem('authToken');
     if (localToken) {
-      // If found in localStorage but not in cookie, restore the cookie
       console.log("Token found in localStorage but not in cookie, restoring cookie");
       Cookies.set("token", localToken, { 
         expires: 7,
