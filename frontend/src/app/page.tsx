@@ -75,14 +75,16 @@ export default function Home() {
             <p className="text-xl mb-8">
               {t('getstarted.quote')}
             </p>
-            <button className={`${
-              isDark 
-                ? 'bg-purple-600 hover:bg-purple-700' 
-                : 'bg-white text-purple-600 hover:bg-gray-100'
-            } px-8 py-3 rounded-md transition-colors flex items-center space-x-2`}>
-              <span>{t('getstarted.button')}</span>
-              <FiArrowRight />
-            </button>
+            <Link href={'/auth/register'}>
+              <button className={`${
+                isDark 
+                  ? 'bg-purple-600 hover:bg-purple-700' 
+                  : 'bg-white text-purple-600 hover:bg-gray-100'
+              } px-8 py-3 rounded-md transition-colors flex items-center space-x-2`}>
+                <span>{t('getstarted.button')}</span>
+                <FiArrowRight />
+              </button>
+            </Link>
           </motion.div>
         </div>
       </section>
@@ -235,13 +237,15 @@ export default function Home() {
             className="text-center"
           >
             <h2 className="text-3xl font-bold mb-8">{t('ready.to.start')}</h2>
-            <button className={`${
-              isDark 
-                ? 'bg-gray-900 hover:bg-gray-800' 
-                : 'bg-white text-purple-600 hover:bg-gray-100'
-            } px-8 py-3 rounded-md transition-colors`}>
-              {t('join.now')}
-            </button>
+            <Link href={'/auth/register'}>   
+              <button className={`${
+                isDark 
+                  ? 'bg-gray-900 hover:bg-gray-800' 
+                  : 'bg-white text-purple-600 hover:bg-gray-100'
+              } px-8 py-3 rounded-md transition-colors`}>
+                {t('join.now')}
+              </button>
+            </Link>
           </motion.div>
         </div>
       </section>
